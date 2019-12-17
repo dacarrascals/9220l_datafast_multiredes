@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/capture_containter"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/top"
+        layout="@layout/top_title" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/frameLayout_view"
+        android:background="@drawable/scan_mask"
+        >
+
+        <RelativeLayout
+            android:id="@+id/capture_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/back_layout"
+            >
+            <RelativeLayout
+                android:id="@+id/capture_crop_layout"
+                android:layout_width="280dp"
+                android:layout_height="300dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/capture2">
+                <ImageView
+                    android:id="@+id/capture_scan_line_real"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_margin="1dp"
+                    android:background="@drawable/scan"
+                    android:contentDescription="libview" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/top_mask"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="64dip"
+                android:layout_above="@id/capture_crop_layout"
+                android:gravity="center"
+                android:text="@string/qr_bar_code"
+                android:layout_alignParentTop="true"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/layout1"
+                android:layout_below="@id/capture_crop_layout"
+                android:background="@drawable/scan_mask"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/layout2"
+                android:layout_above="@id/capture_crop_layout"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/scan_mask"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/capture_crop_layout"
+                android:layout_below="@id/layout2"
+                android:layout_above="@id/layout1"
+                android:background="@drawable/scan_mask"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/capture_crop_layout"
+                android:layout_below="@id/layout2"
+                android:layout_above="@id/layout1"
+                android:background="@drawable/scan_mask"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/preview_layout"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/background_preview"
+                android:scaleType="fitXY"
+                />
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

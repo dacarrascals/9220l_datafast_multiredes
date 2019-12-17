@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.android.newpos.pay"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" /> <!-- TODO replace above two with next line after Android 4.launcher_simple_en -->
+    <!-- <uses-feature android:name="android.hardware.camera.any"/> -->
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.screen.landscape" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" /> <!-- This excludes Google TV, which is unfortunately included by virtue of not requiring a camera -->
+    <uses-feature android:name="android.hardware.touchscreen" />
+
+    <application
+        android:name="cn.desert.newpos.payui.base.PayApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_1"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.datafast.server.activity.ServerTCP"
+            android:screenOrientation="landscape"></activity>
+
+        <uses-library android:name="com.pos.device" /> <!-- <activity -->
+
+        <activity
+            android:name="cn.desert.newpos.payui.master.MasterControl"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:theme="@style/AppTheme.WUZI"
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.desert.newpos.payui.master.ResultControl"
+            android:screenOrientation="landscape"
+            android:configChanges="mcc|mnc|orientation|screenSize|keyboard|layoutDirection"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.desert.newpos.payui.setting.ui.SettingsFrags"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:theme="@style/AppTheme.WUZI"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.desert.newpos.payui.transrecord.HistoryTrans"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:theme="@style/AppTheme.WUZI"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.desert.newpos.payui.setting.ui.classical.TransparaFrags"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:theme="@style/AppTheme.WUZI"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.CommunSettings"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.KeysSettings"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.TransSetting"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.PrivateSettings"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.FeedbackSettings"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.ErrlogSettings"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.transson.TransMerchantSetting"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.transson.TransSysSetting"
+            android:screenOrientation="landscape"/>
+        <activity android:name="cn.desert.newpos.payui.setting.ui.simple.transson.TransScanSetting"
+            android:screenOrientation="landscape"/>
+        <!-- ============================MODO KIOSKO================================ -->
+        <activity
+            android:name=".StartAppDATAFAST"
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden"
+            android:clearTaskOnLaunch="true"
+            android:launchMode="singleTask"
+            android:stateNotNeeded="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- ======================================================================= -->
+        </activity>
+        <activity android:name="com.datafast.keys.PwMasterKey"
+            android:screenOrientation="landscape"/>
+        <activity android:name="com.datafast.keys.InjectMasterKey"
+            android:screenOrientation="landscape"/>
+        <activity android:name="com.datafast.menus.menus"
+            android:screenOrientation="landscape"/>
+        <activity android:name="com.datafast.inicializacion.trans_init.Init"
+            android:screenOrientation="landscape"/>
+        <activity android:name="com.datafast.keys.PwOperario"
+            android:screenOrientation="landscape"/>
+        <activity android:name="com.datafast.printer.PrintParameter"
+            android:screenOrientation="landscape"/> <!-- ============================START BOOT================================ -->
+        <receiver
+            android:name="com.datafast.startboot.StartBoot"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

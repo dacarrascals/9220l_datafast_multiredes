@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#eeeeee"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="30dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="@string/terminal_id"
+            android:textColor="#ff333333"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/merchant_tid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:gravity="right"
+            android:inputType="number"
+            android:maxLength="8"
+            android:paddingTop="15dp"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="@string/trace_no"
+            android:textColor="#ff333333"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/sys_trace_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:gravity="right"
+            android:maxLength="6"
+            android:paddingTop="15dp"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="@string/batch_no"
+            android:textColor="#ff333333"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/sys_batch_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:gravity="right"
+            android:maxLength="6"
+            android:paddingTop="15dp"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="@string/tpdu_no"
+            android:textColor="#ff333333"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/sys_tpdu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:gravity="right"
+            android:maxLength="10"
+            android:paddingTop="15dp"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="@string/wait_user_time"
+            android:textColor="#ff333333"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/sys_wait_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="30dp"
+        android:background="#FFFFFF"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="@string/merchant_name"
+            android:textColor="#ff333333"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/merchant_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:gravity="right"
+            android:maxLength="32"
+            android:paddingTop="15dp"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="30dp"
+        android:background="#FFFFFF"
+        android:layout_height="45dp"
+        android:visibility="invisible">
+        <TextView
+            android:text="@string/merchant_id"
+            android:layout_width="wrap_content"
+            android:textColor="#ff333333"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/merchant_merid"
+            android:background="@android:color/transparent"
+            android:paddingTop="15dp"
+            android:layout_marginRight="10dp"
+            android:maxLength="15"
+            android:gravity="right"
+            android:inputType="number"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>

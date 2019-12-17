@@ -1,0 +1,168 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/trans_siganture"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#eeeeee"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="47dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/signature_pad_container"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/edittext_selector"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/textView_cont"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="-111dp"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:paddingTop="5dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="10dp"
+        android:visibility="visible"
+        android:layout_alignParentEnd="true"
+        app:srcCompat="@drawable/home3_close_menu" />
+
+    <RelativeLayout
+        android:id="@+id/signature_pad_container"
+        android:layout_width="fill_parent"
+        android:layout_height="179dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginTop="57dp"
+        android:layout_marginRight="@dimen/dp_10">
+
+        <com.github.gcacace.signaturepad.views.SignaturePad
+            android:id="@+id/signature_pad"
+            android:layout_width="match_parent"
+            android:layout_height="157dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:background="@drawable/edit_white_shape" />
+
+        <TextView
+            android:layout_width="295dp"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="23dp"
+            android:background="@android:color/darker_gray">
+
+        </TextView>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="251dp"
+        android:text="@string/firme_su_voucher"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="97dp"
+        android:layout_height="45dp"
+        android:layout_alignTop="@+id/editText_cedula"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="28dp"
+        android:text="@string/cedula"
+        android:textColor="@android:color/black"
+        android:textSize="21sp" />
+
+    <EditText
+        android:id="@+id/editText_cedula"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignEnd="@+id/signature_pad_container"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="233dp"
+        android:background="@drawable/rounded_edittext"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="10" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignStart="@+id/textView6"
+        android:layout_alignTop="@+id/editText_telefono"
+        android:text="@string/telefono"
+        android:textColor="@android:color/black"
+        android:textSize="21sp" />
+
+    <EditText
+        android:id="@+id/editText_telefono"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignEnd="@+id/signature_pad_container"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="176dp"
+        android:background="@drawable/rounded_edittext"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="10" />
+
+    <RelativeLayout
+        android:id="@+id/buttons_container"
+        android:layout_width="fill_parent"
+        android:layout_height="153dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_10">
+
+        <Button
+            android:id="@+id/clear_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="11dp"
+            android:background="@color/darker_gray"
+            android:backgroundTint="@color/darker_gray"
+            android:enabled="false"
+            android:text="@string/clear_pad"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:background="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:enabled="false"
+            android:text="@string/save_signature"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+
+</RelativeLayout>

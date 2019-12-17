@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <include
+        android:id="@+id/toolbar_id"
+        layout="@layout/toolbar_cancel" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="320dp"
+        android:layout_height="450dp"
+        android:layout_below="@+id/toolbar_id"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="43dp"
+        android:background="@drawable/edit_white_shape">
+
+        <ListView
+            android:id="@+id/simpleListView"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="51dp"
+            android:divider="#000"
+            android:dividerHeight="1dp"
+            android:gravity="center"
+            android:padding="5dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/relativeLayout"
+        android:layout_alignTop="@+id/relativeLayout"
+        android:background="@drawable/edit_white_shape"
+        android:backgroundTint="@color/colorPrimaryDark">
+
+        <ImageView
+            android:id="@+id/iv_menus"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="14dp"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/select"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

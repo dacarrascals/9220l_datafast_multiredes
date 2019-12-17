@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar_id"
+        layout="@layout/toolbar_cancel" />
+
+    <RelativeLayout
+        android:id="@+id/titulo"
+        android:layout_below="@+id/toolbar_id"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_weight="0">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/logodatafast_handling" />
+
+        <TextView
+            android:id="@+id/handing_msginfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:gravity="center"
+            android:textSize="30dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/monto"
+        android:layout_below="@+id/titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/monto_display_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/edit_white_shape"
+            android:enabled="false"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="8sp"
+            android:padding="15dp"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="20dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/handling"
+        android:layout_below="@+id/monto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/TxtToken"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:hint="INGRESE TOKEN"
+            android:gravity="center"
+            android:layout_margin="15dp"
+            android:visibility="visible"
+            android:inputType="none|number"/>
+
+        <WebView
+            android:id="@+id/handling_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/TxtToken"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

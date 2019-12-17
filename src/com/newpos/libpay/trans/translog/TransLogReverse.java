@@ -1,0 +1,182 @@
+package com.newpos.libpay.trans.translog;
+
+import com.newpos.libpay.Logger;
+import com.newpos.libpay.global.TMConfig;
+import com.newpos.libpay.utils.PAYUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.datafast.menus.MenuAction.callBackSeatle;
+
+/**
+ * 交易日志管理类
+ * @author
+ */
+
+public class TransLogReverse implements Serializable {
+	private static String TranLogPath = "translog.dat";
+
+	private List<TransLogData> transLogData = new ArrayList<TransLogData>();
+	private static TransLogReverse transLogReverse;
+	private static String idAcqTmp;
+
+	private TransLogReverse() {
+	}
+
+	public static TransLogReverse getInstance() {
+		if (transLogReverse == null) {
+			String filepath = TMConfig.getRootFilePath() + TranLogPath;
+			try {
+				transLogReverse = ((TransLogReverse) PAYUtils.file2Object(filepath));
+			} catch (FileNotFoundException e) {
+				transLogReverse = null;
+			} catch (IOException e) {
+				transLogReverse = null;
+			} catch (ClassNotFoundException e) {
+				transLogReverse = null;
+			}if (transLogReverse == null) {
+				transLogReverse = new TransLogReverse();
+			}
+		}
+		return transLogReverse;
+	}
+
+	public static TransLogReverse getInstance(String acquirer_id) {
+
+		if (idAcqTmp != null){
+			if (!idAcqTmp.equals(acquirer_id))
+				transLogReverse = null;
+		}
+
+		if (transLogReverse == null) {
+			idAcqTmp = acquirer_id;
+			String filepath = TMConfig.getRootFilePath() + acquirer_id + TranLogPath;
+			try {
+				transLogReverse = ((TransLogReverse) PAYUtils.file2Object(filepath));
+			} catch (FileNotFoundException e) {
+				transLogReverse = null;
+			} catch (IOException e) {
+				transLogReverse = null;
+			} catch (ClassNotFoundException e) {
+				transLogReverse = null;
+			}if (transLogReverse == null) {
+				transLogReverse = new TransLogReverse();
+			}
+		}
+		return transLogReverse;
+	}
+
+	public List<TransLogData> getData() {
+		return transLogData;
+	}
+
+	public int getSize() {
+		return transLogData.size();
+	}
+
+	public TransLogData get(int position) {
+		if (!(position > getSize())) {
+			return transLogData.get(position);
+		}
+		return null;
+	}
+
+	/**
+	 * 清除交易记录的二进制文件
+	 */
+	public void clearAll() {
+		transLogData.clear();
+		String FullName = TMConfig.getRootFilePath() + TranLogPath;
+		File file = new File(FullName);
+		if (file.exists()) {
+			file.delete();
+		}
+	}
+
+	/**
+	 * 清除交易记录的二进制文件
+	 */
+	public void clearAll(String acquirer_id) {
+		transLogData.clear();
+		String FullName = TMConfig.getRootFilePath() + acquirer_id + TranLogPath;
+		File file = new File(FullName);
+		if (file.exists()) {
+			file.delete();
+		}
+	}
+
+	public boolean saveLog(TransLogData data, String acquirer_id) {
+		transLogData.add(data);
+		Logger.debug("transLogData size " + transLogData.size());
+		try {
+			PAYUtils.object2File(transLogReverse, TMConfig.getRootFilePath()+ acquirer_id + TranLogPath);
+		} catch (FileNotFoundException e) {
+			Logger.debug("save translog file not found");
+			return false;
+		} catch (IOException e) {
+			Logger.debug("save translog IOException");
+			return false;
+		}
+		return true;
+	}
+
+	public boolean saveLog(String acquirer_id) {
+		try {
+			PAYUtils.object2File(transLogReverse, TMConfig.getRootFilePath()+ acquirer_id + TranLogPath);
+		} catch (FileNotFoundException e) {
+			Logger.debug("save translog file not found");
+			return false;
+		} catch (IOException e) {
+			Logger.debug("save translog IOException");
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * 更新交易记录
+	 * @param logIndex 交易记录索引
+	 * @param newData 更新后的数据
+	 * @return 更新结果
+	 */
+	public boolean updateTransLog(int logIndex, TransLogData newData) {
+		if (getSize() > 0) {
+			transLogData.set(transLogData.indexOf(transLogData.get(logIndex)), newData);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 获取当前交易的索引号
+	 * @param data
+	 * @return
+     */
+	public int getCurrentIndex(TransLogData data){
+		int current = -1 ;
+		for (int i = 0 ; i < transLogData.size() ; i++){
+			if(transLogData.get(i).getTraceNo().equals(data.getTraceNo())){
+				current = i ;
+			}
+		}
+		return current ;
+	}
+
+	/**
+	 * Borra transacción anulada
+	 * @param logIndex
+	 * @return
+	 */
+	public boolean deleteTransLog(int logIndex) {
+		if (getSize() > 0) {
+			transLogData.remove(logIndex);
+			Logger.debug("Debug point deleteTransLog " + transLogData.toString());
+			return true;
+		}
+		return false;
+	}
+}

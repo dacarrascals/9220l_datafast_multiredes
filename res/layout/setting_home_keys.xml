@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#eeeeee"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <TextView
+            android:text="@string/please_input_masterkey_index"
+            android:textSize="16sp"
+            android:textColor="#ff333333"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/master_key_index"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:textColor="#ff333333"
+            android:maxLength="2"
+            android:inputType="number"
+            android:textSize="16dp"
+            android:background="#FFFFFF"
+            android:layout_height="40dp" />
+        <TextView
+            android:text="@string/please_input_masterkey_data"
+            android:textSize="16sp"
+            android:layout_marginTop="30dp"
+            android:textColor="#ff333333"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/master_key_data"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:maxLength="32"
+            android:text="11111111111111112222222222222222"
+            android:textColor="#ff333333"
+            android:textSize="16sp"
+            android:background="#FFFFFF"
+            android:layout_height="40dp" />
+        <TextView
+            android:text="@string/please_chose_key_type"
+            android:textSize="16sp"
+            android:layout_marginTop="30dp"
+            android:textColor="#ff333333"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/master_key_des"
+                android:text="@string/des"
+                android:textColor="#ff333333"
+                android:textSize="16sp"
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/master_key_gm"
+                android:text="@string/gm"
+                android:textColor="#ff333333"
+                android:textSize="16sp"
+                android:checked="false"
+                android:layout_marginLeft="50dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>

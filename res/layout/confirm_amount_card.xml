@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar_id"
+        layout="@layout/toolbar_cancel" />
+
+    <RelativeLayout
+        android:id="@+id/titulo"
+        android:layout_below="@+id/toolbar_id"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_weight="0">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/logodatafast_handling" />
+
+        <TextView
+            android:id="@+id/handing_msginfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:gravity="center"
+            android:textSize="30dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/monto"
+        android:layout_below="@+id/titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0">
+
+        <TextView
+            android:id="@+id/monto_display_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/edit_white_shape"
+            android:enabled="false"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="8sp"
+            android:padding="15dp"
+            android:text="75.25"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="35dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/handling"
+        android:layout_below="@+id/monto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0">
+
+        <WebView
+            android:id="@+id/handling_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_tarjeta_manual"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginRight="30dp"
+            android:src="@drawable/keyboard"
+            app:fabSize="auto"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            app:backgroundTint="@color/colorPrimaryDark" />
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/icon_contactless" />
+
+        <EditText
+            android:id="@+id/edtInvisible"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            />
+
+    </RelativeLayout>
+
+    <!--<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_margin="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel_mon"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:background="@drawable/btn_red_shape"
+            android:onClick="onClick"
+            android:text="@string/cancel"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btn_conf_mon"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="72px"
+            android:layout_weight="1"
+            android:background="@drawable/btn_blue_shape"
+            android:onClick="onClick"
+            android:text="@string/confirm"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>-->
+</RelativeLayout>
