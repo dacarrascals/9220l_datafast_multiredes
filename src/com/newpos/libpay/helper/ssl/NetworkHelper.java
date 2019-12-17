@@ -61,8 +61,8 @@ public class NetworkHelper {
 	 * @throws UnknownHostException
 	 */
 	public NetworkHelper(String ip, int port, int timeout, Context context) {
-		this.ip = "10.0.1.166";
-		this.port = 6968;
+		this.ip = ip;
+		this.port = port;
 		this.timeout = timeout;
 		this.tcontext = context;
 	}
