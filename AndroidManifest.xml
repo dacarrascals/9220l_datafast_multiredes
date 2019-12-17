@@ -52,13 +52,13 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity android:name="com.datafast.server.activity.ServerTCP"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="portrait"></activity>
 
         <uses-library android:name="com.pos.device" /> <!-- <activity -->
 
         <activity
             android:name="cn.desert.newpos.payui.master.MasterControl"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:multiprocess="true"
             android:theme="@style/AppTheme.WUZI"
@@ -71,7 +71,7 @@
         </activity>
         <activity
             android:name="cn.desert.newpos.payui.master.ResultControl"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|orientation|screenSize|keyboard|layoutDirection"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden">
@@ -83,7 +83,7 @@
         </activity>
         <activity
             android:name="cn.desert.newpos.payui.setting.ui.SettingsFrags"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:multiprocess="true"
             android:theme="@style/AppTheme.WUZI"
@@ -96,7 +96,7 @@
         </activity>
         <activity
             android:name="cn.desert.newpos.payui.transrecord.HistoryTrans"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:multiprocess="true"
             android:theme="@style/AppTheme.WUZI"
@@ -109,7 +109,7 @@
         </activity>
         <activity
             android:name="cn.desert.newpos.payui.setting.ui.classical.TransparaFrags"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:multiprocess="true"
             android:theme="@style/AppTheme.WUZI"
@@ -121,28 +121,28 @@
             </intent-filter>
         </activity>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.CommunSettings"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.KeysSettings"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.TransSetting"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.PrivateSettings"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.FeedbackSettings"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.ErrlogSettings"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.transson.TransMerchantSetting"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.transson.TransSysSetting"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="cn.desert.newpos.payui.setting.ui.simple.transson.TransScanSetting"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <!-- ============================MODO KIOSKO================================ -->
         <activity
             android:name=".StartAppDATAFAST"
             android:theme="@style/SplashTheme"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTask"
@@ -157,17 +157,17 @@
             <!-- ======================================================================= -->
         </activity>
         <activity android:name="com.datafast.keys.PwMasterKey"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="com.datafast.keys.InjectMasterKey"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="com.datafast.menus.menus"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="com.datafast.inicializacion.trans_init.Init"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="com.datafast.keys.PwOperario"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name="com.datafast.printer.PrintParameter"
-            android:screenOrientation="landscape"/> <!-- ============================START BOOT================================ -->
+            android:screenOrientation="portrait"/> <!-- ============================START BOOT================================ -->
         <receiver
             android:name="com.datafast.startboot.StartBoot"
             android:enabled="true"
