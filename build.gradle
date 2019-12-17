@@ -102,10 +102,10 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 2
-        versionName "1.1.7"
+        versionCode 1
+        versionName "0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        applicationId 'com.wposs.datafast5210'
+        applicationId 'com.wposs.datafast5310'
         //multiDexEnabled true
     }
     packagingOptions {
