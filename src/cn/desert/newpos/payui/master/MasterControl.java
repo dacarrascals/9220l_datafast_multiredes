@@ -444,8 +444,8 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 close = (ImageView) findViewById(R.id.iv_close);
                 close.setVisibility(View.VISIBLE);
                 et_title = (TextView) findViewById(R.id.textView_titleToolbar);
-                btnCancel = (Button) findViewById(R.id.btn_cancel_mon);
-                btnConfirm = (Button) findViewById(R.id.btn_conf_mon);
+                btnCancel = (Button) findViewById(R.id.btn_cancel_pagos);
+                btnConfirm = (Button) findViewById(R.id.btn_confirm_pagos);
                 etNumToken = (EditText) findViewById(R.id.TxtToken);
 
                 etNumToken.setHint("INGRESE " + msg.substring(msg.indexOf("|") + 1));
@@ -460,7 +460,8 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
                 //btnTarjetaManual = (FloatingActionButton) findViewById(R.id.btn_tarjeta_manual);
                 try {
-                    et_title.setText(title.replace("_", " "));
+                    String temporal = title.replace("_"," ");
+                    et_title.setText( temporal.substring(0,temporal.indexOf(" ")) + "\n" + temporal.substring(temporal.indexOf(" ")) );
                 } catch (Exception e){
                     et_title.setText("");
                 }
@@ -478,19 +479,21 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     }
                 });
 
-                etNumToken.setOnClickListener(new View.OnClickListener() {
+                btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        InputMethodManager imm = (InputMethodManager) MasterControl.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(etNumToken.getWindowToken(), 0);
+                        listener.cancel();
+                    }
+                });
 
-                        if (!etNumToken.getText().toString().equals("")){
-                            if (etNumToken.length() < minLen){
-                                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
-                            } else {
-                                inputContent = "MANUAL|" + etNumToken.getText().toString();
-                                listener.confirm(InputManager.Style.COMMONINPUT);
-                            }
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (etNumToken.length() < minLen){
+                            UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
+                        } else {
+                            inputContent = "MANUAL|" + etNumToken.getText().toString();
+                            listener.confirm(InputManager.Style.COMMONINPUT);
                         }
                     }
                 });
