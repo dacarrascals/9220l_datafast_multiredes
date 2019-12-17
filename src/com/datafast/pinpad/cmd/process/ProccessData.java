@@ -16,7 +16,7 @@ public class ProccessData {
 
     public byte[] getByteData(boolean addHash) {
 
-        byte[] temp1 = new byte[12000];
+        byte[] temp1 = new byte[50000];
         byte[] newData = null;
         byte[] len = new byte[2];
         byte[] temp2 = null;

@@ -12,17 +12,15 @@
         android:layout_alignStart="@+id/signature_pad_container"
         android:layout_alignParentTop="true"
         android:background="@drawable/edittext_selector"
-        android:orientation="horizontal"
+        android:gravity="center"
         android:padding="5dp">
 
         <TextView
             android:id="@+id/textView_cont"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="-111dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:fontFamily="sans-serif"
-            android:paddingTop="5dp"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -80,55 +78,69 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="251dp"
+        android:layout_marginTop="231dp"
         android:text="@string/firme_su_voucher"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="97dp"
-        android:layout_height="45dp"
-        android:layout_alignTop="@+id/editText_cedula"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="28dp"
-        android:text="@string/cedula"
-        android:textColor="@android:color/black"
-        android:textSize="21sp" />
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/textView4"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/editText_cedula"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_alignEnd="@+id/signature_pad_container"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="233dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:inputType="number"
-        android:maxLength="10" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_alignStart="@+id/textView6"
-        android:layout_alignTop="@+id/editText_telefono"
-        android:text="@string/telefono"
-        android:textColor="@android:color/black"
-        android:textSize="21sp" />
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/cedula"
+                android:textColor="@color/black"
+                android:textSize="21sp" />
 
-    <EditText
-        android:id="@+id/editText_telefono"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_alignEnd="@+id/signature_pad_container"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="176dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:inputType="number"
-        android:maxLength="10" />
+            <EditText
+                android:id="@+id/editText_cedula"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:background="@drawable/rounded_edittext"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="10" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/telefono"
+                android:textColor="@color/black"
+                android:textSize="21sp" />
+
+            <EditText
+                android:id="@+id/editText_telefono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/rounded_edittext"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="10" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/buttons_container"

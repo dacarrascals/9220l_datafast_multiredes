@@ -3217,9 +3217,9 @@ public class FinanceTrans extends Trans {
         String TransEname = "";
         CardInfo cardInfo;
         if (Server.cmd.equals(LT)){
-            TransEname = "LECTURA DE TARJETA";
+            TransEname = "LECTURA\nDE TARJETA";
         }else if (Server.cmd.equals(CT)){
-            TransEname = "CONSULTA DE TARJETA";
+            TransEname = "CONSULTA\nDE TARJETA";
         }
 
         if (Server.cmd.equals(LT) || Server.cmd.equals(CT)){
