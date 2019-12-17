@@ -180,7 +180,7 @@ public class SendRcvd extends AsyncTask<Void, Integer, byte[]> {
         super.onPreExecute();
         pd = new ProgressDialog(context, R.style.Mypd);
         this.pd.setCancelable(false);
-        this.pd.setIcon(R.drawable.icon_cloud);
+        this.pd.setIcon(R.drawable.ic_polariscloud);
         this.pd.setTitle(Html.fromHtml("<h4> Polaris Cloud </h4>"));
         this.pd.setMessage("Descargando Inicializacion por favor espere...");
         this.pd.setIndeterminate(false);

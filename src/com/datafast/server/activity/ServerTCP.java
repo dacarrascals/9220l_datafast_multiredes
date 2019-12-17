@@ -11,6 +11,7 @@ import android.text.InputFilter;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -184,16 +185,16 @@ public class ServerTCP extends AppCompatActivity {
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {
         final Intent intent = new Intent();
-        mDialog = UIUtils.centerDialog(ServerTCP.this, R.layout.dialogo_pwd, R.id.setting_pass_layout_pwd);
+        mDialog = UIUtils.centerDialog(ServerTCP.this, R.layout.setting_home_pass, R.id.setting_pass_layout);
         mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        final EditText newEdit = mDialog.findViewById(R.id.setting_pass_new_pwd);
-        final TextView title_pass = mDialog.findViewById(R.id.title_pass_pwd);
-        //Button confirm = mDialog.findViewById(R.id.setting_pass_confirm);
+        final EditText newEdit = mDialog.findViewById(R.id.setting_pass_new);
+        final TextView title_pass = mDialog.findViewById(R.id.title_pass);
+        Button confirm = mDialog.findViewById(R.id.setting_pass_confirm);
         newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(lenEdit)});
         newEdit.requestFocus();
         title_pass.setText(title);
 
-        newEdit.setOnClickListener(new View.OnClickListener() {
+        confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 InputMethodManager imm = (InputMethodManager) ServerTCP.this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -221,7 +222,7 @@ public class ServerTCP extends AppCompatActivity {
             }
         });
 
-        mDialog.findViewById(R.id.setting_pass_close_pwd).setOnClickListener(new View.OnClickListener() {
+        mDialog.findViewById(R.id.setting_pass_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDialog.dismiss();
