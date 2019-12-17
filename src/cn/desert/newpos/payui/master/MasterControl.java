@@ -839,7 +839,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 tv_inputUser = (TextView) findViewById(R.id.textView_title);
                 btnCancelInputUser = (TextView) findViewById(R.id.last4_cancel);
                 btnAcceptInputUser = (TextView) findViewById(R.id.last4_confirm);
-                et_inputUser.setInputType(InputType.TYPE_NULL);
+                //et_inputUser.setInputType(InputType.TYPE_NULL);
                 et_inputUser.requestFocus();
 
                 et_inputUser.setOnKeyListener(new View.OnKeyListener() {
