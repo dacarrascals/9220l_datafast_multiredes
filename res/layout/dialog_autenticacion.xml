@@ -8,7 +8,7 @@
     android:background="@color/white">
 
     <LinearLayout
-        android:layout_width="400dp"
+        android:layout_width="280dp"
         android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -17,7 +17,7 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:background="@color/white"
             android:layout_margin="15dp"
             android:layout_gravity="center_horizontal"
@@ -32,7 +32,7 @@
             android:textStyle="bold"
             android:background="@color/white"
             android:textColor="@color/black"
-            android:textSize="26dp"
+            android:textSize="16dp"
             android:layout_margin="5dp"/>
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:background="@color/white"
-            android:textSize="20dp"
+            android:textSize="16dp"
             android:textColor="@color/black"
             />
 
@@ -74,12 +74,12 @@
             <Button
                 android:id="@+id/btn_aceptar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_marginTop="0dp"
                 android:background="@color/white"
                 android:textColor="@color/colorPrimary"
                 android:text="Aceptar"
-                android:textSize="25dp"
+                android:textSize="20dp"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
 

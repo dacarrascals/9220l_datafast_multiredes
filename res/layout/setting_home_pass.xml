@@ -6,10 +6,10 @@
 
     <LinearLayout
         android:id="@+id/setting_pass_layout"
-        android:layout_width="500dp"
-        android:layout_height="320dp"
+        android:layout_width="300dp"
+        android:layout_height="270dp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="85dp"
         android:orientation="vertical">
 
         <FrameLayout
@@ -31,8 +31,8 @@
 
                 <ImageView
                     android:id="@+id/setting_pass_close"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="10dp"
@@ -41,8 +41,8 @@
             </RelativeLayout>
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="66dp"
+                android:layout_width="30dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center"
                 android:src="@drawable/home2_setting_dialog_lock" />
         </FrameLayout>
@@ -61,16 +61,15 @@
 
                 <TextView
                     android:id="@+id/title_pass"
-                    android:layout_width="match_parent"
+                    android:layout_width="261dp"
                     android:layout_height="40dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:background="#fff5f5f5"
                     android:enabled="false"
                     android:gravity="center"
                     android:text="@string/old_pass"
                     android:textColor="#ff333333"
-                    android:textSize="26dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -103,7 +102,7 @@
                     android:gravity="center"
                     android:text="@string/hint_pw_operario"
                     android:textColor="#ff333333"
-                    android:textSize="24dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -116,7 +115,7 @@
                     android:inputType="numberPassword"
                     android:maxLength="6"
                     android:textColor="#ff333333"
-                    android:textSize="22dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -127,8 +126,8 @@
 
                 <Button
                     android:id="@+id/setting_pass_confirm"
-                    android:layout_width="150dp"
-                    android:layout_height="60dp"
+                    android:layout_width="130dp"
+                    android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
@@ -136,7 +135,7 @@
                     android:background="@drawable/btn_blue_shape"
                     android:text="@string/confirm"
                     android:textColor="#ffffffff"
-                    android:textSize="20dp" />
+                    android:textSize="18sp" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

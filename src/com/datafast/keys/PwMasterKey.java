@@ -31,13 +31,13 @@ public class PwMasterKey extends AppCompatActivity {
         btn_ok = (Button) findViewById(R.id.btn_conf_mon);
         btn_cnl = (Button) findViewById(R.id.btn_cancel_mon);
 
-        et_pw.setOnClickListener(new View.OnClickListener() {
+        /*et_pw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 InputMethodManager imm = (InputMethodManager) PwMasterKey.this.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(et_pw.getWindowToken(), 0);
             }
-        });
+        });*/
 
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override

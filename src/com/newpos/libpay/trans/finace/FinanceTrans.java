@@ -2832,7 +2832,11 @@ public class FinanceTrans extends Trans {
             pp_response.setValidatePIN(ISOUtil.spacepad("", 15));
             pp_response.setExpDateCard(ISOUtil.spacepadRight(expDate,4));
         }else {
-            pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCardSwhipe(Track1), 40));
+            if (Track1 != null) {
+                pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCardSwhipe(Track1), 40));
+            } else {
+                pp_response.setNameCardHolder(ISOUtil.spacepadRight("", 40));
+            }
             pp_response.setARQC(ISOUtil.spacepadRight("",16));
             pp_response.setTVR(ISOUtil.spacepadRight("",10));
             pp_response.setTSI(ISOUtil.spacepadRight("",4));
@@ -3217,9 +3221,9 @@ public class FinanceTrans extends Trans {
         String TransEname = "";
         CardInfo cardInfo;
         if (Server.cmd.equals(LT)){
-            TransEname = "LECTURA DE TARJETA";
+            TransEname = "LECTURA\nDE TARJETA";
         }else if (Server.cmd.equals(CT)){
-            TransEname = "CONSULTA DE TARJETA";
+            TransEname = "CONSULTA\nDE TARJETA";
         }
 
         if (Server.cmd.equals(LT) || Server.cmd.equals(CT)){
@@ -3509,7 +3513,9 @@ public class FinanceTrans extends Trans {
         Track2 = data2;
         Track3 = data3;
         processPPFail.setPAN(Pan);//en caso de fallo
-        processPPFail.setCardHolderNameFail(Track1);//en caso de fallo
+        if (Track1 != null) {
+            processPPFail.setCardHolderNameFail(Track1);//en caso de fallo
+        }
 
         if (TransEName.equals(Trans.Type.PREVOUCHER)) {
             if (!ISOUtil.stringToBoolean(rango.getPRE_VOUCHER())) {

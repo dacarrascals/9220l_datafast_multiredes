@@ -49,7 +49,7 @@
 
 
     <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
     <style name="Mypd" parent="@android:style/Theme.Dialog">

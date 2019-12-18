@@ -31,7 +31,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="80dp"
             android:gravity="center"
-            android:textSize="30dp" />
+            android:textSize="24dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -74,6 +74,8 @@
             android:hint="INGRESE TOKEN"
             android:gravity="center"
             android:layout_margin="15dp"
+            android:textSize="16sp"
+            android:imeOptions="actionDone"
             android:visibility="visible"
             android:inputType="none|number"/>
 
@@ -85,5 +87,40 @@
             android:layout_below="@+id/TxtToken"/>
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/setting_dialog_bg_bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel_pagos"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="@drawable/setting_cancel_bg"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btn_confirm_pagos"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="@drawable/btn_blue_shape"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/confirm"
+            android:textColor="@color/white" />
+    </LinearLayout>
 
 </RelativeLayout>

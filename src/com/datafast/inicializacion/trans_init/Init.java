@@ -203,7 +203,7 @@ public class Init extends AppCompatActivity {
         tipoInit = isParcial ? InitParcial : InitTotal;
 
         tv_title = (TextView) findViewById(R.id.textView_titleToolbar);
-        tv_title.setText(Html.fromHtml("<h4> INICIALIZACION POLARIS </h4>"));
+        tv_title.setText(Html.fromHtml("INICIALIZACION POLARIS"));
         callBackSeatle = null;
         init();
         download(null, tipoInit);
