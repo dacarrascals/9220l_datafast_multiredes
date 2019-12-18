@@ -48,7 +48,8 @@ public class NetworkHelper {
 	private String ip;//连接IP地址
 	private int port;//连接端口号
 	private Context tcontext ;//上下文对象
-	private int timeout ; //超时时间
+	private int timeoutRsp; //超时时间
+	private int timeoutCon;
 	private int protocol; // 协议 0: 2字节长度+数据 1:stx协议
 	private final String CLIENT_KEY_MANAGER = "X509"; // 密钥管理器
 	private final String CLIENT_AGREEMENT = "TLSv1.2"; // 使用协议
@@ -60,10 +61,11 @@ public class NetworkHelper {
 	 * @throws IOException
 	 * @throws UnknownHostException
 	 */
-	public NetworkHelper(String ip, int port, int timeout, Context context) {
+	public NetworkHelper(String ip, int port, int timeoutRes, int timeoutCone, Context context) {
 		this.ip = ip;
 		this.port = port;
-		this.timeout = timeout;
+		this.timeoutRsp = timeoutRes;
+		this.timeoutCon = timeoutCone;
 		this.tcontext = context;
 	}
 
@@ -78,14 +80,14 @@ public class NetworkHelper {
 			if (ISOUtil.stringToBoolean(tablaIp.getTLS())){
 				SSLFactory sslFactory = new SSLFactory(tcontext);
 				socket = sslFactory.createSocket();
-				socket.setSoTimeout(timeout);
-				socket.connect(new InetSocketAddress(ip, port), Integer.parseInt(host_confi.getTIEMPO_ESPERA_CONEXION())*1000);//20000
+				socket.setSoTimeout(timeoutRsp);
+				socket.connect(new InetSocketAddress(ip, port), timeoutCon);//20000
 				is = socket.getInputStream();
 				os = socket.getOutputStream();
 			}else {
 				socket = new Socket();
-				socket.setSoTimeout(timeout);
-				socket.connect(new InetSocketAddress(ip, port), Integer.parseInt(host_confi.getTIEMPO_ESPERA_CONEXION())*1000);
+				socket.setSoTimeout(timeoutRsp);
+				socket.connect(new InetSocketAddress(ip, port), timeoutCon);
 				is = socket.getInputStream();
 				os = socket.getOutputStream();
 			}
@@ -156,12 +158,9 @@ public class NetworkHelper {
 	 * @return
 	 * @throws IOException
 	 */
-	public byte[] Recive(int max, int timeout) throws IOException {
+	public byte[] Recive(int max) throws IOException {
 		ByteArrayOutputStream byteOs ;
 		byte[] resP = null ;
-		if(timeout < 5*1000 || timeout > 2*60*1000){
-			timeout = 10*1000 ;
-		}
 		if (protocol == 0) {
 			byte[] packLen = new byte[2];
 			int len ;

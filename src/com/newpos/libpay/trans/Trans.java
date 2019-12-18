@@ -600,7 +600,8 @@ public abstract class Trans {
 
         String ip = null;
         int port = 0;
-        int timeout = 0;
+        int timeoutRsp = 0;
+        int timeoutCon = 0;
 
         //JM
         try {
@@ -616,16 +617,22 @@ public abstract class Trans {
             }
 
             if (host_confi.getTIEMPO_ESPERA_RESPUESTA() != null) {
-                timeout = Integer.parseInt(host_confi.getTIEMPO_ESPERA_CONEXION()) * 1000;
+                timeoutRsp = Integer.parseInt(host_confi.getTIEMPO_ESPERA_RESPUESTA()) * 1000;
             } else {
-                timeout = cfg.getTimeout();
+                timeoutRsp = cfg.getTimeout();
+            }
+
+            if (host_confi.getTIEMPO_ESPERA_CONEXION() != null){
+                timeoutCon = Integer.parseInt(host_confi.getTIEMPO_ESPERA_CONEXION()) * 1000;
+            }else {
+                timeoutCon = cfg.getTimeout();
             }
         } catch (NumberFormatException e) {
             ip = cfg.getIp();
             port = Integer.parseInt(cfg.getPort());
             timeout = cfg.getTimeout();
         }
-        netWork = new NetworkHelper(ip, port, timeout, context);
+        netWork = new NetworkHelper(ip, port, timeoutRsp,timeoutCon, context);
     }
 
     /**
@@ -739,8 +746,7 @@ public abstract class Trans {
     protected byte[] recive() {
         byte[] recive = null;
         try {
-            //recive = netWork.Recive(2048, Integer.parseInt(host_confi.getTIEMPO_ESPERA_RESPUESTA()) * 1000);
-            recive = netWork.Recive(2048, 10000);
+            recive = netWork.Recive(2048);
         } catch (IOException e) {
             return null;
         }
