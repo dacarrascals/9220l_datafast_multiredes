@@ -1,6 +1,8 @@
 package com.datafast.pinpad.cmd.process;
 
 import android.content.Context;
+
+import com.datafast.inicializacion.trans_init.trans.ISO;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -199,12 +201,11 @@ public class ProcessPPFail extends FinanceTrans {
 
                 if (pp_request.getTypeTrans().equals("06")){
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(PANFail,25));
+                    pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));
+                    pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
                 }else {
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(PANFail),25));
-                }
-                pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));
-                if (pp_request.getTypeTrans().equals("06")){
-                    pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(PANFail), 27));
+                    pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));
                 }
                 pp_response.setHash(keySecurity);
 

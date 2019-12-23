@@ -2849,12 +2849,11 @@ public class FinanceTrans extends Trans {
 
         if (transEname.equals(Trans.Type.ELECTRONIC)){
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(Pan,25));
+            pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));
         }else {
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(Pan),25));
-        }
-        pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));
-        if (transEname.equals(Trans.Type.ELECTRONIC)){
-            pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(Pan), 27));
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));
         }
         String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
         if (isSignature.equals("1")) {
