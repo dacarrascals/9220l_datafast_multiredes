@@ -128,14 +128,14 @@ public class ServerTCP extends AppCompatActivity {
                             ret = wifi.comunicacion(aDat, listener);
                             if (ret){
                                 stopServer();
-                                UIUtils.startResult(ServerTCP.this,true,"DATOS DE RED ACTUALIZADOS",true);
+                                UIUtils.startResult(ServerTCP.this,true,"DATOS DE RED ACTUALIZADOS",false);
                             }
                             break;
                         case PC:
                             ret = control.actualizacionControl(aDat);
                             listener.waitRspHost(control.getPc_response().packData());
                             if (ret){
-                                UIUtils.startResult(ServerTCP.this,true,"TRANS. BORRADAS\nINCIO DE DIA REALIZADO",true);
+                                UIUtils.startResult(ServerTCP.this,true,"TRANS. BORRADAS\nINCIO DE DIA REALIZADO",false);
                             }
                             break;
                         case NN:

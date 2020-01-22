@@ -76,6 +76,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.PayApplication;
@@ -1227,13 +1229,12 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
     @Override
     public void showfinishview() {
-        /*runOnUiThread(new Runnable() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                finish();
+                checkCardPresent();
             }
-        });*/
-        checkCardPresent();
+        }, 4000);
     }
 
     private void checkCardPresent() {
