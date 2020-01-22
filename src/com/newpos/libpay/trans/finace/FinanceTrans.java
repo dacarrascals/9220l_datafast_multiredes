@@ -3354,7 +3354,7 @@ public class FinanceTrans extends Trans {
             int type = cardInfo.getCardType();
             switch (type) {
                 case CardManager.TYPE_MAG:
-                    inputMode = ENTRY_MODE_MAG;
+                    inputMode = ENTRY_MODE_FALLBACK;
                     break;
                 default:
                     transUI.showError(timeout, Tcode.T_not_allow,processPPFail);
@@ -3362,7 +3362,7 @@ public class FinanceTrans extends Trans {
             }
             para.setInputMode(inputMode);
 
-            if (inputMode == ENTRY_MODE_MAG) {
+            if (inputMode == ENTRY_MODE_FALLBACK) {
                 isDebit = false;
                 if(isMag1(cardInfo.getTrackNo())){
                     if (Server.cmd.equals(LT)){
@@ -3812,6 +3812,9 @@ public class FinanceTrans extends Trans {
             if (!PAYUtils.isNullWithTrim(pp_request.getPushSalesman())){
                 Field58 = tagvendedor(pp_request.getPushSalesman().substring(0,2)) + pp_request.getPushSalesman().substring(2);
             }
+        }
+        if (Field58 != null) {
+            Field58 = ISOUtil.convertStringToHex(Field58);
         }
     }
 

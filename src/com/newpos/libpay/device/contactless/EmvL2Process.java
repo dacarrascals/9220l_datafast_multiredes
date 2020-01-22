@@ -408,7 +408,12 @@ public class EmvL2Process {
     public String GetTrack2data(){
         return track2;
     }
-    public String GetAid(){return ISOUtil.hexString(AID);}
+    public String GetAid(){
+        if (AID != null)
+            return ISOUtil.hexString(AID);
+        else
+            return "";
+    }
     public String GetLable(){return Lable;}
     public String GetTVR(){return TVR;}
     public String GetTSI(){return TSI;}

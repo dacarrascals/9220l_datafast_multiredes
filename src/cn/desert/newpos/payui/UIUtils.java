@@ -716,6 +716,7 @@ public class UIUtils {
             public void onFinish() {
                 if (countDownTimer != null) {
                     countDownTimer.start();
+                toast.show();
                 }
             }
         }.start();

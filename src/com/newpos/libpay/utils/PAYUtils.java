@@ -46,6 +46,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.CTL;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_CON_PINPAD;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_EN_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.FBI;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.HDL;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ICC;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.INICIO_DIA;
@@ -58,6 +59,7 @@ import static com.newpos.libpay.trans.Tcode.T_success;
 import static com.newpos.libpay.trans.Tcode.T_user_cancel_input;
 import static com.newpos.libpay.trans.Tcode.T_user_cancel_operation;
 import static com.newpos.libpay.trans.Tcode.T_wait_timeout;
+import static com.newpos.libpay.trans.Trans.ENTRY_MODE_FALLBACK;
 import static com.newpos.libpay.trans.Trans.ENTRY_MODE_HAND;
 import static com.newpos.libpay.trans.Trans.ENTRY_MODE_ICC;
 import static com.newpos.libpay.trans.Trans.ENTRY_MODE_MAG;
@@ -1238,19 +1240,18 @@ public class PAYUtils {
         switch (val) {
             case ENTRY_MODE_HAND:
                 inputMode = ISOUtil.spacepadRight(HDL, 2);
-                ;
                 break;
             case ENTRY_MODE_MAG:
                 inputMode = ISOUtil.spacepadRight(MAG, 2);
-                ;
                 break;
             case ENTRY_MODE_ICC:
                 inputMode = ISOUtil.spacepadRight(ICC, 2);
-                ;
                 break;
             case ENTRY_MODE_NFC:
                 inputMode = ISOUtil.spacepadRight(CTL, 2);
-                ;
+                break;
+            case ENTRY_MODE_FALLBACK:
+                inputMode = ISOUtil.spacepadRight(FBI, 2);
                 break;
             default:
                 inputMode = ISOUtil.spacepadRight("", 2);
