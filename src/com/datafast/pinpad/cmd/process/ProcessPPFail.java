@@ -173,6 +173,7 @@ public class ProcessPPFail extends FinanceTrans {
                 pp_response.setValidatePIN(ISOUtil.spacepad("", 15));
 
                 if (inputModeFail == ENTRY_MODE_NFC){
+                    pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvL2Process.getHolderName()), 40));
                     pp_response.setNameCardHolder(ISOUtil.spacepadRight(emvL2Process.getHolderName(), 40));
                     pp_response.setARQC(ISOUtil.spacepadRight(emvL2Process.GetARQC(),16));
                     pp_response.setTVR(ISOUtil.spacepadRight(emvL2Process.GetTVR(),10));
@@ -206,11 +207,29 @@ public class ProcessPPFail extends FinanceTrans {
                 }else {
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(PANFail),25));
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));
+                    pp_response.setFiller(ISOUtil.spacepadRight("", 27));
                 }
                 pp_response.setHash(keySecurity);
 
                 listener.waitRspHost(pp_response.packData());
                 break;
         }
+    }
+
+    private String verifyHolderName(String nameCard){
+        boolean isHexa;
+        String ret = "";
+        if (!nameCard.equals("---")) {
+            if (nameCard.length() > 0) {
+                isHexa = nameCard.matches("^[0-9a-fA-F]+$");                   //validacion de variable labelCard para evitar conversion
+                if (!isHexa) {
+                    nameCard = ISOUtil.convertStringToHex(nameCard);
+                }
+                ret = ISOUtil.hex2AsciiStr(nameCard.trim());
+            }
+        }else{
+            return ret;
+        }
+        return ret;
     }
 }

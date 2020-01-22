@@ -65,6 +65,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_FALLBACK;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_ICC_SWIPE;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_SWIPE_ICC_CTL;
 import static com.datafast.inicializacion.configuracioncomercio.Rango.CENTRO;
 import static com.datafast.inicializacion.configuracioncomercio.Rango.INICIO_FIN;
@@ -2812,7 +2813,7 @@ public class FinanceTrans extends Trans {
         }
 
         if (inputMode == ENTRY_MODE_NFC) {
-            pp_response.setNameCardHolder(ISOUtil.spacepadRight(emvl2.getHolderName(), 40));
+            pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvl2.getHolderName()), 40));
             pp_response.setARQC(ISOUtil.spacepadRight(emvl2.GetARQC(),16));
             pp_response.setTVR(ISOUtil.spacepadRight(emvl2.GetTVR(),10));
             pp_response.setTSI(ISOUtil.spacepadRight(emvl2.GetTSI(),4));
@@ -2867,6 +2868,23 @@ public class FinanceTrans extends Trans {
 
         listener.waitRspHost(pp_response.packData());
 
+    }
+
+    private String verifyHolderName(String nameCard){
+        boolean isHexa;
+        String ret = "";
+        if (!nameCard.equals("---")) {
+            if (nameCard.length() > 0) {
+                isHexa = nameCard.matches("^[0-9a-fA-F]+$");                   //validacion de variable labelCard para evitar conversion
+                if (!isHexa) {
+                    nameCard = ISOUtil.convertStringToHex(nameCard);
+                }
+                ret = ISOUtil.hex2AsciiStr(nameCard.trim());
+            }
+        }else{
+            return ret;
+        }
+        return ret;
     }
 
     private String decode64(){
@@ -3226,7 +3244,8 @@ public class FinanceTrans extends Trans {
         }
 
         if (Server.cmd.equals(LT) || Server.cmd.equals(CT)){
-            cardInfo = transUI.getCardUse(GERCARD_MSG_SWIPE_ICC_CTL, timeout, mode, TransEname);
+            mode = INMODE_IC | INMODE_MAG | INMODE_HAND;
+            cardInfo = transUI.getCardUse(GERCARD_MSG_ICC_SWIPE, timeout, mode, TransEname);
         }else {
             cardInfo = transUI.getCardUseAmount(GERCARD_MSG_SWIPE_ICC_CTL, timeout, mode, transEname,"Monto\nTotal : ",PAYUtils.getStrAmount(Amount));
         }
