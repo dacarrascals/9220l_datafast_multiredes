@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
+import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.menus.MenuAction;
 import com.datafast.menus.menus;
 import com.datafast.pinpad.cmd.PA.Actualizacion;
@@ -32,9 +33,9 @@ import com.pos.device.icc.SlotType;
 import java.io.IOException;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
-
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
+import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -143,7 +144,8 @@ public class ServerTCP extends AppCompatActivity {
                         case PA:
                             actualizacion.procesoActualizacion(aDat);
                             if (actualizacion.intentOK){
-                                UIUtils.startResult(ServerTCP.this,true,"PROCESO DE ACTUALIZACION INICIADO",true);
+                                resumePA = true;
+                                //UIUtils.startResult(ServerTCP.this,true,"PROCESO DE ACTUALIZACION INICIADO",true);
                             }else {
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN PROCESO ACTUALIZACION",true);
                             }
@@ -161,6 +163,20 @@ public class ServerTCP extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         slide.setTimeoutSlide(5000);
+        if (resumePA) {
+            System.out.println("ENTRA AL TIMER");
+            Intent intent = new Intent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setClass(ServerTCP.this, Init.class);
+            intent.putExtra("PARCIAL", false);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            startActivity(intent);
+        }
     }
 
     @Override

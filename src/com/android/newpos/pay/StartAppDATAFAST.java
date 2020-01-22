@@ -56,6 +56,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
     public static String lastCmd = "";
     public static int lastInputMode = 0x00;
     public static String[] lastTrack = null;
+    public static boolean resumePA = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

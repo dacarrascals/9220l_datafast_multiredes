@@ -1,6 +1,5 @@
 package com.datafast.menus;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,25 +12,19 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.newpos.pay.R;
 import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.tools.PolarisUtil;
-import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.ISOUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import cn.desert.newpos.payui.UIUtils;
-import cn.desert.newpos.payui.master.MasterControl;
 
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -125,15 +118,8 @@ public class menus extends AppCompatActivity {
             case DefinesDATAFAST.ITEM_PRINCIPAL:
                 counterDownTimerDisplay();
                 deleteTimerMenus();
-                /*itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANSACCIONES, R.drawable.ic_transacciones));
-                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_PAGOS_ELECTRONICOS, R.drawable.ic_pagoselectronicos));
-                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_IMPRESION, R.drawable.ic_menuimpresion));
-                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_COMERCIO, R.drawable.ic_comercio));
-                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIGURACION, R.drawable.ic_configuracion));*/
-
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_POLARIS, R.drawable.cloud));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_COMERCIO, R.drawable.ic_comercio));
-                //itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_SETTINGS, R.drawable.wifi));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONEXION, R.drawable.comunication));
                 break;
 
@@ -194,7 +180,6 @@ public class menus extends AppCompatActivity {
                 counterDownTimerMenus();
                 deleteTimerDisplay();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_ECHO_TEST, R.drawable.ic_echo));
-                //itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_BORRAR_LOTE, R.drawable.ic_borrarlote));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_BORRAR_REVERSO, R.drawable.ic_borrarreverso));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANS_EN_PANTALLA, R.drawable.ic_menuimpresion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_MASTER_KEY, R.drawable.ic_test));
@@ -202,8 +187,6 @@ public class menus extends AppCompatActivity {
                 break;
 
             case DefinesDATAFAST.ITEM_COMUNICACION:
-                //counterDownTimerMenus();
-                //deleteTimerDisplay();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_INICIALIZACION, R.drawable.ic_inicializacion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_INICIAL, R.drawable.ic_configuracion));
                 break;
@@ -220,25 +203,10 @@ public class menus extends AppCompatActivity {
         layoutSaver.setClickable(false);
         countDownTimerDisplay = new CountDownTimer(60000 * 3, 30000) {
             public void onTick(long millisUntilFinished) {
-                Log.e("onTick", "init onTick countDownTimer Display");
-                /*if (isDisplay) {
-                    layoutSaver.setVisibility(View.VISIBLE);
-                    layoutSaver.setClickable(true);
-                    layoutSaver.setBackgroundColor(Color.parseColor("#7F000000"));
-                    if (isOne) {
-                        imageSaver.setBackgroundResource(R.drawable.logod1);
-                        isOne = false;
-                    } else {
-                        imageSaver.setBackgroundResource(R.drawable.logod2);
-                        isOne = true;
-                    }
-                    imageSaver.startAnimation(AnimationUtils.loadAnimation(menus.this, R.anim.shake));
-                }*/
             }
 
             public void onFinish() {
                 Log.e("onTick", "finish onTick countDownTimer Display");
-                //isDisplay = true;
                 deleteTimerDisplay();
                 counterDownTimerDisplay();
             }
@@ -253,7 +221,6 @@ public class menus extends AppCompatActivity {
     }
 
     private void counterDownTimerMenus() {
-        //stopAsyncTask();
         if (countDownTimerMenus != null) {
             countDownTimerMenus.cancel();
             countDownTimerMenus = null;
@@ -289,7 +256,6 @@ public class menus extends AppCompatActivity {
     }
 
     public void setBrightness(int brightness1) {
-        //Getting Current screen brightness.
         int brightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0
         );
         Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness1);
@@ -317,21 +283,6 @@ public class menus extends AppCompatActivity {
             UIUtils.cancelToastInit();
         }
         super.onPause();
-    }
-
-    //--------------------------------- Venta ---------------------------------
-
-    /**
-     * Permite ejecutar la trans seleccionada
-     */
-    public static void startTrans(Context ctx, String ch) {
-        Logger.debug("startTrans:" + ch);
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setClass(ctx, MasterControl.class);
-        intent.putExtra(MasterControl.TRANS_KEY, ch);
-        ctx.startActivity(intent);
     }
 }
 

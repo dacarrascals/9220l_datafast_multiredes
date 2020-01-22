@@ -2,22 +2,16 @@ package com.datafast.inicializacion.trans_init;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.newpos.pay.R;
 import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
-import com.datafast.inicializacion.init_emv.CAPK_ROW;
-import com.datafast.inicializacion.init_emv.EMVAPP_ROW;
 import com.datafast.inicializacion.tools.PolarisUtil;
 import com.datafast.inicializacion.trans_init.trans.ISO;
 import com.datafast.inicializacion.trans_init.trans.SendRcvd;
@@ -25,8 +19,6 @@ import com.datafast.inicializacion.trans_init.trans.Tools;
 import com.datafast.inicializacion.trans_init.trans.UnpackFile;
 import com.datafast.inicializacion.trans_init.trans.dbHelper;
 import com.datafast.keys.InjectMasterKey;
-import com.datafast.menus.MenuAction;
-import com.datafast.server.activity.ServerTCP;
 import com.datafast.transactions.callbacks.waitInitCallback;
 import com.google.common.base.Strings;
 import com.newpos.libpay.global.TMConfig;
@@ -35,7 +27,6 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.SDKException;
 import com.pos.device.beeper.Beeper;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,13 +34,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import cn.desert.newpos.payui.UIUtils;
-
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.listIPs;
@@ -62,6 +49,7 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.REVOK;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.TERMINAL;
 import static com.datafast.menus.MenuAction.callBackSeatle;
 import static com.datafast.transactions.common.CommonFunctionalities.saveDateSettle;
+import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 
 public class Init extends AppCompatActivity {
 
@@ -339,6 +327,7 @@ public class Init extends AppCompatActivity {
             @Override
             public void RspHost(byte[] rxBuf, String resultOk) {
                 if (rxBuf == null || Arrays.equals(rxBuf, dataVacia)) {
+                    resumePA = false;
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, "ERROR, INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                     UIUtils.startResult(Init.this,false,"ERROR, INICIALIZACION FALLIDA",true);
                     //finish();
@@ -346,6 +335,7 @@ public class Init extends AppCompatActivity {
                 }
 
                 if (!resultOk.equals("OK")){
+                    resumePA = false;
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, resultOk, Toast.LENGTH_SHORT);
                     UIUtils.startResult(Init.this,false,resultOk,true);
                     //finish();
@@ -371,6 +361,7 @@ public class Init extends AppCompatActivity {
                                     //Inyectar WorkingKey
                                     if(!inyectarWorkingKey()){
                                         isInit = false;
+                                        resumePA = false;
                                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                                         UIUtils.startResult(Init.this,false,"INYECCION DE LLAVE FALLIDA",true);
                                         //finish();
@@ -386,6 +377,7 @@ public class Init extends AppCompatActivity {
                                                 listIPs = new ArrayList<>();
                                                 listIPs.clear();
                                                 isInit = false;
+                                                resumePA = false;
                                                 //UIUtils.toast(Init.this, R.drawable.ic_launcher, "Error al leer tabla, Por favor Inicialice nuevamente", Toast.LENGTH_LONG);
                                                 UIUtils.startResult(Init.this,false,"Error al leer tabla, Por favor Inicialice nuevamente",true);
                                                 //finish();
@@ -405,12 +397,14 @@ public class Init extends AppCompatActivity {
 
                                                 saveDateSettle(Init.this);
                                                 Beeper.getInstance().beep();
+                                                resumePA = false;
                                                 //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION EXITOSA", Toast.LENGTH_SHORT);
                                                 UIUtils.startResult(Init.this, true, "INICIALIZACION EXITOSA", true);
                                                 //finish();
                                                 //startActivity( new Intent(Init.this, ServerTCP.class) );
                                             }
                                         } else {
+                                            resumePA = false;
                                             //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                                             UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
                                             //finish();
@@ -423,6 +417,7 @@ public class Init extends AppCompatActivity {
                             }
                         };
                     }else{
+                        resumePA = false;
                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                         UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
 
@@ -435,6 +430,7 @@ public class Init extends AppCompatActivity {
                         callBackInit = new waitInitCallback() {
                             @Override
                             public void getRspInitCallback(int status) {
+                                resumePA = false;
                                 finish();
                             }
                         };
@@ -446,130 +442,6 @@ public class Init extends AppCompatActivity {
         sendTrans.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return 0;
     }
-
-    /*private int OnlineTrans(String aFileName, String aOffset, final String hash, final int tramaQueEnvia) {
-        byte[] data = new byte[0];
-
-        switch (tramaQueEnvia){
-            case InitTotal:
-                data = armarTramaDescarga(aFileName, aOffset, hash);
-                break;
-            case InitParcial:
-                data = armarTramaDescargaParcial(aFileName, aOffset, false);
-                break;
-        }
-
-        //SendRcvd sendTrans = new SendRcvd("186.154.93.81", Integer.parseInt("7177"), Integer.parseInt("20000"), Init.this, new SendRcvd.TcpCallback() {
-        final byte[] dataVacia = new byte[]{};
-        SendRcvd sendTrans = new SendRcvd(IP, Integer.parseInt(puerto), espera, Init.this, new SendRcvd.TcpCallback() {
-            @Override
-            public void RspHost(byte[] rxBuf) {
-                if (rxBuf == null || Arrays.equals(rxBuf, dataVacia)) {
-                    //UIUtils.toast(Init.this, R.drawable.ic_launcher, "ERROR DE CONEXIÓN", Toast.LENGTH_SHORT);
-                    finish();
-                    return;
-                }
-
-                String dta = ISOUtil.bcd2str(rxBuf, 0, rxBuf.length);
-                //System.out.println(dta);
-
-                if(unpackDescarga(new ISO(rxBuf,ISO.lenghtNotInclude, ISO.TpduInclude))==true)
-                {
-                    ISO rspIso = new ISO(rxBuf,ISO.lenghtNotInclude, ISO.TpduInclude);
-                    //ISO.incStan();
-                    TMConfig.getInstance().incTraceNo().save();
-
-                    if(rspIso.GetField(ISO.field_03_PROCESSING_CODE).equals("930101"))
-                    {
-                        long offset;
-                        offset = calcularOffset(gFileName);
-                        OnlineTrans(gFileName,""+offset, hash, tramaQueEnvia);
-                    }
-                    else if(rspIso.GetField(ISO.field_03_PROCESSING_CODE).equals("930100"))
-                    {
-                        UIUtils.toast(Init.this, R.drawable.ic_launcher, (rspIso.GetField(ISO.field_60_RESERVED_PRIVATE)), Toast.LENGTH_SHORT);
-
-                        callBackInit = null;
-
-                        txt.setText(R.string.label_init_process);
-
-                        if(processFile(gFileName)){
-
-                            callBackInit = new waitInitCallback() {
-                                @Override
-                                public void getRspInitCallback(int status) {
-                                    try {
-                                        //Inyectar WorkingKey
-                                        inyectarWorkingKey();
-                                        isInit = PolarisUtil.isInitPolaris(Init.this);
-                                        //isInit = true;
-                                        if (isInit) {
-                                            tconf.selectTconf(Init.this);
-                                            host_confi.selectHostConfi(Init.this);
-                                            listIPs = ChequeoIPs.selectIP(Init.this);
-                                            if (listIPs == null) {
-                                                listIPs = new ArrayList<>();
-                                                listIPs.clear();
-                                                isInit = false;
-                                                UIUtils.toast(Init.this, R.drawable.ic_launcher, "Error al leer tabla, Por favor Inicialice nuevamente", Toast.LENGTH_LONG);
-                                            }else if (listIPs.isEmpty()) {
-                                                listIPs.clear();
-                                                isInit = false;
-                                                UIUtils.toast(Init.this, R.drawable.ic_launcher, "Error al leer tabla, Por favor Inicialice nuevamente", Toast.LENGTH_LONG);
-                                            }
-                                            else {
-
-                                                int numLote = Integer.parseInt(tconf.getNUMERO_LOTE());
-                                                if (numLote != 0)
-                                                    TMConfig.getInstance().setBatchNo(numLote - 1).save();
-                                                else
-                                                    TMConfig.getInstance().setBatchNo(numLote).save();
-
-                                                saveDateSettle(Init.this);
-                                                Beeper.getInstance().beep();
-                                                UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION EXITOSA", Toast.LENGTH_SHORT);
-                                                finish();
-                                            }
-                                        }
-                                        else{
-                                            UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
-                                            finish();
-                                        }
-
-                                    } catch (SDKException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            };
-                        }else{
-                            UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
-                            finish();
-                        }
-                    }
-
-                    else if (rspIso.GetField(ISO.field_03_PROCESSING_CODE).equals("930080")){
-                        if(processFile(gFileName)) {
-                            callBackInit = null;
-                            callBackInit = new waitInitCallback() {
-                                @Override
-                                public void getRspInitCallback(int status) {
-                                    finish();
-                                }
-                            };
-                        }
-                    }
-                    //  guardarLogin(userLogin,pswLogin);
-                }else {
-                    finish();
-                }
-
-
-            }
-        });
-        sendTrans.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,data);
-
-        return 0;
-    }*/
 
     public boolean processFile(String aFileName) {
         int READ_BLOCK_SIZE = 65000*2;
@@ -729,82 +601,6 @@ public class Init extends AppCompatActivity {
             }
         });
         unpackFile.execute();
-    }
-
-    private boolean unpackDescarga(ISO rspTx)
-    {
-
-        String rspCode = rspTx.GetField(ISO.field_39_RESPONSE_CODE);
-        String procCode = rspTx.GetField(ISO.field_03_PROCESSING_CODE);
-        String field64;
-        byte f64[];
-        String field60;
-        String field61;
-        String field62;
-        String hashSegmento;
-
-        if (procCode.equals("930080")){
-            field62 = rspTx.GetField(ISO.field_62_RESERVED_PRIVATE);
-            hashSegmento = field62.substring(0, field62.indexOf("|"));
-            gHashTotal = field62.substring(field62.indexOf("|") + 1);
-            f64 = rspTx.GetFieldB(ISO.field_64_MESSAGE_AUTHENTICATION_CODE);
-            FileOutputStream fileOutputStream = null;
-            try {
-                fileOutputStream = new FileOutputStream(gFile, true);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                int len = rspTx.getSizeField(64);
-                if (Tools.hashSha1(f64).equals(hashSegmento)) {
-                    fileOutputStream.write(f64, 0, rspTx.getSizeField(64));
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }else {
-            int len64 = 0;
-            if (rspCode.equals("00")) {
-//            field60=rspTx.GetField(ISO.field_60_RESERVED_PRIVATE);
-                //          field64=rspTx.GetField(ISO.field_64_MESSAGE_AUTHENTICATION_CODE);
-                field61 = rspTx.GetField(ISO.field_61_RESERVED_PRIVATE);
-                hashSegmento = field61.substring(0, field61.indexOf("|"));
-                gHashTotal = field61.substring(field61.indexOf("|") + 1);
-                f64 = rspTx.GetFieldB(ISO.field_64_MESSAGE_AUTHENTICATION_CODE);
-                FileOutputStream fileOutputStream = null;
-                try {
-                    fileOutputStream = new FileOutputStream(gFile, true);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    int len = rspTx.getSizeField(64);
-                    if (Tools.hashSha1(f64).equals(hashSegmento)) {
-                        fileOutputStream.write(f64, 0, rspTx.getSizeField(64));
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            } else if (rspCode.equals("05")) {
-                field60 = "ERROR EN LA DESCARGA \n NO EXISTE TERMINAL";//rspTx.GetField(ISO.field_60_RESERVED_PRIVATE);
-                //UIUtils.toast(Init.this, R.drawable.ic_launcher, field60, Toast.LENGTH_SHORT);
-                UIUtils.startResult(Init.this,false,field60,true);
-                return false;
-            } else if (rspCode.equals("95")) {
-                field60 = rspTx.GetField(ISO.field_60_RESERVED_PRIVATE);
-                //UIUtils.toast(Init.this, R.drawable.ic_launcher, field60, Toast.LENGTH_SHORT);
-                UIUtils.startResult(Init.this,false,field60,true);
-                return false;
-            }
-        }
-
-        return false;
     }
 
     private boolean inyectarWorkingKey(){
