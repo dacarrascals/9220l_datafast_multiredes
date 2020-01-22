@@ -147,7 +147,7 @@ public class ServerTCP extends AppCompatActivity {
                                 resumePA = true;
                                 //UIUtils.startResult(ServerTCP.this,true,"PROCESO DE ACTUALIZACION INICIADO",true);
                             }else {
-                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN PROCESO ACTUALIZACION",true);
+                                UIUtils.startResult(ServerTCP.this,false,actualizacion.msgfail,false);
                             }
                             listener.waitRspHost(actualizacion.getPa_response().packData());
                             break;
