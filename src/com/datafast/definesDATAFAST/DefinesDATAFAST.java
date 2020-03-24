@@ -71,6 +71,7 @@ public final class DefinesDATAFAST {
     public static final String ITEM_SETTINGS= "CONFIGURACION RED";
     public static final String FILE_NAME_REVERSE = "_reverse_";
     public static final String NN = "NN";
+    public static final String ITEM_CONFIG_WIFI = "CONFIGURACION WIFI";
 
 
     public static final String NAME_FOLDER_CTL_FILES = "CTL_Files";

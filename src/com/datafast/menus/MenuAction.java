@@ -10,7 +10,6 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.provider.Settings;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -21,23 +20,19 @@ import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
-import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
 import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.PwMasterKey;
-import com.datafast.pinpad.cmd.CP.CP_ConfigIP;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.printer.PrintParameter;
-import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.UtilNetwork;
+import com.datafast.tools.WifiSettings;
 import com.datafast.tools_bacth.ToolsBatch;
-import com.datafast.transactions.Settle.Settle;
 import com.datafast.transactions.callbacks.makeInitCallback;
 import com.datafast.transactions.callbacks.waitPrintReport;
 import com.datafast.transactions.callbacks.waitSeatleReport;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.global.TMConfig;
-import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.translog.TransLog;
 import com.newpos.libpay.trans.translog.TransLogData;
 import com.newpos.libpay.trans.translog.TransLogReverse;
@@ -63,8 +58,6 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_REPORTE_DETALLAD
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.newpos.libpay.trans.Trans.idLote;
-import static com.newpos.libpay.utils.ISOUtil.checkNull;
-import static java.security.AccessController.getContext;
 
 //import static com.datafast.menus.menus.acquirerRow;
 //import static com.datafast.menus.menus.issuerRow;
@@ -358,6 +351,12 @@ public class MenuAction {
                         "GATWEY: " + datos[3] + "\n" +
                         "MASK: " + datos[0] + "\n" +
                         "RED: " + datos[4]);
+                break;
+            case DefinesDATAFAST.ITEM_CONFIG_WIFI:
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setClass(context, WifiSettings.class);
+                context.startActivity(intent);
                 break;
 
             default:
