@@ -116,7 +116,7 @@ public class menus extends AppCompatActivity {
         switch (tipoMenu) {
 
             case DefinesDATAFAST.ITEM_PRINCIPAL:
-                counterDownTimerMenus();
+                counterDownTimerDisplay();
                 deleteTimerMenus();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_POLARIS, R.drawable.cloud));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_COMERCIO, R.drawable.ic_comercio));
@@ -179,7 +179,6 @@ public class menus extends AppCompatActivity {
             case DefinesDATAFAST.ITEM_COMERCIO:
                 counterDownTimerMenus();
                 deleteTimerDisplay();
-                deleteTimerMenus();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_ECHO_TEST, R.drawable.ic_echo));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_BORRAR_REVERSO, R.drawable.ic_borrarreverso));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANS_EN_PANTALLA, R.drawable.ic_menuimpresion));
