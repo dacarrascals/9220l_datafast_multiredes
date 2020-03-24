@@ -420,15 +420,15 @@ public class SendRcvd extends AsyncTask<Void, Integer, byte[]> {
         switch (msgE) {
             case TIMEOUT:
                 //Toast.makeText(Tools.getCurrentContext(), "ERROR, TIEMPO DE ESPERA AGOTADO", Toast.LENGTH_LONG).show();
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "ERROR, TIEMPO DE ESPERA AGOTADO", Toast.LENGTH_LONG);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "ERROR, TIEMPO DE ESPERA AGOTADO", Toast.LENGTH_LONG);
                 break;
             case NO_ACCESS_INTERNET:
                 //Toast.makeText(Tools.getCurrentContext(), "ERROR, NO HAY CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "ERROR, NO HAY CONEXIÓN A INTERNET", Toast.LENGTH_LONG);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "ERROR, NO HAY CONEXIÓN A INTERNET", Toast.LENGTH_LONG);
                 break;
             case HOST_OFF:
                 //Toast.makeText(Tools.getCurrentContext(), "ERROR, NO HAY CONEXIÓN CON EL SERVIDOR", Toast.LENGTH_LONG).show();
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "ERROR, INICIALIZACION FALLIDA", Toast.LENGTH_LONG);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "ERROR, INICIALIZACION FALLIDA", Toast.LENGTH_LONG);
                 break;
         }
     }

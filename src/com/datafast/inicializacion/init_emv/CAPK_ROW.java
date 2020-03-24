@@ -213,7 +213,7 @@ public class CAPK_ROW {
                     cursor.moveToNext();
                 }catch (Exception e) {
                     System.out.println(e.getMessage());
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Error al cargar CAPK", Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "Error al cargar CAPK", Toast.LENGTH_SHORT);
                     cursor.moveToNext();
                 }
             }

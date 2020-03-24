@@ -55,7 +55,7 @@ public class PwMasterKey extends AppCompatActivity {
                     finish();
                 }
                 else{
-                    UIUtils.toast(PwMasterKey.this, R.drawable.ic_launcher, getString(R.string.err_msg_pwmk), Toast.LENGTH_SHORT);
+                    UIUtils.toast(PwMasterKey.this, R.drawable.ic_launcher_1, getString(R.string.err_msg_pwmk), Toast.LENGTH_SHORT);
                 }
             }
         });

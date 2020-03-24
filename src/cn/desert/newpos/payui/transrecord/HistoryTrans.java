@@ -214,7 +214,7 @@ public class HistoryTrans extends Activity implements
                         search.setImageResource(android.R.drawable.ic_menu_revert);
                         isSearch = false;
                     } else {
-                        UIUtils.toast(HistoryTrans.this, R.drawable.ic_launcher, HistoryTrans.this.getResources().getString(R.string.not_any_record), Toast.LENGTH_SHORT);
+                        UIUtils.toast(HistoryTrans.this, R.drawable.ic_launcher_1, HistoryTrans.this.getResources().getString(R.string.not_any_record), Toast.LENGTH_SHORT);
                         //Toast.makeText(HistoryTrans.this , HistoryTrans.this.getResources().getString(R.string.not_any_record), Toast.LENGTH_LONG).show();
                     }
                 }

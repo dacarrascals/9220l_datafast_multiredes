@@ -346,7 +346,7 @@ public class Init extends AppCompatActivity {
 
                 if(rspIso.GetField(ISO.field_03_PROCESSING_CODE).equals("930100"))
                 {
-                    UIUtils.toast(Init.this, R.drawable.ic_launcher, (rspIso.GetField(ISO.field_60_RESERVED_PRIVATE)), Toast.LENGTH_SHORT);
+                    UIUtils.toast(Init.this, R.drawable.ic_launcher_1, (rspIso.GetField(ISO.field_60_RESERVED_PRIVATE)), Toast.LENGTH_SHORT);
 
                     callBackInit = null;
 

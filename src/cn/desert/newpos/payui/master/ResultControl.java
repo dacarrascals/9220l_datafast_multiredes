@@ -167,12 +167,9 @@ public class ResultControl extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    UIUtils.toastInit(ResultControl.this, R.drawable.ic_launcher, DefinesDATAFAST.MSG_INIT);
+                                    UIUtils.toastInit(ResultControl.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_INIT);
                                 }
                             });
-                        }
-                        if (buttonActive && flag) {
-                            startActivity(new Intent(ResultControl.this, ServerTCP.class));
                         }
                         if (callBackSeatle != null)
                             callBackSeatle.getRspSeatleReport(0);

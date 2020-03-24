@@ -229,7 +229,7 @@ public class EMVAPP_ROW {
                     cursor.moveToNext();
                 }catch (Exception e) {
                     //permite continuar con la inyeccion de la siguente configuracion de app
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Error al cargar AID", Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "Error al cargar AID", Toast.LENGTH_SHORT);
                     cursor.moveToNext();
                 }
             }

@@ -147,7 +147,7 @@ public class menus extends AppCompatActivity {
                         itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_PAGOS_ELECTRONICOS, R.drawable.ic_pagoselectronicos));
 
                 }else{
-                    UIUtils.toast(menus.this, R.drawable.ic_launcher, "Debe Inicializar POS!", Toast.LENGTH_LONG);
+                    UIUtils.toast(menus.this, R.drawable.ic_launcher_1, "Debe Inicializar POS!", Toast.LENGTH_LONG);
                 }
                 break;
 
@@ -273,7 +273,7 @@ public class menus extends AppCompatActivity {
          contFallback = 0;
          isInit = PolarisUtil.isInitPolaris(menus.this);
          if (!isInit) {
-             UIUtils.toastInit(menus.this, R.drawable.ic_launcher, DefinesDATAFAST.MSG_INIT);
+             UIUtils.toastInit(menus.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_INIT);
          }
      }
 

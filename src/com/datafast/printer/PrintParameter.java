@@ -93,7 +93,7 @@ public class PrintParameter extends AppCompatActivity implements TransUI {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    UIUtils.toast(PrintParameter.this, R.drawable.ic_launcher, "NO EXISTEN" + "\n" + "TRANSACCIONES", Toast.LENGTH_SHORT);
+                                    UIUtils.toast(PrintParameter.this, R.drawable.ic_launcher_1, "NO EXISTEN" + "\n" + "TRANSACCIONES", Toast.LENGTH_SHORT);
                                 }
                             });
 
