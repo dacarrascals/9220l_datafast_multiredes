@@ -121,6 +121,8 @@ public class menus extends AppCompatActivity {
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_POLARIS, R.drawable.cloud));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_COMERCIO, R.drawable.ic_comercio));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONEXION, R.drawable.comunication));
+                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_WIFI, R.drawable.ic_wifi));
+                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_APPMANAGER, R.drawable.ic_appmanager));
                 break;
 
             case DefinesDATAFAST.ITEM_TRANSACCIONES:

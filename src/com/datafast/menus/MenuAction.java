@@ -358,6 +358,17 @@ public class MenuAction {
                 intent.setClass(context, WifiSettings.class);
                 context.startActivity(intent);
                 break;
+            case DefinesDATAFAST.ITEM_APPMANAGER:
+                idAcquirer = idLote;
+                if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
+                    Intent intentManager = context.getPackageManager().getLaunchIntentForPackage("com.newpos.appmanager");
+                    context.startActivity(intentManager);
+                } else {
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                }
+                break;
 
             default:
                 intent.setClass(context, menus.class);
