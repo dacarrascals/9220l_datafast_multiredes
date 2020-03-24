@@ -4,16 +4,16 @@
     android:id="@+id/rl_remove_card"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="@color/white">
 
     <ImageView
         android:id="@+id/iv_remove__card"
         android:layout_width="match_parent"
-        android:layout_height="243dp"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        app:srcCompat="@drawable/remove_card" />
+        app:srcCompat="@drawable/remove_card"/>
 
     <TextView
         android:id="@+id/textView"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_remove__card"
         android:layout_centerHorizontal="true"
-        android:text="@string/remove_card"
+
         android:textColor="@color/colorPrimaryDark"
         android:textSize="25sp"
         android:textStyle="bold" />

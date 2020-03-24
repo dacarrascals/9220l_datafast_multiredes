@@ -43,7 +43,6 @@ import java.util.Properties;
 
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.AUTORIZADO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CTL;
-import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_CON_PINPAD;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_EN_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.FBI;
@@ -53,7 +52,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.INICIO_DIA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.INICIO_DIA_MSG;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.MAG;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
-import static com.datafast.pinpad.cmd.defines.CmdDatafast.TO;
+import static com.newpos.libpay.trans.Tcode.T_gen_2_ac_fail;
 import static com.newpos.libpay.trans.Tcode.T_socket_err;
 import static com.newpos.libpay.trans.Tcode.T_success;
 import static com.newpos.libpay.trans.Tcode.T_user_cancel_input;
@@ -1200,6 +1199,7 @@ public class PAYUtils {
             case T_user_cancel_operation:
             case T_socket_err:
             case T_wait_timeout:
+            case T_gen_2_ac_fail:
                 ret = ERROR_PROCESO;
                 break;
             case 2:
