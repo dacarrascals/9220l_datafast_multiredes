@@ -100,7 +100,7 @@ public class MenuAction {
             case DefinesDATAFAST.NN:
                 processPPFail = new ProcessPPFail(context, null);
                 processPPFail.cmdCancel(PP, 0);
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "TRANSACCION NO DISPONIBLE", Toast.LENGTH_SHORT);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "TRANSACCION NO DISPONIBLE", Toast.LENGTH_SHORT);
                 break;
             case DefinesDATAFAST.ITEM_DIFERIDO:
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -119,7 +119,7 @@ public class MenuAction {
                 }else{
                     processPPFail = new ProcessPPFail(context, null);
                     processPPFail.cmdCancel(PP, 0);
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, "LOS PAGOS ELECTRONICOS \n NO ESTAN HABILITADOS", Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "LOS PAGOS ELECTRONICOS \n NO ESTAN HABILITADOS", Toast.LENGTH_SHORT);
                 }
                 break;
             case DefinesDATAFAST.ITEM_TRANS_PRE_AUT:
@@ -164,7 +164,7 @@ public class MenuAction {
                     intent.putExtra(MasterControl.TRANS_KEY, PrintRes.TRANSEN[20]);
                     context.startActivity(intent);
                 }else{
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Debe Inicializar POS!", Toast.LENGTH_LONG);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "Debe Inicializar POS!", Toast.LENGTH_LONG);
                 }
 
                 break;
@@ -191,9 +191,9 @@ public class MenuAction {
                 break;
             case DefinesDATAFAST.ITEM_TEST:
                 if ((batteryStatus.getLevelBattery() <= 8) && (!batteryStatus.isCharging())) {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
                 } else if (paperStatus.getRet() == Printer.PRINTER_STATUS_PAPER_LACK){
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
                 } else {
                     intent = new Intent(context, PrintParameter.class);
                     intent.putExtra("typeReport", DefinesDATAFAST.ITEM_TEST);
@@ -203,9 +203,9 @@ public class MenuAction {
                 break;
             case DefinesDATAFAST.ITEM_TRANS_EN_PANTALLA:
                 if ((batteryStatus.getLevelBattery() <= 8) && (!batteryStatus.isCharging())) {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
                 } else if (paperStatus.getRet() == Printer.PRINTER_STATUS_PAPER_LACK){
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
                 } else {
 
                     idAcquirer = idLote;
@@ -214,7 +214,7 @@ public class MenuAction {
                         intent.putExtra(HistoryTrans.EVENTS, HistoryTrans.COMMON);
                         context.startActivity(intent);
                     } else {
-                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.LOTE_VACIO, Toast.LENGTH_LONG);
+                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.LOTE_VACIO, Toast.LENGTH_LONG);
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }
@@ -222,9 +222,9 @@ public class MenuAction {
                 break;
             case ITEM_PREAUTO_PANTALLA:
                 if ((batteryStatus.getLevelBattery() <= 8) && (!batteryStatus.isCharging())) {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
                 } else if (paperStatus.getRet() == Printer.PRINTER_STATUS_PAPER_LACK){
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
                 } else {
 
                     idAcquirer = idLote + FILE_NAME_PREAUTO;
@@ -233,7 +233,7 @@ public class MenuAction {
                         intent.putExtra(HistoryTrans.EVENTS, HistoryTrans.COMMON);
                         context.startActivity(intent);
                     } else {
-                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.LOTE_VACIO_PREAUTO, Toast.LENGTH_LONG);
+                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.LOTE_VACIO_PREAUTO, Toast.LENGTH_LONG);
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }
@@ -263,7 +263,7 @@ public class MenuAction {
                     intent.putExtra("PARCIAL", false);
                     context.startActivity(intent);
                 } else {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
@@ -279,9 +279,9 @@ public class MenuAction {
                 break;
             case ITEM_REPORTE_DETALLADO:
                 if ((batteryStatus.getLevelBattery() <= 8) && (!batteryStatus.isCharging())) {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
                 } else if (paperStatus.getRet() == Printer.PRINTER_STATUS_PAPER_LACK){
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
                 } else {
                     callbackPrint = null;
                     idAcquirer = idLote;
@@ -293,7 +293,7 @@ public class MenuAction {
                         intent.putExtra("typeReport", DefinesDATAFAST.ITEM_REPORTE_DETALLADO);
                         context.startActivity(intent);
                     } else {
-                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.LOTE_VACIO, Toast.LENGTH_SHORT);
+                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.LOTE_VACIO, Toast.LENGTH_SHORT);
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }
@@ -403,13 +403,13 @@ public class MenuAction {
 
                                 TransLogData revesalData = TransLog.getReversal(false);
                                 if (revesalData != null) {
-                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_REV_PEN, Toast.LENGTH_SHORT);
+                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_REV_PEN, Toast.LENGTH_SHORT);
                                 }else {
 
                                     if ((batteryStatus.getLevelBattery() <= 8) && (!batteryStatus.isCharging())) {
-                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
+                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
                                     } else if (paperStatus.getRet() == Printer.PRINTER_STATUS_PAPER_LACK) {
-                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
+                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
                                     } else {
                                         idAcquirer = idLote;
                                         if (ToolsBatch.statusTrans(idAcquirer)) {
@@ -479,7 +479,7 @@ public class MenuAction {
                                             };
 
                                         } else {
-                                            UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.LOTE_VACIO, Toast.LENGTH_SHORT);
+                                            UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.LOTE_VACIO, Toast.LENGTH_SHORT);
                                             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                                             toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                                         }
@@ -499,23 +499,23 @@ public class MenuAction {
                                         TransLog.clearReveral(true);
                                     }
 
-                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, "REVERSO BORRADO EXITOSAMENTE", Toast.LENGTH_SHORT);
+                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "REVERSO BORRADO EXITOSAMENTE", Toast.LENGTH_SHORT);
                                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                                 } else
-                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, "NO EXISTE REVERSO", Toast.LENGTH_SHORT);
+                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "NO EXISTE REVERSO", Toast.LENGTH_SHORT);
 
                                 break;
                             case DefinesDATAFAST.ITEM_BORRAR_LOTE:
 
                                 TransLogData revesalData1 = TransLog.getReversal(false);
                                 if (revesalData1 != null) {
-                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_REV_PEN, Toast.LENGTH_SHORT);
+                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_REV_PEN, Toast.LENGTH_SHORT);
                                 }else if (TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).getSize() > 0){
-                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_REV_PEN, Toast.LENGTH_SHORT);
+                                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_REV_PEN, Toast.LENGTH_SHORT);
                                 }else {
                                     if (paperStatus.getRet() == Printer.PRINTER_STATUS_PAPER_LACK) {
-                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
+                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
                                     } else {
 
                                         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
@@ -558,7 +558,7 @@ public class MenuAction {
                                                             }
                                                         }
 
-                                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, "LOTE BORRADO", Toast.LENGTH_SHORT);
+                                                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "LOTE BORRADO", Toast.LENGTH_SHORT);
                                                     }
                                                 });
 
@@ -613,7 +613,7 @@ public class MenuAction {
 
                     } else {
                         newEdit.setText("");
-                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, context.getString(R.string.err_msg_pwoperario), Toast.LENGTH_SHORT);
+                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, context.getString(R.string.err_msg_pwoperario), Toast.LENGTH_SHORT);
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }

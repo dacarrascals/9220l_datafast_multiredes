@@ -230,7 +230,7 @@ public class ServerTCP extends AppCompatActivity {
 
                     } else {
                         newEdit.setText("");
-                        UIUtils.toast(ServerTCP.this, R.drawable.ic_launcher, getString(R.string.err_msg_pwoperario), Toast.LENGTH_SHORT);
+                        UIUtils.toast(ServerTCP.this, R.drawable.ic_launcher_1, getString(R.string.err_msg_pwoperario), Toast.LENGTH_SHORT);
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }
@@ -247,7 +247,7 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     private void settings(){
-        UIUtils.toastInit(ServerTCP.this, R.drawable.ic_launcher, DefinesDATAFAST.MSG_INIT);
+        UIUtils.toastInit(ServerTCP.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_INIT);
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
 

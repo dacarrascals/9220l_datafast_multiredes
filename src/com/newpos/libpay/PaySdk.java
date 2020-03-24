@@ -3,6 +3,7 @@ package com.newpos.libpay;
 import android.app.Activity;
 import android.content.Context;
 
+import com.datafast.server.server_tcp.Server;
 import com.datafast.transactions.Settle.AutoSettle;
 import com.datafast.transactions.Settle.Settle;
 import com.datafast.transactions.anulacion.Anulacion;
@@ -45,6 +46,9 @@ import com.newpos.libpay.trans.manager.SettleTrans;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.SDKManager;
 import com.pos.device.SDKManagerCallback;
+
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 
 /**
  * Created by zhouqiang on 2017/4/25.
@@ -320,7 +324,11 @@ public class PaySdk {
             para.setNeedOnline(true);
             para.setNeedPrint(false);
             para.setNeedConfirmCard(false);
-            para.setNeedPass(true);
+            if (Server.cmd.equals(LT) || Server.cmd.equals(CT)) {
+                para.setNeedPass(false);
+            } else {
+                para.setNeedPass(true);
+            }
             para.setNeedAmount(false);
             para.setEmvAll(true);
             presenter = new Venta(this.mContext, Trans.Type.VENTA, para);

@@ -14,6 +14,7 @@ import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
+import static com.datafast.transactions.common.CommonFunctionalities.saveDateSettle;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 import static com.newpos.libpay.trans.Trans.idLote;
 
@@ -49,6 +50,8 @@ public class Control {
                                   .setCID(pc_request.getCID()).save();
 
             deleteBatch();
+
+            saveDateSettle(context);
 
             processOk();
             ret = true;

@@ -2,6 +2,7 @@ package cn.desert.newpos.payui.master;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -47,6 +48,7 @@ import com.datafast.inicializacion.init_emv.CAPK_ROW;
 import com.datafast.inicializacion.init_emv.EMVAPP_ROW;
 import com.datafast.inicializacion.prompts.ChequeoPromtsActivos;
 import com.datafast.inicializacion.prompts.Prompt;
+import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.InputManager2;
 import com.datafast.tools.MenuApplicationsList;
 import com.datafast.tools.WaitSelectApplicationsList;
@@ -301,10 +303,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     hideKeyBoard(entradaDatos.getWindowToken());
                     listener.confirm(InputManager.Style.COMMONINPUT);
                 }else{
-                    UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
+                    UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
                 }
             } else {
-                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.ingrese_dato), Toast.LENGTH_SHORT);
+                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, getString(R.string.ingrese_dato), Toast.LENGTH_SHORT);
             }
         }
         if (view.equals(btnCancelarPrompt)) {
@@ -492,7 +494,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     @Override
                     public void onClick(View v) {
                         if (etNumToken.length() < minLen){
-                            UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
+                            UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
                         } else {
                             inputContent = "MANUAL|" + etNumToken.getText().toString();
                             listener.confirm(InputManager.Style.COMMONINPUT);
@@ -866,7 +868,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
                         if (!et_inputUser.getText().toString().equals("")){
                             if (et_inputUser.length() < Min_et_inputUser){
-                                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
+                                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
                             } else {
                                 inputContent = et_inputUser.getText().toString();
                                 listener.confirm(InputManager.Style.COMMONINPUT);
@@ -896,7 +898,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     toneG.startTone(ToneGenerator.TONE_PROP_BEEP2, 2000);
                     toneG.stopTone();
                 }
-                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, errcode, Toast.LENGTH_SHORT);
+                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, errcode, Toast.LENGTH_SHORT);
             }
         });
 
@@ -912,7 +914,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     toneG.startTone(ToneGenerator.TONE_PROP_BEEP2, 2000);
                     toneG.stopTone();
                 }
-                UIUtils.toastReverse(MasterControl.this, R.drawable.ic_launcher, errcode, Toast.LENGTH_SHORT);
+                UIUtils.toastReverse(MasterControl.this, R.drawable.ic_launcher_1, errcode, Toast.LENGTH_SHORT);
             }
         });
 
@@ -1195,10 +1197,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                                     if (entradaDatos.length() >= Integer.parseInt(promptActual.getLONGITUD_MINIMA())) {
                                         listener.confirm(InputManager.Style.COMMONINPUT);
                                     }else{
-                                        UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
+                                        UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, getString(R.string.longitud_invalida), Toast.LENGTH_SHORT);
                                     }
                                 } else {
-                                    UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, getString(R.string.ingrese_dato), Toast.LENGTH_SHORT);
+                                    UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, getString(R.string.ingrese_dato), Toast.LENGTH_SHORT);
                                 }
                             }
                         }
@@ -1268,7 +1270,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             }
         } while (iccReader0.isCardPresent());
 
-        finish();
+        //finish();
+        startActivity( new Intent(MasterControl.this, ServerTCP.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void initList(String transType, final ArrayList<String> listMenu) {
@@ -1332,10 +1337,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
     private void startTrans(String type) {
         try {
             if ((batteryStatus.getLevelBattery() <= 8) && (!batteryStatus.isCharging()) && (!type.equals(Trans.Type.ECHO_TEST))) {
-                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
+                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_BATTERY, Toast.LENGTH_SHORT);
                 finish();
             } else if ( paperStatus.getRet() == Printer.PRINTER_STATUS_PAPER_LACK && (!type.equals(Trans.Type.ECHO_TEST)) ){
-                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
+                UIUtils.toast(MasterControl.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_PAPER, Toast.LENGTH_SHORT);
                 finish();
             }else {
                 PaySdk.getInstance().startTrans(type, this);

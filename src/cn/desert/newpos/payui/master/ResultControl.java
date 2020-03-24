@@ -25,8 +25,8 @@ import java.util.TimerTask;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.BaseActivity;
 
-import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
+import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.datafast.menus.MenuAction.callBackSeatle;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static java.lang.Thread.sleep;
@@ -35,16 +35,16 @@ import static java.lang.Thread.sleep;
  * Created by zhouqiang on 2016/11/12.
  */
 public class ResultControl extends BaseActivity {
-    Button confirm ;
-    TextView details ;
-    ImageView face ;
-    ImageView removeCard ;
+    Button confirm;
+    TextView details;
+    ImageView face;
+    ImageView removeCard;
     IccReader iccReader0;
     Thread proceso = null;
     private static long second = 1000;
     private final int TIMEOUT_REMOVE_CARD = 60 * 2000;//2 min
     private Timer timer = null;
-    private String info = null ;
+    private String info = null;
     private boolean back;
     private boolean buttonActive = false;
     private boolean flag;
@@ -62,12 +62,12 @@ public class ResultControl extends BaseActivity {
 
         iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
 
-        timer = new Timer() ;
+        timer = new Timer();
 
         Bundle bundle = getIntent().getExtras();
-        if(bundle!=null){
+        if (bundle != null) {
             displayDetails(bundle.getBoolean("flag"), bundle.getString("info"));
-            if (bundle.getBoolean("boton") ){
+            if (bundle.getBoolean("boton")) {
                 confirm.setVisibility(View.VISIBLE);
                 buttonActive = true;
             } else {
@@ -77,7 +77,7 @@ public class ResultControl extends BaseActivity {
                         //over();
                         removeCard();
                     }
-                } , 4*second);
+                }, 4 * second);
             }
             over();
         } else {
@@ -87,32 +87,32 @@ public class ResultControl extends BaseActivity {
                     //over();
                     removeCard();
                 }
-            } , 4*second);
+            }, 4 * second);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(timer!=null){
+        if (timer != null) {
             timer.cancel();
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             over();
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void over(){
+    private void over() {
         //finish();
         confirm.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode == KeyEvent.KEYCODE_ENTER){
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     removeCard();
                 }
                 return false;
@@ -127,20 +127,20 @@ public class ResultControl extends BaseActivity {
         });
     }
 
-    private void displayDetails(boolean flag , String info){
-        this.info = info ;
+    private void displayDetails(boolean flag, String info) {
+        this.info = info;
         this.flag = flag;
         details.setText(info);
-        if(flag){
+        if (flag) {
             face.setImageResource(R.drawable.result_success);
             details.setTextColor(Color.parseColor("#0097AC"));
-        }else {
+        } else {
             face.setImageResource(R.drawable.result_fail);
             details.setTextColor(Color.parseColor("#0097AC"));
         }
     }
 
-    private void removeCard(){
+    private void removeCard() {
         if (proceso == null) {
             proceso = new Thread(new Runnable() {
                 public void run() {
@@ -158,21 +158,22 @@ public class ResultControl extends BaseActivity {
                         }
                     });
 
-                    if (checkCard()){
-                        finish();
+                    if (checkCard()) {
+                        startActivity(new Intent(ResultControl.this, ServerTCP.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
                         if (!isInit) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    UIUtils.toastInit(ResultControl.this, R.drawable.ic_launcher, DefinesDATAFAST.MSG_INIT);
+                                    UIUtils.toastInit(ResultControl.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_INIT);
                                 }
                             });
                         }
-                        if (buttonActive && flag){
-                            startActivity( new Intent(ResultControl.this, ServerTCP.class) );
-                        }
                         if (callBackSeatle != null)
                             callBackSeatle.getRspSeatleReport(0);
+                        finish();
                     }
                 }
             });
@@ -180,15 +181,15 @@ public class ResultControl extends BaseActivity {
         }
     }
 
-    private boolean checkCard(){
+    private boolean checkCard() {
         boolean ret = false;
-        if (lastCmd.equals(LT)){
+        if (lastCmd.equals(LT)) {
             return true;
         }
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
         //iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
 
-        long start = SystemClock.uptimeMillis() ;
+        long start = SystemClock.uptimeMillis();
 
         while (true) {
 
@@ -208,7 +209,7 @@ public class ResultControl extends BaseActivity {
                     ret = true;
                     break;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 ret = true;
                 break;
             }

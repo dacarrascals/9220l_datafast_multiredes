@@ -8,16 +8,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:background="#FFFFFF">
 
         <TextView
             android:id="@+id/tv_timeout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
             android:text="@string/wait_connect_time"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -27,14 +27,13 @@
             android:id="@+id/setting_com_timeout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/tv_timeout"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="4dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:layout_toEndOf="@id/tv_timeout"
             android:background="@android:color/transparent"
             android:gravity="right"
             android:inputType="number"
             android:maxLength="2"
-            android:paddingTop="15dp"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -42,11 +41,10 @@
             android:id="@+id/txtTimeout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/tv_timeout"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="4dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:layout_toEndOf="@id/tv_timeout"
             android:background="@android:color/transparent"
-            android:gravity="right"
             android:maxLength="6"
             android:paddingTop="15dp"
             android:textColor="@color/black"
@@ -57,153 +55,153 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:background="#FFFFFF">
 
         <TextView
-            android:id="@+id/tvtIp"
+            android:id="@+id/tv_ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
             android:text="@string/public_network_ip"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_toEndOf="@+id/tvtIp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="25dp"
-            android:gravity="center_vertical">
+            android:layout_toEndOf="@+id/tv_ip"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/etIp1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:textSize="21sp"
-                android:imeOptions="actionNext"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:gravity="center"
+                android:imeOptions="actionNext"
                 android:inputType="number"
+                android:maxLength="3"
                 android:textColor="@color/black"
-                android:maxLength="3"/>
+                android:textSize="21sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="."
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="." />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etIp2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:textSize="21sp"
-                android:imeOptions="actionNext"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:gravity="center"
+                android:imeOptions="actionNext"
                 android:inputType="number"
+                android:maxLength="3"
                 android:textColor="@color/black"
-                android:maxLength="3"/>
+                android:textSize="21sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="."
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="." />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etIp3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:textSize="21sp"
-                android:imeOptions="actionNext"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:gravity="center"
+                android:imeOptions="actionNext"
                 android:inputType="number"
+                android:maxLength="3"
                 android:textColor="@color/black"
-                android:maxLength="3"/>
+                android:textSize="21sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="."
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="." />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etIp4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:textSize="21sp"
-                android:imeOptions="actionNext"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:gravity="center"
+                android:imeOptions="actionNext"
                 android:inputType="number"
+                android:maxLength="3"
                 android:textColor="@color/black"
-                android:maxLength="3"/>
+                android:textSize="21sp" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_toEndOf="@+id/tvtIp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="25dp"
-            android:gravity="center_vertical">
+            android:layout_toEndOf="@+id/tv_ip"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvIp1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:paddingTop="15dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_weight="1"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvIp2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:paddingTop="15dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_weight="1"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvIp3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:paddingTop="15dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_weight="1"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvIp4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:paddingTop="15dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_weight="1"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -212,16 +210,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:background="#FFFFFF">
 
         <TextView
-            android:id="@+id/tvtPuerto"
+            android:id="@+id/tv_port"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
             android:text="@string/public_network_port"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -231,38 +229,36 @@
             android:id="@+id/setting_com_public_port"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/tvtPuerto"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="44dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_toEndOf="@+id/tv_port"
             android:background="@android:color/transparent"
             android:gravity="right"
             android:inputType="number"
             android:maxLength="6"
-            android:paddingTop="15dp"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:imeOptions="actionNext"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/txtPuerto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/tvtPuerto"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="44dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:layout_toEndOf="@+id/tv_port"
             android:background="@android:color/transparent"
-            android:gravity="right"
             android:maxLength="6"
             android:paddingTop="15dp"
             android:textColor="@color/black"
             android:textSize="16sp" />
+
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/layout_termID_comm"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:background="#FFFFFF"
         android:visibility="visible">
 
@@ -270,9 +266,9 @@
             android:id="@+id/tv_ter_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
             android:text="@string/terminal_id"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -282,28 +278,25 @@
             android:id="@+id/merchant_tid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="53dp"
-            android:layout_toEndOf="@id/tv_ter_id"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_toEndOf="@+id/tv_ter_id"
             android:background="@android:color/transparent"
             android:gravity="right"
-            android:inputType="textCapCharacters"
+            android:inputType="textCapCharacters|textNoSuggestions"
             android:maxLength="8"
-            android:paddingTop="15dp"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:imeOptions="actionNext" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/txtTerminal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
             android:layout_toEndOf="@+id/tv_ter_id"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="53dp"
             android:background="@android:color/transparent"
-            android:gravity="right"
             android:maxLength="6"
             android:paddingTop="15dp"
             android:textColor="@color/black"
@@ -314,17 +307,17 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:background="#FFFFFF"
         android:visibility="visible">
 
         <TextView
-            android:id="@+id/tvtNii"
+            android:id="@+id/tv_nii"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
             android:text="@string/title_nii"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -334,24 +327,23 @@
             android:id="@+id/setting_com_nii"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/tvtNii"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="130dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_toEndOf="@+id/tv_nii"
             android:background="@android:color/transparent"
             android:gravity="right"
             android:inputType="number"
             android:maxLength="3"
-            android:paddingTop="15dp"
             android:textColor="@color/black"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/txtNii"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/tvtNii"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="130dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:layout_toEndOf="@+id/tv_nii"
             android:background="@android:color/transparent"
             android:gravity="right"
             android:maxLength="6"
@@ -384,7 +376,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:background="@android:color/transparent"
-            android:gravity="center"
+            android:gravity="right"
             android:inputType="number"
             android:maxLength="2"
             android:paddingTop="15dp"
@@ -422,4 +414,5 @@
             android:textColor="#000000"
             android:textSize="16sp" />
     </LinearLayout>
+
 </LinearLayout>

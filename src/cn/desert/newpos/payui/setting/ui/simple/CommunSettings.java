@@ -455,7 +455,7 @@ public class CommunSettings extends BaseActivity implements View.OnClickListener
                 .setIntentosConex(Integer.parseInt(intentConex))
                 .setNii(nii)
                 .save();
-        UIUtils.toast(this, R.drawable.ic_launcher, getString(R.string.save_success), Toast.LENGTH_SHORT);
+        UIUtils.toast(this, R.drawable.ic_launcher_1, getString(R.string.save_success), Toast.LENGTH_SHORT);
         //hideKeyboard(CommunSettings.this);
         finish();
     }

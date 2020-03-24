@@ -142,7 +142,7 @@ public class UtilNetwork {
 
         String[] datos = new String[5];
 
-        EthDevinfoParcel eth0Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH0_NAME);
+        /*EthDevinfoParcel eth0Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH0_NAME);
         EthDevinfoParcel eth1Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH1_NAME);
         if (eth0Info != null) {
             datos[0] = eth0Info.getNetMask();
@@ -156,7 +156,7 @@ public class UtilNetwork {
             datos[2] = eth1Info.getDnsAddr();
             datos[3] = eth1Info.getRouteAddr();
             datos[4] = "eth1";
-        } else {
+        } else {*/
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
 
@@ -165,7 +165,7 @@ public class UtilNetwork {
             datos[2] = intToIp(dhcpInfo.dns2);
             datos[3] = intToIp(dhcpInfo.gateway);
             datos[4] = wifiManager.getConnectionInfo().getSSID();
-        }
+        //}
         return datos;
 
     }

@@ -116,7 +116,7 @@ public class InjectMasterKey extends AppCompatActivity {
         if(retTmp == 0){
             return true;
         }else {
-            UIUtils.toast(activity, R.drawable.ic_launcher, msg, Toast.LENGTH_SHORT);
+            UIUtils.toast(activity, R.drawable.ic_launcher_1, msg, Toast.LENGTH_SHORT);
             return false;
         }
     }

@@ -176,7 +176,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
             listIPs = ChequeoIPs.selectIP(context);
             if (listIPs == null) {
                 isInit = false;
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Error al leer tabla, Por favor Inicialice nuevamente", Toast.LENGTH_LONG);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "Error al leer tabla, Por favor Inicialice nuevamente", Toast.LENGTH_LONG);
             }
         }
     }

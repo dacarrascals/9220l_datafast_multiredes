@@ -47,7 +47,7 @@ public class PwOperario extends AppCompatActivity {
                 }
                 else{
                     et_pw.setText("");
-                    UIUtils.toast(PwOperario.this, R.drawable.ic_launcher, getString(R.string.err_msg_pwoperario), Toast.LENGTH_SHORT);
+                    UIUtils.toast(PwOperario.this, R.drawable.ic_launcher_1, getString(R.string.err_msg_pwoperario), Toast.LENGTH_SHORT);
                     //TMConfig.getInstance().setPw_Operario(false);
 
                 }
