@@ -2,6 +2,7 @@ package cn.desert.newpos.payui.master;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -47,6 +48,7 @@ import com.datafast.inicializacion.init_emv.CAPK_ROW;
 import com.datafast.inicializacion.init_emv.EMVAPP_ROW;
 import com.datafast.inicializacion.prompts.ChequeoPromtsActivos;
 import com.datafast.inicializacion.prompts.Prompt;
+import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.InputManager2;
 import com.datafast.tools.MenuApplicationsList;
 import com.datafast.tools.WaitSelectApplicationsList;
@@ -1268,7 +1270,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             }
         } while (iccReader0.isCardPresent());
 
-        finish();
+        //finish();
+        startActivity( new Intent(MasterControl.this, ServerTCP.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void initList(String transType, final ArrayList<String> listMenu) {
