@@ -16,6 +16,7 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
+import com.datafast.inicializacion.trans_init.trans.ISO;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -201,6 +202,8 @@ public class FinanceTrans extends Trans {
 
     protected String expDate;
 
+    protected String ARQC;
+
     /**
      * 金融交易类构造
      *
@@ -344,6 +347,12 @@ public class FinanceTrans extends Trans {
         // 卡序号
         len = PAYUtils.get_tlv_data_kernal(0x5F34, temp);
         PanSeqNo = ISOUtil.padleft(ISOUtil.byte2int(temp, 0, len) + "", 3, '0');
+
+        ARQC = getARQC();
+        if (ARQC != null){
+            processPPFail.setARQCFail(ARQC);
+        }
+
         //55域数据
         temp = new byte[512];
         len = PAYUtils.pack_tags(PAYUtils.wOnlineTags, temp);
@@ -1789,10 +1798,10 @@ public class FinanceTrans extends Trans {
         return aux.trim();
     }
 
-    private String getTC() {
+    public String getTC() {
         byte[] temp = new byte[128];
-        PAYUtils.get_tlv_data_kernal(0x9F26, temp);
-        String aux = ISOUtil.bcd2str(temp, 0, 2);
+        int len = PAYUtils.get_tlv_data_kernal(0x9F26, temp);
+        String aux = ISOUtil.bcd2str(temp, 0, len);
         return aux.trim();
     }
 
@@ -2847,7 +2856,7 @@ public class FinanceTrans extends Trans {
             pp_response.setExpDateCard(ISOUtil.spacepadRight(emvl2.getExpdate(),4));
         } else if (inputMode == ENTRY_MODE_ICC){
             pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCard(), 40));
-            pp_response.setARQC(ISOUtil.spacepadRight(getARQC(),16));
+            pp_response.setARQC(ISOUtil.spacepadRight(ARQC+"",16));
             pp_response.setTVR(ISOUtil.spacepadRight(getTVR(),10));
             pp_response.setTSI(ISOUtil.spacepadRight(getTSI(),4));
             pp_response.setAppEMV(ISOUtil.spacepadRight(getLabelCard(), 20));

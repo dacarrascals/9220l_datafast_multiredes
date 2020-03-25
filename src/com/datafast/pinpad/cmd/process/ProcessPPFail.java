@@ -36,6 +36,7 @@ public class ProcessPPFail extends FinanceTrans {
     private String PANFail = "";
     private String expDateFail = "";
     private String cardHolderNameFail = "";
+    private String ARQCFail = "";
 
     public ProcessPPFail(Context ctx, ISO8583 iso8583) {
         super(ctx);
@@ -59,6 +60,9 @@ public class ProcessPPFail extends FinanceTrans {
     }
     public void setCardHolderNameFail(String entrada){
         this.cardHolderNameFail = entrada;
+    }
+    public void setARQCFail(String ARQC){
+        this.ARQCFail = ARQC;
     }
 
     public void cmdCancel(String cmd, int codRet){
@@ -154,7 +158,7 @@ public class ProcessPPFail extends FinanceTrans {
                         pp_response.setNameBankAcq(ISOUtil.spacepad("", 30));
                     }
                 }catch (IndexOutOfBoundsException e){}
-                
+
                 if (iso8583.getfield(39) != null){
                     pp_response.setNumberBatch(ISOUtil.spacepadRight(BatchNo,6));
                     pp_response.setNameGroupCard(ISOUtil.spacepadRight(rango.getNOMBRE_RANGO(), 25));
@@ -174,7 +178,6 @@ public class ProcessPPFail extends FinanceTrans {
 
                 if (inputModeFail == ENTRY_MODE_NFC){
                     pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvL2Process.getHolderName()), 40));
-                    pp_response.setNameCardHolder(ISOUtil.spacepadRight(emvL2Process.getHolderName(), 40));
                     pp_response.setARQC(ISOUtil.spacepadRight(emvL2Process.GetARQC(),16));
                     pp_response.setTVR(ISOUtil.spacepadRight(emvL2Process.GetTVR(),10));
                     pp_response.setTSI(ISOUtil.spacepadRight(emvL2Process.GetTSI(),4));
@@ -183,12 +186,12 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setCriptEMV(ISOUtil.spacepad(emvL2Process.GetCID(), 22));
                 }else if (inputModeFail == ENTRY_MODE_ICC){
                     pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCard(), 40));
-                    pp_response.setARQC(ISOUtil.spacepadRight(getARQC(),16));
+                    pp_response.setARQC(ISOUtil.spacepadRight(ARQCFail,16));
                     pp_response.setTVR(ISOUtil.spacepadRight(getTVR(),10));
                     pp_response.setTSI(ISOUtil.spacepadRight(getTSI(),4));
                     pp_response.setAppEMV(ISOUtil.spacepadRight(getLabelCard(), 20));
                     pp_response.setAIDEMV(ISOUtil.spacepadRight(getAID(), 20));
-                    pp_response.setCriptEMV(ISOUtil.spacepad(getCID(), 22));
+                    pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
                 } else {
                     pp_response.setNameCardHolder(ISOUtil.spacepadRight(cardHolderNameFail, 40));
                     pp_response.setARQC(ISOUtil.spacepadRight("",16));
