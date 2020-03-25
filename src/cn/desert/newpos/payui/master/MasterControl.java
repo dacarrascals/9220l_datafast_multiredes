@@ -49,6 +49,7 @@ import com.datafast.inicializacion.init_emv.EMVAPP_ROW;
 import com.datafast.inicializacion.prompts.ChequeoPromtsActivos;
 import com.datafast.inicializacion.prompts.Prompt;
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.server.server_tcp.Server;
 import com.datafast.tools.InputManager2;
 import com.datafast.tools.MenuApplicationsList;
 import com.datafast.tools.WaitSelectApplicationsList;
@@ -93,6 +94,7 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREVOUCHER;
 import static com.datafast.menus.menus.FALLBACK;
 import static com.datafast.menus.menus.contFallback;
 import static com.datafast.menus.menus.idAcquirer;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC_DEFERRED;
 import static com.newpos.libpay.trans.Trans.idLote;
@@ -1508,6 +1510,9 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
         if (cardNum.length()< 10)
             return false;
+
+        if(Server.cmd.equals(CT))
+            return true;
 
         String pan = cardNum.substring(0, 10);
 
