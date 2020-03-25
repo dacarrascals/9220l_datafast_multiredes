@@ -2,7 +2,6 @@ package com.datafast.pinpad.cmd.process;
 
 import android.content.Context;
 
-import com.datafast.inicializacion.trans_init.trans.ISO;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -17,6 +16,7 @@ import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
+
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
@@ -137,11 +137,15 @@ public class ProcessPPFail extends FinanceTrans {
                 pp_response.setNumberAuth(ISOUtil.spacepadRight(iso8583.getfield(38), 6));
                 if (iso8583.getfield(41) != null){
                     pp_response.setTID(ISOUtil.spacepadRight(iso8583.getfield(41), 8));
-                    pp_response.setMID(ISOUtil.spacepadRight(MerchID, 15));
                 }else {
-                    pp_response.setTID(ISOUtil.spacepadRight(iso8583.getfield(41), 8));
-                    pp_response.setMID(ISOUtil.spacepadRight(iso8583.getfield(42), 15));
+                    pp_response.setTID(ISOUtil.spacepadRight(TermID, 8));
                 }
+                if (iso8583.getfield(42) != null){
+                    pp_response.setMID(ISOUtil.spacepadRight(iso8583.getfield(42), 15));
+                }else {
+                    pp_response.setMID(ISOUtil.spacepadRight(MerchID, 15));
+                }
+                
                 pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
                 pp_response.setMsgPrintAwards(ISOUtil.spacepadRight("", 80));
 
