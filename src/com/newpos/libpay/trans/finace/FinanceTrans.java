@@ -780,20 +780,26 @@ public class FinanceTrans extends Trans {
     }
 
     private void setField57() {
+        StringBuilder fld57 = new StringBuilder();
         switch (para.getTransType()) {
             case Type.DEFERRED:
             case Type.ELECTRONIC_DEFERRED:
                 for (int i = 0; i < deferredType.length; i++) {
                     if (TypeDeferred.equals(deferredType[i][1])) {
-                        Field57 = deferredType[i][0];
+                        fld57.append(deferredType[i][0]);
+                        //Field57 = deferredType[i][0];
                     }
                 }
-                Field57 += "03" + ISOUtil.zeropad(numCuotasDeferred, 3);
+                fld57.append("03");
+                fld57.append(ISOUtil.zeropad(numCuotasDeferred, 3));
                 break;
             case Type.PAGOS_VARIOS:
                 try {
-                    Field57 = "008";
-                    Field57 += "03" + ISOUtil.zeropad(pagoVarioSeleccionado.substring(1), 3);
+                    fld57.append("008");
+                    //Field57 = "008";
+                    fld57.append("03");
+                    fld57.append(ISOUtil.zeropad(pagoVarioSeleccionado.substring(1), 3));
+                    //Field57 += "03" + ISOUtil.zeropad(pagoVarioSeleccionado.substring(1), 3);
                 } catch (IndexOutOfBoundsException e) {
                 }
                 break;
@@ -802,21 +808,38 @@ public class FinanceTrans extends Trans {
                     switch (tipoMontoFijo) {
                         case NO_OPERA:
                         case PIDE_CONFIRMACION:
-                            Field57 = "00003000";
+                            fld57.append("00003000");
+                            //Field57 = "00003000";
                             break;
                         default:
-                            Field57 = "00403000";//Identificador 004 solo se utiliza si el tipo de comercio es una Gasolinera, el campo datos siempre es 000
+                            fld57.append("00403000");
+                            //Field57 = "00403000";//Identificador 004 solo se utiliza si el tipo de comercio es una Gasolinera, el campo datos siempre es 000
                             break;
                     }
                 } else {
                     if (pagoVarioSeleccionado != null){
-                        Field57 = "008";
-                        Field57 += "03" + ISOUtil.zeropad(pagoVarioSeleccionado.substring(1), 3);
+                        fld57.append("008");
+                        //Field57 = "008";
+                        fld57.append("03");
+                        fld57.append(ISOUtil.zeropad(pagoVarioSeleccionado.substring(1), 3));
+                        //Field57 += "03" + ISOUtil.zeropad(pagoVarioSeleccionado.substring(1), 3);
                     }else
-                        Field57 = "00003000";
+                        fld57.append("00003000");
+                    //Field57 = "00003000";
                 }
                 break;
         }
+
+        fld57.append("030");
+        fld57.append("03");
+        fld57.append(ISOUtil.zeropad(pp_request.getMonthsGrace(),3));
+
+        fld57.append("031");
+        fld57.append("03");
+        fld57.append(ISOUtil.zeropad(pp_request.getIdCodNetAcq(),3));
+
+        Field57 = fld57.toString();
+        //Field57 += "031" + "03" + ISOUtil.zeropad(pp_request.getIdCodNetAcq(),3);
     }
 
     private void setField58() {
