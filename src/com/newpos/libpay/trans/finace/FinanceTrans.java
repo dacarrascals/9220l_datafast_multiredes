@@ -16,7 +16,6 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
-import com.datafast.inicializacion.trans_init.trans.ISO;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -58,8 +57,8 @@ import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
 
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
-import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
+import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.lastInputMode;
 import static com.android.newpos.pay.StartAppDATAFAST.lastTrack;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
@@ -79,6 +78,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
+import static com.datafast.server.activity.ServerTCP.listener;
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsAmountPrinter;
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
@@ -87,7 +87,6 @@ import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 import static com.newpos.libpay.trans.Trans.Type.PAGOS_VARIOS;
 import static com.newpos.libpay.trans.Trans.Type.SETTLE;
-import static com.datafast.server.activity.ServerTCP.listener;
 
 /**
  * 金融交易类
@@ -286,7 +285,9 @@ public class FinanceTrans extends Trans {
                     EntryMode = "102";
                 }
             }
-        } else {
+        }else if(inputMode == ENTRY_MODE_FALLBACK){
+            EntryMode = MODE1_FALLBACK + CapPinPOS();
+        }else {
             EntryMode = "000";
         }
 
@@ -2861,7 +2862,7 @@ public class FinanceTrans extends Trans {
             pp_response.setTSI(ISOUtil.spacepadRight(getTSI(),4));
             pp_response.setAppEMV(ISOUtil.spacepadRight(getLabelCard(), 20));
             pp_response.setAIDEMV(ISOUtil.spacepadRight(getAID(), 20));
-            pp_response.setCriptEMV(ISOUtil.spacepad(getCID(), 22));
+            pp_response.setCriptEMV(ISOUtil.spacepadRight(getTC(), 22));
             pp_response.setValidatePIN(ISOUtil.spacepad("", 15));
             pp_response.setExpDateCard(ISOUtil.spacepadRight(expDate,4));
         }else {
