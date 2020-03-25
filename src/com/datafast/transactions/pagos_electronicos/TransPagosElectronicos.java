@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.ToneGenerator;
 
 import com.android.desert.keyboard.InputInfo;
-import com.android.newpos.pay.R;
 import com.datafast.inicializacion.pagoselectronicos.GrupoPagosElectronicos;
 import com.datafast.inicializacion.pagoselectronicos.PagosElectronicos;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
@@ -19,7 +18,6 @@ import com.newpos.libpay.device.contactless.EmvL2Process;
 import com.newpos.libpay.helper.iso8583.ISO8583;
 import com.newpos.libpay.presenter.TransPresenter;
 import com.newpos.libpay.trans.Tcode;
-import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.TransInputPara;
 import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
@@ -30,16 +28,11 @@ import java.util.Iterator;
 
 import cn.desert.newpos.payui.UIUtils;
 
-import static cn.desert.newpos.payui.master.MasterControl.callbackFallback;
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
-import static com.android.newpos.pay.StartAppDATAFAST.listPrompts;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_TOKEN_PE;
-import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PAGOS_ELECTRONICOS;
-import static com.datafast.menus.menus.TOTAL_BATCH;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
-import static com.datafast.transactions.common.GetAmount.getConfirmarMontos;
 
 public class TransPagosElectronicos extends FinanceTrans implements TransPresenter {
 
@@ -86,11 +79,11 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
     @Override
     public void start() {
 
-        if (!checkBatchAndSettle(true,true)){
+        if (!checkBatchAndSettle(true, true)) {
             return;
         }
 
-        if (!setAmountPP()){
+        if (!setAmountPP()) {
             return;
         }
 
@@ -99,36 +92,39 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         } else {
             //cardInf = null;
             transUI.handlingError(timeout, retVal);
-            processPPFail.cmdCancel(Server.cmd,retVal);
+            processPPFail.cmdCancel(Server.cmd, retVal);
             UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-            try{
+            try {
                 Thread.sleep(2000);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         Logger.debug("PagoElecTrans>>finish");
 
-        if (aCmd.equals(PP)){
-            callbackRsp = new waitRspReverse() {
-                @Override
-                public void getWaitRspReverse(int status) {
-                    retVal = status;
-                    if (Reverse() != 0){
-                        if (retVal != Tcode.T_not_reverse){
-                            transUI.showError(timeout,retVal);
-                        }else {
-                            transUI.showfinish();
+        if (retVal != 106 && retVal != 104) {
+            if (aCmd.equals(PP)) {
+                callbackRsp = new waitRspReverse() {
+                    @Override
+                    public void getWaitRspReverse(int status) {
+                        retVal = status;
+                        if (Reverse() != 0) {
+                            if (retVal != Tcode.T_not_reverse) {
+                                transUI.showError(timeout, retVal);
+                            } else {
+                                transUI.showfinish();
+                            }
+                        } else {
+                            transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
                         }
-                    }else {
-                        transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
                     }
-                }
-            };
+                };
+            }
         }
-        if (aCmd.equals(PP)){
-            if (callbackRsp != null){
+
+        if (aCmd.equals(PP)) {
+            if (callbackRsp != null) {
                 callbackRsp.getWaitRspReverse(retVal);
             }
         }
@@ -139,18 +135,18 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
 
         llenarListPagosElectronico();
 
-        String[] tipoTransaccion = new String[] {"PAYCLUB", "BDP WALLET"};
-        String[] transaccion = new String[] {"VENTA", "DIFERIDOS"};
+        String[] tipoTransaccion = new String[]{"PAYCLUB", "BDP WALLET"};
+        String[] transaccion = new String[]{"VENTA", "DIFERIDOS"};
 
-        if (pp_request.getTypeTrans().equals("06") && pp_request.getProviderOTT().equals("02")){
+        if (pp_request.getTypeTrans().equals("06") && pp_request.getProviderOTT().equals("02")) {
             TypeTransElectronic = tipoTransaccion[1];
-        }else {
+        } else {
             TypeTransElectronic = tipoTransaccion[0];
         }
 
         procesarSeleccion(TypeTransElectronic);
 
-        if (index >= 0){
+        if (index >= 0) {
 
             if (TypeTransElectronic.equals(listPagoElectronico.get(index).getNOMBRE_PAGO_ELECTRONICO())) {
                 transUI.showCardImg(listPagoElectronico.get(index).getIMAGEN());
@@ -158,9 +154,9 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
                     TypeTransElectronic = Type.PAYCLUB;
                 else if (listPagoElectronico.get(index).getNOMBRE_PAGO_ELECTRONICO().equals(Type.PAYBLUE))
                     TypeTransElectronic = Type.PAYBLUE;
-                else{
+                else {
                     retVal = Tcode.T_not_allow;
-                    transUI.showError(timeout, retVal,processPPFail);
+                    transUI.showError(timeout, retVal, processPPFail);
                     return retVal;
                 }
 
@@ -179,16 +175,16 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
             }
 
             transUI = para.getTransUI();
-            if (pp_request.getIdCodDef().equals("00")){
+            if (pp_request.getIdCodDef().equals("00")) {
                 typeInput = transaccion[0];
-            }else{
+            } else {
                 typeInput = transaccion[1];
             }
 
 
             if (typeInput.equals("VENTA")) {
                 if (processWallet() != 0) {
-                    transUI.showError(timeout, retVal,processPPFail);
+                    transUI.showError(timeout, retVal, processPPFail);
                     return retVal;
                 }
             }
@@ -197,7 +193,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
                 para.setTransType(Type.ELECTRONIC_DEFERRED);
                 TransEName = Type.ELECTRONIC_DEFERRED;
 
-                if (!PAYUtils.isNullWithTrim(pp_request.getIdCodDef())){
+                if (!PAYUtils.isNullWithTrim(pp_request.getIdCodDef())) {
                     for (int i = 0; i < deferredType.length; i++) {
                         if (("0" + pp_request.getIdCodDef()).equals(deferredType[i][0])) {
                             TypeDeferred = deferredType[i][1];
@@ -208,11 +204,11 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
 
                 if (!Cuotas()) {
                     retVal = Tcode.T_user_cancel_operation;
-                    transUI.showError(timeout, retVal,processPPFail);
+                    transUI.showError(timeout, retVal, processPPFail);
                     return retVal;
                 } else {
                     if (processWallet() != 0) {
-                        transUI.showError(timeout, retVal,processPPFail);
+                        transUI.showError(timeout, retVal, processPPFail);
                         return retVal;
                     }
 
@@ -221,16 +217,16 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
 
             if (!incardTable(Pan, TransEName, TypeTransElectronic)) {
                 retVal = Tcode.T_unsupport_card;
-                transUI.showError(timeout, Tcode.T_unsupport_card,processPPFail);
+                transUI.showError(timeout, Tcode.T_unsupport_card, processPPFail);
                 return retVal;
             }
 
             prepareOnline();
 
 
-        }else{
+        } else {
             retVal = Tcode.T_not_allow;
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
             return retVal;
         }
 
@@ -246,13 +242,13 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         return list;
     }
 
-    private void llenarListPagosElectronico(){
+    private void llenarListPagosElectronico() {
         listPagoElectronico = new ArrayList<>();
         listPagoElectronico = GrupoPagosElectronicos.GetListaPagosElectronicos(tconf.getGRUPO_PAGOS_ELECTRONICOS(), context);
-        if (listPagoElectronico == null){
+        if (listPagoElectronico == null) {
             listPagoElectronico = new ArrayList<>();
             listPagoElectronico.clear();
-        }else  if (listPagoElectronico.isEmpty())
+        } else if (listPagoElectronico.isEmpty())
             listPagoElectronico.clear();
     }
 
@@ -260,18 +256,18 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         final ArrayList<String> list = new ArrayList<>();
         Iterator<PagosElectronicos> itrPagosElect = listPagoElectronico.iterator();
 
-        while (itrPagosElect.hasNext()){
+        while (itrPagosElect.hasNext()) {
             PagosElectronicos pagosElectActual = itrPagosElect.next();
             list.add(pagosElectActual.getNOMBRE_PAGO_ELECTRONICO());
         }
         return list;
     }
 
-    private int procesarSeleccion(String seleccion){
+    private int procesarSeleccion(String seleccion) {
         Iterator<PagosElectronicos> itrPagosElectronicos = listPagoElectronico.iterator();
-        while (itrPagosElectronicos.hasNext()){
+        while (itrPagosElectronicos.hasNext()) {
             PagosElectronicos pagosElectActual = itrPagosElectronicos.next();
-            if (seleccion.equals(pagosElectActual.getNOMBRE_PAGO_ELECTRONICO())){
+            if (seleccion.equals(pagosElectActual.getNOMBRE_PAGO_ELECTRONICO())) {
                 break;
             }
             index++;
@@ -328,28 +324,28 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
             return true;
         } else {
             retVal = Tcode.T_user_cancel_input;
-            transUI.showError(timeout, Tcode.T_user_cancel_input,processPPFail);
+            transUI.showError(timeout, Tcode.T_user_cancel_input, processPPFail);
             return false;
         }
     }
 
     private int getCodeOTT() {
-        if (PAYUtils.isNullWithTrim(pp_request.getOTT())){
+        if (PAYUtils.isNullWithTrim(pp_request.getOTT())) {
 
             inputInfo = transUI.showInputUser(timeout, title, "CODIGO OTT", Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MINIMA()), Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()));
 
             if (!inputInfo.isResultFlag()) {
                 retVal = Tcode.T_user_cancel_operation;
-                transUI.showError(timeout, retVal,processPPFail);
+                transUI.showError(timeout, retVal, processPPFail);
                 return retVal;
-            }else {
+            } else {
                 Pan = listPagoElectronico.get(index).getNUM_TARJETA();
                 Pan += inputInfo.getResult();
                 CodOTT = inputInfo.getResult();
                 retVal = 0;
             }
 
-        }else {
+        } else {
 
             Pan = listPagoElectronico.get(index).getNUM_TARJETA();
             Pan += pp_request.getOTT();
@@ -358,12 +354,12 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
 
         }
 
-        return  retVal;
+        return retVal;
     }
 
     private int processWallet() {
         String msj;
-        if (PAYUtils.isNullWithTrim(pp_request.getOTT())){
+        if (PAYUtils.isNullWithTrim(pp_request.getOTT())) {
 
             if (TypeTransElectronic.equals(Type.PAYCLUB)) {
                 msj = "CODIGO OTT";
@@ -371,8 +367,8 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
                 msj = "TOKEN";
             }
 
-            CardInfo cardInfo = transUI.getCardUsePagosElect(GERCARD_MSG_TOKEN_PE+"|"+msj, timeout,
-                    INMODE_NFC | INMODE_HAND, transEname,"Monto\nTotal : ",PAYUtils.getStrAmount(Amount),
+            CardInfo cardInfo = transUI.getCardUsePagosElect(GERCARD_MSG_TOKEN_PE + "|" + msj, timeout,
+                    INMODE_NFC | INMODE_HAND, transEname, "Monto\nTotal : ", PAYUtils.getStrAmount(Amount),
                     Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MINIMA()),
                     Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()));
             //CardInfo cardInfo = transUI.getCardUse(GERCARD_MSG_TOKEN_PE, timeout, INMODE_NFC | INMODE_HAND, transEname);
@@ -406,7 +402,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
                 }
             }
 
-        }else {
+        } else {
             Pan = listPagoElectronico.get(index).getNUM_TARJETA();
             Pan += pp_request.getOTT();
             if (TypeTransElectronic.equals(Type.PAYCLUB))
@@ -441,7 +437,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
                     retVal = Tcode.T_err_not_file_entry_point;
                     break;
             }
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
             return;
         }
 
@@ -450,18 +446,18 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         code = emvl2.start();
 
         Logger.debug("EmvL2Process return = " + code);
-        if ((code != 0) ||  (emvl2.tkn == null)) {
+        if ((code != 0) || (emvl2.tkn == null)) {
             retVal = Tcode.T_err_detect_card_failed;
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
             return;
         }
 
         Pan = listPagoElectronico.get(index).getNUM_TARJETA();
         Pan += emvl2.tkn;
 
-        if (TypeTransElectronic.equals(Type.PAYCLUB)){
+        if (TypeTransElectronic.equals(Type.PAYCLUB)) {
             CodOTT = emvl2.tkn;
-        }else {
+        } else {
             TokenElectronic = emvl2.tkn;
         }
     }
@@ -491,13 +487,13 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
 
     private boolean Cuotas() {
         boolean ret = false;
-        if (!PAYUtils.isNullWithTrim(pp_request.getLimitDef())){
+        if (!PAYUtils.isNullWithTrim(pp_request.getLimitDef())) {
             numCuotasDeferred = pp_request.getLimitDef();
 
-            if (numCuotasDeferred.equals("00") || numCuotasDeferred.equals("0")){
+            if (numCuotasDeferred.equals("00") || numCuotasDeferred.equals("0")) {
                 transUI.toasTrans(Tcode.T_err_invalid_len, true, true);
                 processPPFail.cmdCancel(Server.cmd, retVal);
-            }else{
+            } else {
                 ret = true;
             }
         }
@@ -534,15 +530,15 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
             Logger.debug("SaleTrans>>OnlineTrans=" + retVal);
             clearPan();
             if (retVal == 0) {
-                msgAprob(Tcode.Status.pago_electronico_exitoso,true);
+                msgAprob(Tcode.Status.pago_electronico_exitoso, true);
                 return true;
-            }else {
+            } else {
                 transUI.handlingError(timeout, retVal);
-                processPPFail.cmdCancel(Server.cmd,retVal);
+                processPPFail.cmdCancel(Server.cmd, retVal);
                 return false;
             }
         } else {
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
             return false;
         }
     }
