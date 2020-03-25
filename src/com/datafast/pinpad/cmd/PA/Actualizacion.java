@@ -2,13 +2,12 @@ package com.datafast.pinpad.cmd.PA;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import com.datafast.server.callback.waitResponse;
 import com.datafast.tools_bacth.ToolsBatch;
+import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
+import com.newpos.libpay.utils.PAYUtils;
 
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
 import static com.datafast.menus.menus.idAcquirer;
@@ -39,6 +38,11 @@ public class Actualizacion{
     public void procesoActualizacion(byte[] data){
         //this.listenerResponse = listener;
         pa_request.UnPackData(data);
+
+        if (!PAYUtils.isNullWithTrim(pa_request.getMID()) && !PAYUtils.isNullWithTrim(pa_request.getTID())){
+            TMConfig.getInstance().setMerchID(pa_request.getMID())
+                    .setTermID(pa_request.getTID()).save();
+        }
         if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
             try{
                 Intent intentPack = ctx.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
