@@ -972,8 +972,8 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 final EditText editText_telefono = (EditText) findViewById(R.id.editText_telefono);
                 close = (ImageView) findViewById(R.id.iv_close);
                 close.setOnClickListener(MasterControl.this);
-                /*editText_cedula.setInputType(InputType.TYPE_NULL);
-                editText_telefono.setInputType(InputType.TYPE_NULL);*/
+                editText_cedula.setInputType(InputType.TYPE_NULL);
+                editText_telefono.setInputType(InputType.TYPE_NULL);
                 editText_cedula.requestFocus();
 
                 if (countDownTimer != null) {
@@ -1036,9 +1036,17 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                         if (editText_cedula.getText().toString().trim().length() > 5 && isOnSignature) {
                             Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
                             saveImage(signatureBitmap);
-                            countDownTimerSignature.cancel();
-                            inputContent = editText_cedula.getText().toString() + ";" + editText_telefono.getText().toString();
-                            listener.confirm(InputManager.Style.COMMONINPUT);
+                            File file = new File(Environment.getExternalStorageDirectory().toString() + "/saved_signature/" + "signature.jpeg");
+                            System.out.println("FIRMA " + file.length());
+                            if (file.length() >= 8500) {
+                                UIUtils.showAlertDialog("Informacion","Ingrese una firma más pequeña", MasterControl.this);
+                                mSignaturePad.clear();
+                            } else {
+                                countDownTimerSignature.cancel();
+                                inputContent = editText_cedula.getText().toString() + ";" + editText_telefono.getText().toString();
+                                listener.confirm(InputManager.Style.COMMONINPUT);
+                            }
+
                         } else if (!isOnSignature) {
                             UIUtils.showAlertDialog("Informacion","Debe ingresar firma", MasterControl.this);
                         } else if (editText_cedula.getText().toString().trim().length() <= 5) {
@@ -1046,7 +1054,6 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                         }
                     }
                 });
-
 
             }
         });
