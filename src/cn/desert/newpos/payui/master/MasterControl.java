@@ -414,6 +414,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
                         if(keyCode == KeyEvent.KEYCODE_BACK){
+                            contFallback = 0;
                             listener.cancel();
                         }
                         return false;
@@ -1683,6 +1684,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             }
 
             public void onFinish() {
+                contFallback = 0;
                 countDownTimerGeneral.cancel();
                 /*inputContent = "false";
                 listener.confirm(InputManager.Style.COMMONINPUT);*/

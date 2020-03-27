@@ -337,7 +337,6 @@ public class EmvL2Process {
             TranResult = emvL2.EmvL2TransactionExecute(0);
 
             if (getToken()) {
-                TranResult = IEmvL2CallBack.L2_APPROVED;
                 return 0;
             }
 

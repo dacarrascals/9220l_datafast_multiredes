@@ -103,7 +103,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
 
         Logger.debug("PagoElecTrans>>finish");
 
-        if (retVal != 106 && retVal != 104) {
+        if (retVal != Tcode.T_wait_timeout && retVal != Tcode.T_user_cancel_input && retVal != Tcode.T_unsupport_card) {
             if (aCmd.equals(PP)) {
                 callbackRsp = new waitRspReverse() {
                     @Override
@@ -446,8 +446,11 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         code = emvl2.start();
 
         Logger.debug("EmvL2Process return = " + code);
-        if ((code != 0) || (emvl2.tkn == null)) {
+        if ((code != 0)) {
             retVal = Tcode.T_err_detect_card_failed;
+            if (emvl2.tkn == null) {
+                retVal = Tcode.T_unsupport_card;
+            }
             transUI.showError(timeout, retVal, processPPFail);
             return;
         }

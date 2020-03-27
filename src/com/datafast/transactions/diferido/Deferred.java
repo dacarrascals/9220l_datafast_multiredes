@@ -75,42 +75,25 @@ public class Deferred extends FinanceTrans implements TransPresenter {
         Logger.debug("DiferidoTrans>>finish");
 
         if (retVal != 106 && retVal != 104) {
-            if (aCmd.equals(PP)) {
+            if (aCmd.equals(PP)){
                 callbackRsp = new waitRspReverse() {
                     @Override
                     public void getWaitRspReverse(int status) {
                         retVal = status;
-                        if (Reverse() != 0) {
-                            if (retVal != Tcode.T_not_reverse) {
-                                transUI.showError(timeout, retVal);
-                            } else {
+                        if (Reverse() != 0){
+                            if (retVal != Tcode.T_not_reverse){
+                                transUI.showError(timeout,retVal);
+                            }else {
                                 transUI.showfinish();
                             }
-                        } else {
-                            transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
+                        }else {
+                            transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
                         }
                     }
                 };
             }
         }
 
-        if (aCmd.equals(PP)){
-            callbackRsp = new waitRspReverse() {
-                @Override
-                public void getWaitRspReverse(int status) {
-                    retVal = status;
-                    if (Reverse() != 0){
-                        if (retVal != Tcode.T_not_reverse){
-                            transUI.showError(timeout,retVal);
-                        }else {
-                            transUI.showfinish();
-                        }
-                    }else {
-                        transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
-                    }
-                }
-            };
-        }
         if (aCmd.equals(PP)){
             if (callbackRsp != null){
                 callbackRsp.getWaitRspReverse(retVal);

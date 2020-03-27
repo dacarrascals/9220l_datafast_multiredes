@@ -3284,6 +3284,7 @@ public class FinanceTrans extends Trans {
         }
 
         if (cardInfo.isResultFalg()) {
+            contFallback = 0;
             int type = cardInfo.getCardType();
             switch (type) {
                 case CardManager.TYPE_MAG:

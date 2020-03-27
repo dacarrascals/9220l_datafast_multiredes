@@ -317,8 +317,12 @@ public class CallBackHandle implements IEmvL2CallBack {
                             case Trans.Type.ELECTRONIC:
                             case Trans.Type.ELECTRONIC_DEFERRED:
                                 tkn = ISOUtil.byte2hex(resp);
-                                if (tkn.indexOf('D')>0) {
+                                int index = tkn.indexOf('D');
+                                if (index > 0) {
                                     token = tkn.substring(18, tkn.indexOf('D'));
+                                    if (token.length() > 6) {
+                                        token = null;
+                                    }
                                 }
                                 break;
                             default:
