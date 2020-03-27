@@ -1,53 +1,28 @@
 package com.datafast.transactions.diferido;
 
-import android.app.Service;
 import android.content.Context;
 import android.media.ToneGenerator;
-import android.util.Log;
 
-import com.android.desert.keyboard.InputInfo;
-import com.android.newpos.libemv.PBOCTag9c;
-import com.android.newpos.libemv.PBOCTransProperty;
-import com.android.newpos.libemv.PBOCode;
-import com.android.newpos.pay.R;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.transactions.callbacks.waitRspReverse;
 import com.datafast.transactions.common.CommonFunctionalities;
-import com.datafast.transactions.common.GetAmount;
-import com.newpos.bypay.EmvL2CVM;
 import com.newpos.libpay.Logger;
-import com.newpos.libpay.device.card.CardInfo;
-import com.newpos.libpay.device.card.CardManager;
-import com.newpos.libpay.device.contactless.EmvL2Process;
-import com.newpos.libpay.device.pinpad.PinInfo;
 import com.newpos.libpay.helper.iso8583.ISO8583;
 import com.newpos.libpay.presenter.TransPresenter;
-import com.newpos.libpay.process.EmvTransaction;
 import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.TransInputPara;
 import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
 import cn.desert.newpos.payui.UIUtils;
-import cn.desert.newpos.payui.master.MasterControl;
 
 import static cn.desert.newpos.payui.master.MasterControl.callbackFallback;
-import static cn.desert.newpos.payui.master.MasterControl.incardTable;
-import static com.android.newpos.pay.StartAppDATAFAST.listPrompts;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
-import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_FALLBACK;
-import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_SWIPE_ICC_CTL;
-import static com.datafast.menus.menus.FALLBACK;
-import static com.datafast.menus.menus.TOTAL_BATCH;
 import static com.datafast.menus.menus.contFallback;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
-import static com.datafast.transactions.common.GetAmount.getConfirmarMontos;
 
 public class Deferred extends FinanceTrans implements TransPresenter {
 
@@ -98,6 +73,26 @@ public class Deferred extends FinanceTrans implements TransPresenter {
             }
         }
         Logger.debug("DiferidoTrans>>finish");
+
+        if (retVal != 106 && retVal != 104) {
+            if (aCmd.equals(PP)) {
+                callbackRsp = new waitRspReverse() {
+                    @Override
+                    public void getWaitRspReverse(int status) {
+                        retVal = status;
+                        if (Reverse() != 0) {
+                            if (retVal != Tcode.T_not_reverse) {
+                                transUI.showError(timeout, retVal);
+                            } else {
+                                transUI.showfinish();
+                            }
+                        } else {
+                            transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
+                        }
+                    }
+                };
+            }
+        }
 
         if (aCmd.equals(PP)){
             callbackRsp = new waitRspReverse() {
