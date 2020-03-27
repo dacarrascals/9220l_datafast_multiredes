@@ -3382,6 +3382,11 @@ public class FinanceTrans extends Trans {
     private boolean fallback(CardInfo cardInfo){
         isFallBack = true;
         retVal = 0;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         cardInfo = transUI.getCardUse(GERCARD_MSG_FALLBACK, timeout,  INMODE_MAG, transEname);
         if (cardInfo.isResultFalg()) {
             int type = cardInfo.getCardType();

@@ -21,7 +21,6 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -41,7 +40,6 @@ import com.android.desert.keyboard.InputInfo;
 import com.android.desert.keyboard.InputListener;
 import com.android.desert.keyboard.InputManager;
 import com.android.newpos.pay.R;
-import com.datafast.datos_pruebas.cfg_emv.LoadEMV;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.configuracioncomercio.Rango;
 import com.datafast.inicializacion.init_emv.CAPK_ROW;
@@ -54,7 +52,6 @@ import com.datafast.tools.InputManager2;
 import com.datafast.tools.MenuApplicationsList;
 import com.datafast.tools.WaitSelectApplicationsList;
 import com.datafast.transactions.callbacks.waitResponseFallback;
-import com.datafast.transactions.callbacks.waitResponseVoid;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.datafast.transactions.common.FormatAmount;
 import com.github.gcacace.signaturepad.views.SignaturePad;
@@ -250,6 +247,14 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
     public void onClick(View view) {
 
         if (view.equals(close)) {
+            if (mSignaturePad != null) {
+                mSignaturePad.clear();
+                File file = new File(Environment.getExternalStorageDirectory().toString() + "/saved_signature/" + "signature.jpeg");
+                if (file.exists()){
+                    file.delete();
+                }
+            }
+            contFallback = 0;
             listener.cancel();
         }
 
