@@ -143,6 +143,9 @@ public class Deferred extends FinanceTrans implements TransPresenter {
             }
 
             if (!CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)){
+                if(retVal == 0){
+                    retVal = Tcode.T_user_cancel_input;
+                }
                 contFallback = 0;
                 return retVal;
             }
