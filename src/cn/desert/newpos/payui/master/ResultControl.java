@@ -77,7 +77,7 @@ public class ResultControl extends BaseActivity {
                         //over();
                         removeCard();
                     }
-                }, 4 * second);
+                }, 3 * second);
             }
             over();
         } else {
@@ -87,7 +87,7 @@ public class ResultControl extends BaseActivity {
                     //over();
                     removeCard();
                 }
-            }, 4 * second);
+            }, 3 * second);
         }
     }
 

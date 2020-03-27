@@ -1245,7 +1245,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             public void run() {
                 checkCardPresent();
             }
-        }, 4000);
+        }, 3000);
     }
 
     private void checkCardPresent() {
