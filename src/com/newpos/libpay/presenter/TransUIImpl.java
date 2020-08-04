@@ -411,7 +411,7 @@ public class TransUIImpl implements TransUI {
     }
 
     public void handlingError(int timeout, int status) {
-        transView.showMsgInfo(timeout, getErrInfo(String.valueOf(status)),false);
+        transView.showMsgInfo(timeout, getErrInfo(String.valueOf(status)),true);
     }
 
     @Override
@@ -421,7 +421,7 @@ public class TransUIImpl implements TransUI {
 
     @Override
     public void handlingInfo(int timeout, int status, String msg) {
-        transView.showMsgInfo(timeout, getStatusInfo(String.valueOf(status)) + msg,false);
+        transView.showMsgInfo(timeout, getStatusInfo(String.valueOf(status)) + msg,true);
     }
 
     @Override
