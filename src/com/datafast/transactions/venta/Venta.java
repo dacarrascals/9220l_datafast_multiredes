@@ -72,15 +72,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
 
         if (setAmountPP()) {
             if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)){
-                if(prepareOnline()){
-                    UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
-                }else {
+                if(!prepareOnline()) {
                     UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-                    try{
-                        Thread.sleep(2000);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
                 }
                 if (aCmd.equals(PP)){
                     callbackRsp = new waitRspReverse() {

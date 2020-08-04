@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -276,15 +277,24 @@ public class menus extends AppCompatActivity {
          contFallback = 0;
          isInit = PolarisUtil.isInitPolaris(menus.this);
          if (!isInit) {
-             UIUtils.toastInit(menus.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_INIT);
+             new Handler().postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+                     if (UIUtils.dialog != null) {
+                         if (!UIUtils.dialog.isShowing()) {
+                             UIUtils.showAlertDialogInit("ATENCIÓN", DefinesDATAFAST.MSG_INIT, menus.this);
+                         }
+                     } else {
+                         UIUtils.showAlertDialogInit("ATENCIÓN", DefinesDATAFAST.MSG_INIT, menus.this);
+                     }
+                 }
+             }, 500);
+
          }
      }
 
     @Override
     protected void onPause() {
-        if (!isInit) {
-            UIUtils.cancelToastInit();
-        }
         super.onPause();
     }
 }

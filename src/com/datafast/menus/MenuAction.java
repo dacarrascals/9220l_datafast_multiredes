@@ -255,7 +255,6 @@ public class MenuAction {
             case DefinesDATAFAST.ITEM_INICIALIZACION:
                 idAcquirer = idLote;
                 if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
-                    UIUtils.cancelToastInit();
                     //if (!ToolsBatch.statusTrans(context)) {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -269,7 +268,6 @@ public class MenuAction {
                 }
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_INICIAL:
-                UIUtils.cancelToastInit();
                 String text = "CONFIG INICIAL";
                 intent.putExtra(JUMP_KEY, text);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -226,16 +226,18 @@ public class ProcessPPFail extends FinanceTrans {
     private String verifyHolderName(String nameCard){
         boolean isHexa;
         String ret = "";
-        if (!nameCard.equals("---")) {
-            if (nameCard.length() > 0) {
-                isHexa = nameCard.matches("^[0-9a-fA-F]+$");                   //validacion de variable labelCard para evitar conversion
-                if (!isHexa) {
-                    nameCard = ISOUtil.convertStringToHex(nameCard);
+        if (nameCard != null && !nameCard.equals("")) {
+            if (!nameCard.equals("---")) {
+                if (nameCard.length() > 0) {
+                    isHexa = nameCard.matches("^[0-9a-fA-F]+$");                   //validacion de variable labelCard para evitar conversion
+                    if (!isHexa) {
+                        nameCard = ISOUtil.convertStringToHex(nameCard);
+                    }
+                    ret = ISOUtil.hex2AsciiStr(nameCard.trim());
                 }
-                ret = ISOUtil.hex2AsciiStr(nameCard.trim());
+            }else{
+                return ret;
             }
-        }else{
-            return ret;
         }
         return ret;
     }

@@ -247,7 +247,6 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     private void settings(){
-        UIUtils.toastInit(ServerTCP.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_INIT);
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
 

@@ -163,14 +163,6 @@ public class ResultControl extends BaseActivity {
                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
-                        if (!isInit) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    UIUtils.toastInit(ResultControl.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_INIT);
-                                }
-                            });
-                        }
                         if (callBackSeatle != null)
                             callBackSeatle.getRspSeatleReport(0);
                         finish();

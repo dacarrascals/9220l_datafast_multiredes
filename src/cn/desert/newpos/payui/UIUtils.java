@@ -2,6 +2,7 @@ package cn.desert.newpos.payui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Instrumentation;
 import android.content.Context;
@@ -690,47 +691,27 @@ public class UIUtils {
         dialog.show();
     }
 
-    static CountDownTimer countDownTimer = null;
-    static Toast toast;
-    public static void toastInit(Activity activity, int ico, String str) {
-        LayoutInflater inflater_3 = activity.getLayoutInflater();
-        View view_3 = inflater_3.inflate(R.layout.app_toast,
-                (ViewGroup) activity.findViewById(R.id.toast_layout));
-        ImageView face = (ImageView) view_3.findViewById(R.id.app_t_iv);
+    static AlertDialog.Builder alertDialog;
+    public static AlertDialog dialog;
+    public static void showAlertDialogInit(String title, String msg, Context context){
+        alertDialog = new AlertDialog.Builder(context);
 
-        face.setBackgroundResource(ico);
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(msg);
+        alertDialog.setIcon(R.drawable.ic_launcher);
+        alertDialog.setCancelable(false);
 
-        toast = new Toast(activity);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(view_3);
-        ((TextView) view_3.findViewById(R.id.toast_tv)).setText(str);
-        toast.show();
-
-        countDownTimer = new CountDownTimer(5000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                if (toast != null){
-                    toast.show();
-                }
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
-            public void onFinish() {
-                if (countDownTimer != null) {
-                    countDownTimer.start();
-                toast.show();
-                }
-            }
-        }.start();
+        });
 
-    }
 
-    public static void cancelToastInit() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer = null;
-        }
-        if (toast != null) {
-            toast.cancel();
-            toast = null;
+        dialog = alertDialog.create();
+        if (!dialog.isShowing()) {
+            dialog.show();
         }
     }
 }
