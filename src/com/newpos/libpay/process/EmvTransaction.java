@@ -30,6 +30,7 @@ import com.pos.device.icc.OperatorMode;
 import com.pos.device.icc.SlotType;
 import com.pos.device.icc.VCC;
 //import com.pos.device.ped.RsaPinKey;
+import com.pos.device.ped.RsaPinKey;
 import com.pos.device.picc.EmvContactlessCard;
 import com.pos.device.picc.PiccReader;
 
@@ -696,6 +697,11 @@ public class EmvTransaction {
             Logger.debug("=====getOfflinePin======");
             // 读PED倒计时并为零 才继续执行
             // 请输入OFFLINE PIN
+            return 0;
+        }
+
+        @Override
+        public int getOfflinePin(int i, RsaPinKey rsaPinKey, byte[] bytes, byte[] bytes1) {
             return 0;
         }
 

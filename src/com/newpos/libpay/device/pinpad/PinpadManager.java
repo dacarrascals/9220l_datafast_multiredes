@@ -192,7 +192,6 @@ public class PinpadManager {
                 e.printStackTrace();
             }
             ped.setPinPadView(padView);
-            ped.displayPinEntry("0,4,5,6,7,8,9,10,11,12");
         }
     }
 

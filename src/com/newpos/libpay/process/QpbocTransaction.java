@@ -17,6 +17,7 @@ import com.pos.device.emv.IEMVCallback;
 import com.pos.device.emv.IEMVHandler;
 import com.pos.device.emv.TerminalMckConfigure;
 //import com.pos.device.ped.RsaPinKey;
+import com.pos.device.ped.RsaPinKey;
 import com.pos.device.picc.EmvContactlessCard;
 import com.pos.device.qpboc.QPbocHandler;
 import com.pos.device.qpboc.QPbocParameters;
@@ -233,6 +234,11 @@ public class QpbocTransaction {
         @Override
         public int getPin(int[] pinLen, byte[] cardPin) {
             Logger.debug("==getPin==");
+            return 0;
+        }
+
+        @Override
+        public int getOfflinePin(int i, RsaPinKey rsaPinKey, byte[] bytes, byte[] bytes1) {
             return 0;
         }
 

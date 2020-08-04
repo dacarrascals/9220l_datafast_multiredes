@@ -1,21 +1,17 @@
 package com.datafast.tools;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.wifi.WifiManager;
+import android.widget.Toast;
 
-import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
-import com.datafast.pinpad.cmd.CP.CP_ConfigIP;
 import com.datafast.pinpad.cmd.CP.CP_Request;
 import com.datafast.pinpad.cmd.CP.CP_Response;
-import com.datafast.server.activity.ServerTCP;
+import com.datafast.pinpad.cmd.CP.IpEthernetConf;
+import com.datafast.pinpad.cmd.CP.IpWifiConf;
 import com.datafast.server.callback.waitResponse;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
-import com.pos.device.ethernet.Ethernet;
-
-import java.io.IOException;
+import com.pos.device.net.eth.EthernetManager;
 
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
@@ -67,12 +63,32 @@ public class Wifi {
 
         listener.waitRspHost(getCp_response().packData());
 
-        WifiManager wifiManager = CP_ConfigIP.setWifi(this.ctx, cp_request.getIp(), cp_request.getGateway(), cp_request.getMask());
+        //WifiManager wifiManager = CP_ConfigIP.setWifi(this.ctx, cp_request.getIp(), cp_request.getGateway(), cp_request.getMask());
 
-        if (CP_ConfigIP.isWifiEthernet()){
+        if (EthernetManager.getInstance().isEtherentEnabled()) {
+
+            try {
+                IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+            } catch (Exception e) {
+                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+        } else {
+
+            try {
+                IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+            } catch (Exception e) {
+                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+        }
+
+        /*if (CP_ConfigIP.isWifiEthernet()){
             wifiManager.disconnect();
             wifiManager.reconnect();
-        }
+        }*/
 
         return ret;
 

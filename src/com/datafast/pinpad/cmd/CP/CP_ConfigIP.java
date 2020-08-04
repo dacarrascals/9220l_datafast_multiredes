@@ -7,8 +7,6 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.v7.app.AppCompatActivity;
-import com.pos.device.ethernet.EthDevinfoParcel;
-import com.pos.device.ethernet.Ethernet;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -31,7 +29,7 @@ public class CP_ConfigIP extends AppCompatActivity {
         WifiInfo connectionInfo = wifiManager.getConnectionInfo();
         List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
 
-        EthDevinfoParcel eth0Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH0_NAME);
+        /*EthDevinfoParcel eth0Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH0_NAME);
         EthDevinfoParcel eth1Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH1_NAME);
 
         if (eth0Info != null || eth1Info != null) {
@@ -64,7 +62,7 @@ public class CP_ConfigIP extends AppCompatActivity {
                 e.printStackTrace();
                 return null;
             }
-        }
+        }*/
         return wifiManager;
     }
 
@@ -133,7 +131,7 @@ public class CP_ConfigIP extends AppCompatActivity {
         f.set(obj, Enum.valueOf((Class<Enum>) f.getType(), value));
     }
 
-    public static boolean saveStaticIPConfig(String ip, String gateway, String mask) {
+    /*public static boolean saveStaticIPConfig(String ip, String gateway, String mask) {
         EthDevinfoParcel ethDevinfo = new EthDevinfoParcel();
         ethDevinfo.setConnectMode(EthDevinfoParcel.ETHERNET_CONN_MODE_MANUAL);
         ethDevinfo.setIfName("eth0");
@@ -149,9 +147,9 @@ public class CP_ConfigIP extends AppCompatActivity {
         }
 
         return saved;
-    }
+    }*/
 
-    public static void saveDynamicIPConfig() {
+    /*public static void saveDynamicIPConfig() {
         EthDevinfoParcel ethDevinfo = new EthDevinfoParcel();
         ethDevinfo.setConnectMode(EthDevinfoParcel.ETHERNET_CONN_MODE_DHCP);
         ethDevinfo.setIfName("eth0");
@@ -165,5 +163,5 @@ public class CP_ConfigIP extends AppCompatActivity {
         } else {
             System.out.println("CONFIG FAILED");
         }
-    }
+    }*/
 }
