@@ -1098,4 +1098,9 @@ public class TMConfig implements Serializable {
         }
         return true;
     }
+
+    public void activeDebugMode(boolean active){
+        this.setDebug(active);
+        this.save();
+    }
 }

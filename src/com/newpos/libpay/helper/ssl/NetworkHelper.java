@@ -1,11 +1,13 @@
 package com.newpos.libpay.helper.ssl;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.android.newpos.pay.R;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.ISOUtil;
 
@@ -78,10 +80,18 @@ public class NetworkHelper {
 		try {
 
 			if (ISOUtil.stringToBoolean(tablaIp.getTLS())){
-				SSLFactory sslFactory = new SSLFactory(tcontext);
-				socket = sslFactory.createSocket();
-				socket.setSoTimeout(timeoutRsp);
-				socket.connect(new InetSocketAddress(ip, port), timeoutCon);//20000
+				Resources res = tcontext.getResources();
+				InputStream tlsKeyStore = res.openRawResource(R.raw.tool);
+				AndroidSocketFactory sf = new AndroidSocketFactory(tlsKeyStore);
+				sf.setAlgorithm("TLSv1.2");
+				sf.setKeyPassword("123456");
+				sf.setPassword("123456");
+				sf.setServerAuthNeeded(false);
+				sf.setClientAuthNeeded(false);
+				socket = sf.createSocket(ip, port);
+
+				socket.setSoTimeout(timeoutCon);
+
 				is = socket.getInputStream();
 				os = socket.getOutputStream();
 			}else {
@@ -91,28 +101,7 @@ public class NetworkHelper {
 				is = socket.getInputStream();
 				os = socket.getOutputStream();
 			}
-		} catch (FileNotFoundException e) {
-			Logger.error("Exception" + e.toString());
-			return -1;
-		} catch (IOException e) {
-			Logger.error("Exception" + e.toString());
-			return -1;
-		} catch (CertificateException e) {
-			Logger.error("Exception" + e.toString());
-			return -1;
-		} catch (NoSuchAlgorithmException e) {
-			Logger.error("Exception" + e.toString());
-			return -1;
-		} catch (UnrecoverableKeyException e) {
-			Logger.error("Exception" + e.toString());
-			return -1;
-		} catch (KeyStoreException e) {
-			Logger.error("Exception" + e.toString());
-			return -1;
-		} catch (KeyManagementException e) {
-			Logger.error("Exception" + e.toString());
-			return -1;
-		}catch (Exception e){
+		} catch (Exception e) {
 			Logger.error("Exception" + e.toString());
 			return -1;
 		}

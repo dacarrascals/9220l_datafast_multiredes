@@ -25,6 +25,7 @@ import com.datafast.tools.BatteryStatus;
 import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
 import com.newpos.libpay.PaySdk;
+import com.newpos.libpay.global.TMConfig;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,8 @@ public class StartAppDATAFAST extends AppCompatActivity {
         initSDK();
 
         isInit = PolarisUtil.isInitPolaris(StartAppDATAFAST.this);
+
+        //TMConfig.getInstance().activeDebugMode(true);
 
         //kioske mode
         kiosk();
