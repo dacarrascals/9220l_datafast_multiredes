@@ -58,7 +58,7 @@ public class ServerTCP extends AppCompatActivity {
     private String[] tipoVenta;
     private int seleccion = 0;
 
-    public static waitResponse listener;
+    public static waitResponse listenerServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +102,7 @@ public class ServerTCP extends AppCompatActivity {
 
     public void startTrans(final String aCmd, final byte[] aDat, waitResponse l) {
 
-        this.listener = l;
+        this.listenerServer = l;
         new Thread() {
             @Override
             public void run() {
@@ -126,7 +126,7 @@ public class ServerTCP extends AppCompatActivity {
                             break;
 
                         case CP:
-                            ret = wifi.comunicacion(aDat, listener);
+                            ret = wifi.comunicacion(aDat, listenerServer);
                             if (ret){
                                 stopServer();
                                 UIUtils.startResult(ServerTCP.this,true,"DATOS DE RED ACTUALIZADOS",false);
@@ -134,7 +134,7 @@ public class ServerTCP extends AppCompatActivity {
                             break;
                         case PC:
                             ret = control.actualizacionControl(aDat);
-                            listener.waitRspHost(control.getPc_response().packData());
+                            listenerServer.waitRspHost(control.getPc_response().packData());
                             if (ret){
                                 UIUtils.startResult(ServerTCP.this,true,"TRANS. BORRADAS\nINCIO DE DIA REALIZADO",false);
                             }
@@ -149,7 +149,7 @@ public class ServerTCP extends AppCompatActivity {
                             }else {
                                 UIUtils.startResult(ServerTCP.this,false,actualizacion.msgfail,false);
                             }
-                            listener.waitRspHost(actualizacion.getPa_response().packData());
+                            listenerServer.waitRspHost(actualizacion.getPa_response().packData());
                             break;
                         default:
                             break;

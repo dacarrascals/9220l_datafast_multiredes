@@ -1,6 +1,7 @@
 package com.newpos.libpay.presenter;
 
 import android.app.Activity;
+import android.os.Handler;
 
 import com.android.desert.keyboard.InputInfo;
 import com.android.desert.keyboard.InputManager;
@@ -29,6 +30,8 @@ import com.newpos.libpay.utils.PAYUtils;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
+
+import cn.desert.newpos.payui.master.MasterControl;
 
 import static com.datafast.tools_card.GetCard.cInfo;
 import static com.datafast.tools_card.GetCard.cardManager;
@@ -448,7 +451,7 @@ public class TransUIImpl implements TransUI {
 
     @Override
     public void showError(int timeout, int errcode) {
-        transView.showError(timeout, getErrInfo(String.valueOf(errcode)));
+        transView.showError(timeout, getErrInfo(String.valueOf(errcode)), false);
     }
 
     @Override
@@ -457,9 +460,11 @@ public class TransUIImpl implements TransUI {
     }
 
     @Override
-    public void showError(int timeout, int errcode, ProcessPPFail processPPFail) {
-        processPPFail.cmdCancel(Server.cmd,errcode);
-        transView.showError(timeout, getErrInfo(String.valueOf(errcode)));
+    public void showError(int timeout, final int errcode, final ProcessPPFail processPPFail) {
+        if (!MasterControl.alreadySend) {
+            processPPFail.cmdCancel(Server.cmd,errcode);
+        }
+        transView.showError(timeout, getErrInfo(String.valueOf(errcode)), true);
     }
 
     @Override

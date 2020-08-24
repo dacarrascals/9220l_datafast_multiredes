@@ -10,6 +10,7 @@ import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -46,6 +47,7 @@ import com.datafast.inicializacion.init_emv.CAPK_ROW;
 import com.datafast.inicializacion.init_emv.EMVAPP_ROW;
 import com.datafast.inicializacion.prompts.ChequeoPromtsActivos;
 import com.datafast.inicializacion.prompts.Prompt;
+import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.tools.InputManager2;
@@ -92,10 +94,12 @@ import static com.datafast.menus.menus.FALLBACK;
 import static com.datafast.menus.menus.contFallback;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC_DEFERRED;
 import static com.newpos.libpay.trans.Trans.idLote;
 import static com.newpos.libpay.trans.finace.FinanceTrans.LOCAL;
+import static com.newpos.libpay.trans.finace.FinanceTrans.ppResponse;
 
 //import static com.datafast.menus.menus.acquirerRow;
 //import static com.datafast.menus.menus.cardRow;
@@ -736,11 +740,27 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
         });
     }
 
+    public static boolean alreadySend = false;
     @Override
-    public void showError(int timeout, final String err) {
+    public void showError(int timeout, final String err, final boolean pp) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if (ppResponse != null && pp && !alreadySend) {
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            listenerServer.waitRspHost(ppResponse);
+                            alreadySend = false;
+                        }
+                    }, 3300);
+
+                    alreadySend = true;
+
+                }
+
                 UIUtils.startResult(MasterControl.this, false, err);
                 deleteTimer();
             }
@@ -764,6 +784,18 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 showHanding(status);
 
                 deleteTimer();
+
+                if (transaccion && ppResponse != null && !alreadySend){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            listenerServer.waitRspHost(ppResponse);
+                            alreadySend = false;
+                        }
+                    }, 3300);
+                    alreadySend = true;
+
+                }
                 //counterDownTimer(timeout);
             }
         });

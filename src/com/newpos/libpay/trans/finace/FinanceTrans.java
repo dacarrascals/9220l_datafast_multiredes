@@ -78,7 +78,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
-import static com.datafast.server.activity.ServerTCP.listener;
+import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsAmountPrinter;
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
@@ -2777,6 +2777,7 @@ public class FinanceTrans extends Trans {
     /**
      * Procesar Pago
      */
+    public static byte[] ppResponse;
     private void responsePP() {
 
         pp_response.setTypeMsg(PP);
@@ -2899,7 +2900,7 @@ public class FinanceTrans extends Trans {
         }
         pp_response.setHash(keySecurity);
 
-        listener.waitRspHost(pp_response.packData());
+        ppResponse = pp_response.packData();
 
     }
 
@@ -3088,7 +3089,8 @@ public class FinanceTrans extends Trans {
         ltResponse.setHash(keySecurity);
         retVal = 0;
 
-        listener.waitRspHost(ltResponse.packData());
+        ppResponse = ltResponse.packData();
+        //listenerServer.waitRspHost(ltResponse.packData());
     }
 
     /**
@@ -3117,7 +3119,8 @@ public class FinanceTrans extends Trans {
         ctResponse.setHash(keySecurity);
         retVal = 0;
 
-        listener.waitRspHost(ctResponse.packData());
+        ppResponse = ctResponse.packData();
+        //listenerServer.waitRspHost(ctResponse.packData());
     }
 
     protected boolean checkBatchAndSettle(boolean checkBatch, boolean checkSettle){

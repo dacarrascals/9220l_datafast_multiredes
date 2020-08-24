@@ -13,6 +13,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
+import static com.newpos.libpay.trans.finace.FinanceTrans.ppResponse;
 
 public class Server extends AppCompatActivity {
 
@@ -95,6 +96,9 @@ public class Server extends AppCompatActivity {
                                         //outputStream.write(Info);
                                         //outputStream.flush();
                                         //output.close();
+
+                                        ppResponse = null;
+
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }

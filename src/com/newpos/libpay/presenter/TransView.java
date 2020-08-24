@@ -2,6 +2,7 @@ package com.newpos.libpay.presenter;
 
 import com.android.desert.keyboard.InputManager;
 import com.datafast.inicializacion.prompts.Prompt;
+import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.newpos.libpay.device.user.OnUserResultListener;
 import com.newpos.libpay.trans.translog.TransLogData;
 
@@ -122,7 +123,7 @@ public interface TransView {
      * @param timeout 超时时间
      * @param err     错误详情信息
      */
-    void showError(int timeout, String err);
+    void showError(int timeout, String err, final boolean pp);
 
     /**
      * 通知UI显示交易进行到某一状态

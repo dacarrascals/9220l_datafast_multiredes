@@ -93,8 +93,13 @@ public class Venta extends FinanceTrans implements TransPresenter {
                     };
                 }
             } else {
-                transUI.showError(timeout, retVal,processPPFail);
                 UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                transUI.showError(timeout, retVal,processPPFail);
                 Log.i("Venta" , String.valueOf(retVal));
             }
         }

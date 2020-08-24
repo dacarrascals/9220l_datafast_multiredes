@@ -21,7 +21,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
-import static com.datafast.server.activity.ServerTCP.listener;
+import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.newpos.libpay.presenter.TransUIImpl.getErrInfo;
 
 public class ProcessPPFail extends FinanceTrans {
@@ -84,7 +84,8 @@ public class ProcessPPFail extends FinanceTrans {
                 ctResponse.setFiller(ISOUtil.spacepad("", 27));
                 ctResponse.setHash(keySecurity);
 
-                listener.waitRspHost(ctResponse.packData());
+                ppResponse = ctResponse.packData();
+                //listenerServer.waitRspHost(ctResponse.packData());
 
                 break;
 
@@ -106,7 +107,8 @@ public class ProcessPPFail extends FinanceTrans {
                 ltResponse.setHash(keySecurity);
                 retVal = 0;
 
-                listener.waitRspHost(ltResponse.packData());
+                ppResponse = ltResponse.packData();
+                //listenerServer.waitRspHost(ltResponse.packData());
                 break;
 
             case PP:
@@ -218,7 +220,9 @@ public class ProcessPPFail extends FinanceTrans {
                 }
                 pp_response.setHash(keySecurity);
 
-                listener.waitRspHost(pp_response.packData());
+                ppResponse = pp_response.packData();
+
+                //listenerServer.waitRspHost(pp_response.packData());
                 break;
         }
     }
