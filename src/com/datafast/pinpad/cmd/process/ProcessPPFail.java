@@ -85,6 +85,7 @@ public class ProcessPPFail extends FinanceTrans {
                 ctResponse.setHash(keySecurity);
 
                 ppResponse = ctResponse.packData();
+                
                 //listenerServer.waitRspHost(ctResponse.packData());
 
                 break;
