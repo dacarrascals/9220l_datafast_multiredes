@@ -94,6 +94,7 @@ import static com.datafast.menus.menus.FALLBACK;
 import static com.datafast.menus.menus.contFallback;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC_DEFERRED;
@@ -733,6 +734,21 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if (ppResponse != null && (Server.cmd.equals(CT) || Server.cmd.equals(LT))) {
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            listenerServer.waitRspHost(ppResponse);
+                            alreadySend = false;
+                        }
+                    }, 3300);
+
+                    alreadySend = true;
+
+                }
+
                 //UIUtils.toast(MasterControl.this , info);
                 UIUtils.startResult(MasterControl.this, true, info);
                 deleteTimer();

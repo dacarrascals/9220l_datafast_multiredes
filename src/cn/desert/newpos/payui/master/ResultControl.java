@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.Logger;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
@@ -150,7 +151,7 @@ public class ResultControl extends BaseActivity {
                         public void run() {
                             iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
 
-                            if (iccReader0.isCardPresent() && !lastCmd.equals(LT)) {
+                            if (iccReader0.isCardPresent() && (!Server.cmd.equals(LT))) {
                                 setContentView(R.layout.activity_remove_card);
                                 removeCard = (ImageView) findViewById(R.id.iv_remove__card);
                                 removeCard.setImageResource(R.drawable.remove_card);
@@ -175,7 +176,7 @@ public class ResultControl extends BaseActivity {
 
     private boolean checkCard() {
         boolean ret = false;
-        if (lastCmd.equals(LT)) {
+        if (Server.cmd.equals(LT)) {
             return true;
         }
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
