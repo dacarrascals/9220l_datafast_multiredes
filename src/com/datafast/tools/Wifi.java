@@ -3,6 +3,7 @@ package com.datafast.tools;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
 import com.datafast.pinpad.cmd.CP.CP_Request;
 import com.datafast.pinpad.cmd.CP.CP_Response;
@@ -34,29 +35,30 @@ public class Wifi {
         return cp_response;
     }
 
-    public boolean comunicacion(byte[] aDat,waitResponse listener) {
+    public boolean comunicacion(byte[] aDat, waitResponse listener) {
         String[] data = new String[2];
         boolean ret = false;
 
         cp_request.UnPackData(aDat);
 
-        if (!PAYUtils.isNullWithTrim(cp_request.getIpPrimary()) && !PAYUtils.isNullWithTrim(cp_request.getPortPrimary())){
+        if (!PAYUtils.isNullWithTrim(cp_request.getIpPrimary()) && !PAYUtils.isNullWithTrim(cp_request.getPortPrimary())) {
             data[0] = cp_request.getIpPrimary();
             data[1] = cp_request.getPortPrimary();
-
-            ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP,data,0,this.ctx);
+            ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 0, this.ctx);
         }
 
-        if (!PAYUtils.isNullWithTrim(cp_request.getIpSecundary())  && !PAYUtils.isNullWithTrim(cp_request.getPortSecundary())){
+        if (!PAYUtils.isNullWithTrim(cp_request.getIpSecundary()) && !PAYUtils.isNullWithTrim(cp_request.getPortSecundary())) {
             data[0] = cp_request.getIpSecundary();
             data[1] = cp_request.getPortSecundary();
 
-            ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP,data,1,this.ctx);
+            ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 1, this.ctx);
         }
 
-        if (ret){
+        StartAppDATAFAST.listIPs = ChequeoIPs.selectIP(ctx);
+
+        if (ret) {
             processOk();
-        }else{
+        } else {
             processFail();
             ret = false;
         }
@@ -94,14 +96,14 @@ public class Wifi {
 
     }
 
-    private void processOk(){
+    private void processOk() {
         cp_response.setRspCodeMsg(OK);
         cp_response.setRspMessage(ISOUtil.padright(getStatusInfo(String.valueOf(58)) + "", 20, ' '));
         cp_response.setTypeMsg(CP);
         cp_response.setHash(cp_request.getHash());
     }
 
-    private void processFail(){
+    private void processFail() {
         cp_response.setRspCodeMsg(ERROR_PROCESO);
         cp_response.setRspMessage(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         cp_response.setTypeMsg(CP);
