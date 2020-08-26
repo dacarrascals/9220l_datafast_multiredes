@@ -1026,8 +1026,8 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 final EditText editText_telefono = (EditText) findViewById(R.id.editText_telefono);
                 close = (ImageView) findViewById(R.id.iv_close);
                 close.setOnClickListener(MasterControl.this);
-                editText_cedula.setInputType(InputType.TYPE_NULL);
-                editText_telefono.setInputType(InputType.TYPE_NULL);
+                editText_cedula.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText_telefono.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText_cedula.requestFocus();
 
                 if (countDownTimer != null) {
