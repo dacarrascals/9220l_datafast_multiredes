@@ -113,7 +113,7 @@ public class SettleTrans extends Trans implements TransPresenter{
                 setTraceNoInc(true);
                 Logger.debug("FinanceTrans>>OnlineTrans>>结算进行冲正上送");
                 transUI.handling(timeout , Tcode.Status.settle_send_reversal);
-                RevesalTrans revesal = new RevesalTrans(context, "REVERSAL");
+                RevesalTrans revesal = new RevesalTrans(context, "REVERSAL", transUI);
                 for (int i = 0; i < cfg.getReversalCount() ; i++) {
                     //EL PINPAD NO REALIZA CIERRE SE COMENTA LINEA DE ENVIO DE REVERSO
                     //retVal = revesal.sendRevesal();

@@ -764,9 +764,12 @@ public abstract class Trans {
     protected int OnLineTrans() {
 
         int reintentos = Integer.parseInt(host_confi.getREINTENTOS());
+        int showReintentos = 1;
         int rta;
 
         do {
+            transUI.handling(timeout, Tcode.Status.connecting_center, "CONECTANDO IP1 (" + showReintentos + ")");
+            showReintentos ++;
             rta = connect();
             if (rta == 0) {
                 reintentos = 0;
@@ -774,12 +777,16 @@ public abstract class Trans {
             reintentos --;
         }while (reintentos >0);
 
+        showReintentos = 0;
+
         if (rta == -1){
             reintentos = Integer.parseInt(host_confi.getREINTENTOS());
             cfg = TMConfig.getInstance();
             cfg.setPubCommun(false);
             loadConfigIP();
             do {
+                transUI.handling(timeout, Tcode.Status.connecting_center, "CONECTANDO IP2 (" + showReintentos + ")");
+                showReintentos ++;
                 rta = connect();
                 if (rta == 0) {
                     reintentos = 0;
@@ -791,6 +798,8 @@ public abstract class Trans {
         if (rta == -1) {
             return Tcode.T_socket_err;
         }
+
+        transUI.handling(timeout + 10000, Tcode.Status.terminal_reversal);
 
         if (send() == -1) {
             return Tcode.T_send_err;

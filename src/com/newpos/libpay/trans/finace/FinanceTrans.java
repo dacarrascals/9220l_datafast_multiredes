@@ -1294,8 +1294,8 @@ public class FinanceTrans extends Trans {
 
                 //SE INSTANCIA CLASE QUE SE ENCARGA
                 //DEL ENVIO DE EL O LOS REVERSOS EXISTENTES
-                transUI.handling(timeout + 10000, Tcode.Status.terminal_reversal);
-                RevesalTrans revesal = new RevesalTrans(context, "REVERSAL");
+                //transUI.handling(timeout + 10000, Tcode.Status.terminal_reversal);
+                RevesalTrans revesal = new RevesalTrans(context, "REVERSAL", transUI);
 
                 //CICLO QUE SIRVE PARA INTENTAR ENVIAR UN REVERSO X VECES POR DEFECTO 1
                 for (int i = 0; i < 1; i++) {

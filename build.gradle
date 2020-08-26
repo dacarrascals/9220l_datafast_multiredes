@@ -107,7 +107,7 @@ android {
         versionCode 1
         versionName "1.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        applicationId 'com.wposs.datafast5310'
+        applicationId 'com.wposs.datafastpinpadL'
         //multiDexEnabled true
     }
     packagingOptions {

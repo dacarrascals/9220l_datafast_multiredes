@@ -3,6 +3,7 @@ package com.newpos.libpay.trans.manager;
 import android.content.Context;
 
 import com.newpos.libpay.Logger;
+import com.newpos.libpay.presenter.TransUI;
 import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.translog.TransLog;
@@ -20,11 +21,12 @@ import static com.newpos.libpay.trans.finace.FinanceTrans.getTypeCoin;
 public class RevesalTrans extends Trans {
 
     public String rspCode;
-    public RevesalTrans(Context ctx, String transEname) {
+    public RevesalTrans(Context ctx, String transEname, TransUI transUI) {
         super(ctx, transEname);
         isUseOrgVal = true; // 使用原交易的60.1 60.3
         iso8583.setHasMac(false);
         isTraceNoInc = false; // 冲正不需要自增流水号
+        this.transUI = transUI;
     }
 
     protected void setFields(TransLogData data) {
