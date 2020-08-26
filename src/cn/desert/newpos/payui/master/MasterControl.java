@@ -905,6 +905,9 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 //et_inputUser.setInputType(InputType.TYPE_NULL);
                 et_inputUser.requestFocus();
 
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.showSoftInput(et_inputUser, InputMethodManager.SHOW_IMPLICIT);
+
                 et_inputUser.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
