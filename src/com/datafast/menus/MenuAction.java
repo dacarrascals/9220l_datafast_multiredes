@@ -24,6 +24,7 @@ import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.PwMasterKey;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.printer.PrintParameter;
+import com.datafast.tools.ConfigRed;
 import com.datafast.tools.UtilNetwork;
 import com.datafast.tools.WifiSettings;
 import com.datafast.tools_bacth.ToolsBatch;
@@ -366,6 +367,12 @@ public class MenuAction {
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
+                break;
+            case DefinesDATAFAST.ITEM_CONFIG_RED:
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setClass(context, ConfigRed.class);
+                context.startActivity(intent);
                 break;
 
             default:
