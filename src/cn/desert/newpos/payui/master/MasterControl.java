@@ -245,7 +245,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        PaySdk.getInstance().releaseCard();
+        //PaySdk.getInstance().releaseCard();
     }
 
     @Override
@@ -743,7 +743,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 3300);
+                    }, 2500);
 
                     alreadySend = true;
 
@@ -771,7 +771,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 3300);
+                    }, 2500);
 
                     alreadySend = true;
 
@@ -808,7 +808,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 3300);
+                    }, 2500);
                     alreadySend = true;
 
                 }

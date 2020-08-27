@@ -9,6 +9,7 @@ import com.datafast.transactions.callbacks.waitRspReverse;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.datafast.transactions.common.GetAmount;
 import com.newpos.libpay.Logger;
+import com.newpos.libpay.PaySdk;
 import com.newpos.libpay.helper.iso8583.ISO8583;
 import com.newpos.libpay.presenter.TransPresenter;
 import com.newpos.libpay.trans.Tcode;
@@ -95,7 +96,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
             } else {
                 UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -158,9 +159,9 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             msgAprob(Tcode.Status.sale_succ,true);
                             clearPan();
                             return true;
-                        }else {
-                            transUI.handlingError(timeout, retVal);
+                        } else {
                             processPPFail.cmdCancel(Server.cmd,retVal);
+                            transUI.handlingError(timeout, retVal);
                             //transUI.showError(timeout, retVal,processPPFail);
                             clearPan();
                             return false;
