@@ -905,6 +905,9 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 //et_inputUser.setInputType(InputType.TYPE_NULL);
                 et_inputUser.requestFocus();
 
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.showSoftInput(et_inputUser, InputMethodManager.SHOW_IMPLICIT);
+
                 et_inputUser.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -1026,8 +1029,8 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 final EditText editText_telefono = (EditText) findViewById(R.id.editText_telefono);
                 close = (ImageView) findViewById(R.id.iv_close);
                 close.setOnClickListener(MasterControl.this);
-                editText_cedula.setInputType(InputType.TYPE_NULL);
-                editText_telefono.setInputType(InputType.TYPE_NULL);
+                editText_cedula.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText_telefono.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText_cedula.requestFocus();
 
                 if (countDownTimer != null) {
