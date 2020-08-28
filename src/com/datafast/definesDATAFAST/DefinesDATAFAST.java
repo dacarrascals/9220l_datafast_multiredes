@@ -49,7 +49,7 @@ public final class DefinesDATAFAST {
     public static final String MSG_PAPER = "INSERTE PAPEL \n PARA CONTINUAR";
     public static final String LOTE_VACIO = "LOTE VACIO";
     public static final String LOTE_VACIO_PREAUTO = "SIN PREAUTORIZACIONES";
-    public static final String MSG_SETTLE = "REALICE INICIO DE DIA";
+    public static final String MSG_SETTLE = "REALICE PROCESO DE CONTROL";
     public static final String FILE_NAME_PREAUTO = "_preauto_";
     public static final String FILE_NAME_PREVOUCHER = "_prevoucher_";
     public static final String ITEM_TRANS_EN_PANTALLA = "TRANSACCIONES EN LOTE";

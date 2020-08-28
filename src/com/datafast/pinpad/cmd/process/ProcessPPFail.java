@@ -119,14 +119,17 @@ public class ProcessPPFail extends FinanceTrans {
 
                 pp_response.setTypeMsg(PP);
                 if (codRet == Tcode.T_err_batch_full){
-                    pp_response.setRspCodeMsg(PAYUtils.selectRspCode(02,iso8583.getfield(39)));
+                    pp_response.setRspCodeMsg(PAYUtils.selectRspCode(20,iso8583.getfield(39)));
                 }else {
                     pp_response.setRspCodeMsg(PAYUtils.selectRspCode(codRet,iso8583.getfield(39)));
                 }
                 pp_response.setIdCodNetAcq(ISOUtil.padleft(pp_request.getIdCodNetAcq() + "", 2, '0'));
                 pp_response.setRspCode(ISOUtil.spacepadZero(iso8583.getfield(39), 2));
                 String mensaje = getErrInfo(String.valueOf(codRet));
-                if (mensaje.length() > 20){
+                if (codRet == Tcode.T_err_batch_full) {
+                    mensaje = "PROCESO CONTROL";
+                }
+                if (mensaje.length() > 20) {
                     mensaje = mensaje.substring(0,20);
                 }
                 pp_response.setMsgRsp(ISOUtil.padright( mensaje, 20, ' '));

@@ -55,8 +55,8 @@ public class Actualizacion{
             }
         }else {
             intentOK = false;
-            msgfail = "REALICE INICIO DE DIA";
-            processFail(INICIO_DIA, "REALICE INICIO DE DIA");
+            msgfail = "REALICE PROCESO DE CONTROL";
+            processFail(INICIO_DIA, "REALICE PROCESO DE CONTROL");
         }
     }
 
