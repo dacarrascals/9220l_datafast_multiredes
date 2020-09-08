@@ -1,6 +1,7 @@
 package com.datafast.tools;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import com.android.newpos.pay.StartAppDATAFAST;
@@ -31,6 +32,9 @@ public class Wifi {
         cp_request = new CP_Request();
     }
 
+    SharedPreferences preferences;
+    SharedPreferences.Editor edit;
+
     public CP_Response getCp_response() {
         return cp_response;
     }
@@ -41,18 +45,26 @@ public class Wifi {
 
         cp_request.UnPackData(aDat);
 
+        preferences = ctx.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
+        edit = preferences.edit();
+
         if (!PAYUtils.isNullWithTrim(cp_request.getIpPrimary()) && !PAYUtils.isNullWithTrim(cp_request.getPortPrimary())) {
             data[0] = cp_request.getIpPrimary();
             data[1] = cp_request.getPortPrimary();
             ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 0, this.ctx);
+            edit.putString("ip_primary", cp_request.getIpPrimary());
+            edit.putString("port_primary", cp_request.getPortPrimary());
         }
 
         if (!PAYUtils.isNullWithTrim(cp_request.getIpSecundary()) && !PAYUtils.isNullWithTrim(cp_request.getPortSecundary())) {
             data[0] = cp_request.getIpSecundary();
             data[1] = cp_request.getPortSecundary();
-
             ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 1, this.ctx);
+            edit.putString("ip_secundary", cp_request.getIpSecundary());
+            edit.putString("port_secundary", cp_request.getPortSecundary());
         }
+
+        edit.apply();
 
         StartAppDATAFAST.listIPs = ChequeoIPs.selectIP(ctx);
 
