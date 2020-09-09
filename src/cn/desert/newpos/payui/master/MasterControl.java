@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -171,7 +172,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
     //Tarjeta manual
     FloatingActionButton btnTarjetaManual;
 
-    WebView webview;
+    ProgressBar progressBar;
 
     public MasterControl() {
     }
@@ -735,7 +736,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             @Override
             public void run() {
 
-                if (ppResponse != null && (Server.cmd.equals(CT) || Server.cmd.equals(LT))) {
+                if (ppResponse != null && (Server.cmd.equals(CT) || Server.cmd.equals(LT) || info.contains("ANULACION"))) {
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -743,7 +744,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 2500);
+                    }, 2000);
 
                     alreadySend = true;
 
@@ -771,7 +772,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 2500);
+                    }, 2000);
 
                     alreadySend = true;
 
@@ -793,9 +794,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 close.setOnClickListener(MasterControl.this);
                 btnTarjetaManual = (FloatingActionButton) findViewById(R.id.btn_tarjeta_manual);
                 btnTarjetaManual.setVisibility(View.INVISIBLE);
-                webview = (WebView) findViewById(R.id.handling_loading);
+                progressBar = findViewById(R.id.progress);
+
                 if (transaccion){
-                    webview.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
                 showHanding(status);
 
@@ -808,7 +810,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 2500);
+                    }, 2000);
                     alreadySend = true;
 
                 }
@@ -828,10 +830,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 et_title = (TextView) findViewById(R.id.textView_titleToolbar);
                 btnTarjetaManual = (FloatingActionButton) findViewById(R.id.btn_tarjeta_manual);
                 btnTarjetaManual.setVisibility(View.INVISIBLE);
-                webview = (WebView) findViewById(R.id.handling_loading);
+                progressBar = findViewById(R.id.progress);
 
                 if (transaccion){
-                    webview.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
 
                 try {
@@ -1519,9 +1521,9 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
     private void showHanding(String msg) {
         TextView tv = (TextView) findViewById(R.id.handing_msginfo);
         tv.setText(msg);
-        WebView wv = (WebView) findViewById(R.id.handling_loading);
-        wv.loadDataWithBaseURL(null, "<HTML><body bgcolor='#FFF'><div align=center>" +
-                "<img width=\"80\" height=\"80\" src='file:///android_asset/gif/load3.gif'/></div></body></html>", "text/html", "UTF-8", null);
+//        WebView wv = (WebView) findViewById(R.id.handling_loading);
+//        wv.loadDataWithBaseURL(null, "<HTML><body bgcolor='#FFF'><div align=center>" +
+//                "<img width=\"80\" height=\"80\" src='file:///android_asset/gif/load3.gif'/></div></body></html>", "text/html", "UTF-8", null);
     }
 
     private void setToolbar(String titleToolbar) {

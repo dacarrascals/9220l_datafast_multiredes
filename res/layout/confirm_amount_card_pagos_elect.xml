@@ -79,12 +79,14 @@
             android:visibility="visible"
             android:inputType="none|number"/>
 
-        <WebView
-            android:id="@+id/handling_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/TxtToken"/>
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@+id/TxtToken"
+            android:layout_centerInParent="true"
+            android:indeterminateDrawable="@drawable/progress_bar_color"
+            android:indeterminateDuration="700" />
 
     </RelativeLayout>
 

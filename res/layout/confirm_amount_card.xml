@@ -69,13 +69,16 @@
         android:layout_height="match_parent"
         android:layout_weight="0">
 
-        <WebView
-            android:id="@+id/handling_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"/>
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_toEndOf="@+id/img"
+            android:indeterminateDrawable="@drawable/progress_bar_color"
+            android:indeterminateDuration="700" />
 
         <ImageView
+            android:id="@+id/img"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginLeft="30dp"
