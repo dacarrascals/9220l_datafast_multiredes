@@ -30,7 +30,7 @@ public class CmdDatafast {
 
     //msg respuesta
     public static final String AUTORIZADO = "AUTORIZADO";
-    public static final String ERROR_EN_TRAMA = "TRANSACCION CANCELAD";
+    public static final String ERROR_EN_TRAMA = "TRANS CANCELADA";
     public static final String ERROR_CON_PINPAD = "ERR.CONEXION PINPAD";
     public static final String INICIO_DIA_MSG = "INICIO DE DIA";
 }
