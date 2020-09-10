@@ -3050,6 +3050,7 @@ public class FinanceTrans extends Trans {
                 keySecurity = pp_request.getHash();
                 retVal = Reverse();
                 if (retVal == 0){
+                    Server.cmd = "PP_REVERSE";
                     transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
                     UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
                 }else {

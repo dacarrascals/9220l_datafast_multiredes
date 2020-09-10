@@ -736,7 +736,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             @Override
             public void run() {
 
-                if (ppResponse != null && (Server.cmd.equals(CT) || Server.cmd.equals(LT) || info.contains("ANULACION"))) {
+                if (ppResponse != null && (Server.cmd.equals(CT) || Server.cmd.equals(LT) || info.contains("ANULACION") || Server.cmd.equals("PP_REVERSE"))) {
 
                     new Handler().postDelayed(new Runnable() {
                         @Override

@@ -87,9 +87,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
             return;
         }
 
-        if (procesarPagoElectronico() == 0) {
-            transUI.handling(timeout, Tcode.Status.pago_electronico_exitoso);
-        } else {
+        if (procesarPagoElectronico() != 0) {
             //cardInf = null;
             transUI.handlingError(timeout, retVal);
             processPPFail.cmdCancel(Server.cmd, retVal);
