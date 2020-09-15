@@ -89,7 +89,7 @@ public class ServerTCP extends AppCompatActivity {
 
     private void stopServer(){
         if (server != null) {
-            if (server.getServerSocket() != null) {
+            if (server.getServerSocket() != null && !server.getServerSocket().isClosed()) {
                 try {
                     server.getServerSocket().close();
                 } catch (IOException e) {
@@ -136,7 +136,7 @@ public class ServerTCP extends AppCompatActivity {
                             ret = control.actualizacionControl(aDat);
                             listenerServer.waitRspHost(control.getPc_response().packData());
                             if (ret){
-                                UIUtils.startResult(ServerTCP.this,true,"TRANS. BORRADAS\nINCIO DE DIA REALIZADO",false);
+                                UIUtils.startResult(ServerTCP.this,true,"TRANS. BORRADAS\nINICIO DE DIA REALIZADO",false);
                             }
                             break;
                         case NN:

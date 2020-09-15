@@ -285,8 +285,6 @@ public class FinanceTrans extends Trans {
                     EntryMode = "102";
                 }
             }
-        }else if(inputMode == ENTRY_MODE_FALLBACK){
-            EntryMode = MODE1_FALLBACK + CapPinPOS();
         }else {
             EntryMode = "000";
         }
@@ -2838,7 +2836,7 @@ public class FinanceTrans extends Trans {
         }catch (IndexOutOfBoundsException e){}
 
         pp_response.setNameGroupCard(ISOUtil.spacepadRight(rango.getNOMBRE_RANGO(),25));
-        pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode));
+        pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack));
 
         if (montoFijo > 0){
             pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));
@@ -3397,7 +3395,7 @@ public class FinanceTrans extends Trans {
             int type = cardInfo.getCardType();
             switch (type) {
                 case CardManager.TYPE_MAG:
-                    inputMode = ENTRY_MODE_FALLBACK;
+                    inputMode = ENTRY_MODE_MAG;
                     break;
                 default:
                     transUI.showError(timeout, Tcode.T_not_allow,processPPFail);
@@ -3405,7 +3403,7 @@ public class FinanceTrans extends Trans {
             }
             para.setInputMode(inputMode);
 
-            if (inputMode == ENTRY_MODE_FALLBACK) {
+            if (inputMode == ENTRY_MODE_MAG) {
                 isDebit = false;
                 if(isMag1(cardInfo.getTrackNo())){
                     if (Server.cmd.equals(LT)){
@@ -3814,6 +3812,7 @@ public class FinanceTrans extends Trans {
                         return false;
                     }
                 } else {
+                    isPinExist = false;
                     retVal = Tcode.T_user_cancel_input;
                     transUI.showError(timeout, retVal,processPPFail);
                     return false;

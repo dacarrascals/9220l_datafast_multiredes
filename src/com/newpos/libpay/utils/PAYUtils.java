@@ -1234,7 +1234,7 @@ public class PAYUtils {
         return ret;
     }
 
-    public static String entryModePP(int val) {
+    public static String entryModePP(int val, boolean isFallback) {
         String inputMode = "";
 
         switch (val) {
@@ -1242,16 +1242,17 @@ public class PAYUtils {
                 inputMode = ISOUtil.spacepadRight(HDL, 2);
                 break;
             case ENTRY_MODE_MAG:
-                inputMode = ISOUtil.spacepadRight(MAG, 2);
+                if (isFallback) {
+                    inputMode = ISOUtil.spacepadRight(FBI, 2);
+                } else {
+                    inputMode = ISOUtil.spacepadRight(MAG, 2);
+                }
                 break;
             case ENTRY_MODE_ICC:
                 inputMode = ISOUtil.spacepadRight(ICC, 2);
                 break;
             case ENTRY_MODE_NFC:
                 inputMode = ISOUtil.spacepadRight(CTL, 2);
-                break;
-            case ENTRY_MODE_FALLBACK:
-                inputMode = ISOUtil.spacepadRight(FBI, 2);
                 break;
             default:
                 inputMode = ISOUtil.spacepadRight("", 2);

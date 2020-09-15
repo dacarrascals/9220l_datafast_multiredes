@@ -77,21 +77,30 @@ public class Venta extends FinanceTrans implements TransPresenter {
                     UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
                 }
                 if (aCmd.equals(PP)){
-                    callbackRsp = new waitRspReverse() {
-                        @Override
-                        public void getWaitRspReverse(int status) {
-                            retVal = status;
-                            if (Reverse() != 0){
-                                if (retVal != Tcode.T_not_reverse){
-                                    transUI.showError(timeout,retVal);
-                                }else {
-                                    transUI.showfinish();
-                                }
-                            }else {
-                                transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
-                            }
+                    if ((inputMode == ENTRY_MODE_MAG && !isPinExist)) {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
-                    };
+                        callbackRsp = null;
+                    } else {
+                        callbackRsp = new waitRspReverse() {
+                            @Override
+                            public void getWaitRspReverse(int status) {
+                                retVal = status;
+                                if (Reverse() != 0){
+                                    if (retVal != Tcode.T_not_reverse){
+                                        transUI.showError(timeout,retVal);
+                                    }else {
+                                        transUI.showfinish();
+                                    }
+                                }else {
+                                    transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
+                                }
+                            }
+                        };
+                    }
                 }
             } else {
                 UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
@@ -127,8 +136,12 @@ public class Venta extends FinanceTrans implements TransPresenter {
                     if (retVal==0){
                         if (Server.cmd.equals(CT)){
                             transUI.trannSuccess(timeout, Tcode.Status.request_card_ok);
+                            UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
+                            return true;
                         }else {
                             transUI.trannSuccess(timeout, Tcode.Status.read_card_ok);
+                            UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
+                            return true;
                         }
                     }else{
                         transUI.showError(timeout, retVal);

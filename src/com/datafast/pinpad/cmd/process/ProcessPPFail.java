@@ -177,7 +177,7 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setNameGroupCard(ISOUtil.spacepadRight("", 25));
                 }
 
-                pp_response.setModeReadCard(PAYUtils.entryModePP(inputModeFail));
+                pp_response.setModeReadCard(PAYUtils.entryModePP(inputModeFail, isFallBack));
 
                 if (montoFijo > 0){
                     pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));

@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -42,7 +43,7 @@ public class Server extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        if (serverSocket != null) {
+        if (serverSocket != null && !serverSocket.isClosed()) {
             try {
                 serverSocket.close();
             } catch (IOException e) {
@@ -61,52 +62,53 @@ public class Server extends AppCompatActivity {
         public void run() {
             try {
                 // create ServerSocket using specified port
-                serverSocket = new ServerSocket(socketServerPORT);
+                serverSocket = new ServerSocket();
+                serverSocket.setReuseAddress(true);
+                serverSocket.bind(new InetSocketAddress(socketServerPORT));
 
-                while (true) {
-                    // block the call until connection is created and return Socket object
+                // block the call until connection is created and return Socket object
 
-                    final Socket socket = serverSocket.accept();
-                    final InputStream input = socket.getInputStream();
-                    DataInputStream dataInputStream = new DataInputStream(input);
+                final Socket socket = serverSocket.accept();
+                final InputStream input = socket.getInputStream();
+                DataInputStream dataInputStream = new DataInputStream(input);
 
-                    final DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                final DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
-                    //final OutputStream outputStream = socket.getOutputStream();
+                //final OutputStream outputStream = socket.getOutputStream();
 
-                    text = readSocket(dataInputStream);
+                text = readSocket(dataInputStream);
 
-                    dataReceived.identifyCommand(text);
-                    dat = dataReceived.getDataRaw();
-                    cmd = dataReceived.getCmd();
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            activity.startTrans(cmd,dat,new waitResponse() {
-                                @Override
-                                public void waitRspHost(byte[] Info) {
+                dataReceived.identifyCommand(text);
+                dat = dataReceived.getDataRaw();
+                cmd = dataReceived.getCmd();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.startTrans(cmd,dat,new waitResponse() {
+                            @Override
+                            public void waitRspHost(byte[] Info) {
 
-                                    try {
-                                        lastCmd = cmd;
-                                        output.write(Info);
-                                        socket.close();
+                                try {
+                                    lastCmd = cmd;
+                                    output.write(Info);
+                                    socket.close();
 
-                                        input.close();
-                                        output.close();
-                                        //outputStream.write(Info);
-                                        //outputStream.flush();
-                                        //output.close();
+                                    input.close();
+                                    output.close();
+                                    //outputStream.write(Info);
+                                    //outputStream.flush();
+                                    //output.close();
 
-                                        ppResponse = null;
+                                    ppResponse = null;
 
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                            });
-                        }
-                    });
-                }
+                            }
+                        });
+                    }
+                });
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

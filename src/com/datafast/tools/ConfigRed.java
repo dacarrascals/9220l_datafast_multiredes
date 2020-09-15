@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.android.newpos.pay.R;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
+import com.datafast.server.activity.ServerTCP;
+import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.net.eth.EthernetManager;
 
@@ -199,16 +201,14 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
                 if (EthernetManager.getInstance().isEtherentEnabled()) {
                     try {
                         IpEthernetConf.setConnectionStaticIP(ip, mask, gateway);
-                        UIUtils.toast(this, R.drawable.ic_launcher_1, getString(R.string.save_success), Toast.LENGTH_SHORT);
-                        finish();
+                        UIUtils.startResult(ConfigRed.this,true,"DATOS DE RED ACTUALIZADOS",false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
                     try {
                         IpWifiConf.setStaticIpConfiguration(getApplicationContext(), ip, mask, gateway);
-                        UIUtils.toast(this, R.drawable.ic_launcher_1, getString(R.string.save_success), Toast.LENGTH_SHORT);
-                        finish();
+                        UIUtils.startResult(ConfigRed.this,true,"DATOS DE RED ACTUALIZADOS",false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
