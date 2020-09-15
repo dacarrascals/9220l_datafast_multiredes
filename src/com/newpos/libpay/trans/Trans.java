@@ -1,6 +1,7 @@
 package com.newpos.libpay.trans;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.android.newpos.libemv.PBOCManager;
 import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
@@ -591,30 +592,50 @@ public abstract class Trans {
     protected void loadConfigIP(){
         boolean isPub = cfg.getPubCommun();
 
+        String ipKey, portKey;
+        SharedPreferences preferences = context.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         if (isPub){  //Se valida la variable para seleccionar la ip
             tablaIp = ChequeoIPs.seleccioneIP(0);
+            ipKey = "ip_primary";
+            portKey = "port_primary";
         } else {
             tablaIp = ChequeoIPs.seleccioneIP(1);
+            ipKey = "ip_secundary";
+            portKey = "port_secundary";
         }
 
-
-        String ip = null;
-        int port = 0;
+        String ip = preferences.getString(ipKey, "");
+        int port = Integer.parseInt(preferences.getString(portKey, "0"));
         int timeoutRsp = 0;
         int timeoutCon = 0;
 
         //JM
         try {
-            if (tablaIp.getIP_HOST() != null) {
-                ip = tablaIp.getIP_HOST();
-            } else {
-                ip = cfg.getIp();
+            if (ip.equals("")){
+                if(tablaIp.getIP_HOST() != null){
+                    ip = tablaIp.getIP_HOST();
+                }else {
+                    ip = cfg.getIp();
+                }
             }
-            if (tablaIp.getPUERTO() != null) {
-                port = Integer.parseInt(tablaIp.getPUERTO());
-            } else {
-                port = Integer.parseInt(cfg.getPort());
+            if (port == 0){
+                if(tablaIp.getPUERTO() != null){
+                    port = Integer.parseInt(tablaIp.getPUERTO());
+                }else{
+                    port = Integer.parseInt(cfg.getPort());
+                }
             }
+
+//            if (tablaIp.getIP_HOST() != null) {
+//                ip = tablaIp.getIP_HOST();
+//            } else {
+//                ip = cfg.getIp();
+//            }
+//            if (tablaIp.getPUERTO() != null) {
+//                port = Integer.parseInt(tablaIp.getPUERTO());
+//            } else {
+//                port = Integer.parseInt(cfg.getPort());
+//            }
 
             if (host_confi.getTIEMPO_ESPERA_RESPUESTA() != null) {
                 timeoutRsp = Integer.parseInt(host_confi.getTIEMPO_ESPERA_RESPUESTA()) * 1000;

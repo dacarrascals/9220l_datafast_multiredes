@@ -269,8 +269,8 @@ public class fileSlide {
             // 计算出实际宽高和目标宽高的比率
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
             }
         }
