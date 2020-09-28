@@ -353,16 +353,16 @@ public class MenuAction {
                     datos = UtilNetwork.getWifi(context, false);
                     UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                             "IP: " + UtilNetwork.getIPAddress(true) + "\n" +
-                                    "GATEWAY: " + datos[3] + "\n" +
                                     "MASK: " + datos[0] + "\n" +
+                                    "GATEWAY: " + datos[3] + "\n" +
                                     "RED: " + datos[4]);
                 } else if (EthernetManager.getInstance().isEtherentEnabled()){
 
                     datos = UtilNetwork.getWifi(context, true);
                     UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                             "IP: " + datos[0] + "\n" +
-                                    "GATEWAY: " + datos[3] + "\n" +
-                                    "MASK: " + datos[1]);
+                                    "MASK: " + datos[1] + "\n" +
+                                    "GATEWAY: " + datos[3]);
 
                 }
 

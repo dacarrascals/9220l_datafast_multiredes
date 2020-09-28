@@ -20,10 +20,10 @@ public final class DefinesDATAFAST {
     public static final String ITEM_TIPO_COMUNICACION = "TIPO DE COMUNICACION";
     public static final String ITEM_INICIALIZACION = "INICIALIZACION \n POLARIS";
     public static final String ITEM_CONFIG_INICIAL = "CONFIGURACION \n POLARIS";
-    public static final String GERCARD_MSG_SWIPE_ICC_CTL = "DESLICE/INSERTE O ACERQUE  LA TARJETA";
+    public static final String GERCARD_MSG_SWIPE_ICC_CTL = "DESLICE/INSERTE O\nACERQUE  LA TARJETA";
     public static final String GERCARD_MSG_FALLBACK = "PASE LA TARJETA";
     public static final String GERCARD_MSG_ICC_CTL = "INSERTE O ACERQUE   TARJETA";
-    public static final String GERCARD_MSG_ICC_SWIPE = "DESLICE O INSERTE LA TARJETA";
+    public static final String GERCARD_MSG_ICC_SWIPE = "DESLICE O INSERTE\nLA TARJETA";
     public static final String GERCARD_MSG_SWIPE = "DESLICE LA TARJETA";
     public static final String GERCARD_MSG_ICC = "INSERTE LA TARJETA";
     public static final String GERCARD_MSG_CTL = "ACERQUE LA TARJETA";

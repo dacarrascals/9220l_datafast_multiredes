@@ -975,7 +975,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     toneG.startTone(ToneGenerator.TONE_PROP_BEEP2, 2000);
                     toneG.stopTone();
                 }
-                UIUtils.toastReverse(MasterControl.this, R.drawable.ic_launcher_1, errcode, Toast.LENGTH_SHORT);
+                //UIUtils.toastReverse(MasterControl.this, R.drawable.ic_launcher_1, errcode, Toast.LENGTH_SHORT);
             }
         });
 
