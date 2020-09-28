@@ -2,6 +2,7 @@ package com.datafast.tools;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.widget.Toast;
 
 import com.android.newpos.pay.StartAppDATAFAST;
@@ -15,6 +16,7 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.net.eth.EthernetManager;
 
+import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
@@ -79,24 +81,22 @@ public class Wifi {
 
         //WifiManager wifiManager = CP_ConfigIP.setWifi(this.ctx, cp_request.getIp(), cp_request.getGateway(), cp_request.getMask());
 
-        if (EthernetManager.getInstance().isEtherentEnabled()) {
-
-            try {
-                IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
-            } catch (Exception e) {
-                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-
-        } else {
-
+        if (isWifiConnected()) {
             try {
                 IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
             } catch (Exception e) {
                 Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
+        }
 
+        if (EthernetManager.getInstance().isEtherentEnabled()) {
+            try {
+                IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+            } catch (Exception e) {
+                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
         }
 
         /*if (CP_ConfigIP.isWifiEthernet()){
@@ -106,6 +106,11 @@ public class Wifi {
 
         return ret;
 
+    }
+
+    private boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
     }
 
     private void processOk() {

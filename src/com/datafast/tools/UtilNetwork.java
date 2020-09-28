@@ -9,6 +9,9 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 
+import com.pos.device.net.eth.EthernetInfo;
+import com.pos.device.net.eth.EthernetManager;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -136,25 +139,20 @@ public class UtilNetwork {
         return "";
     }
 
-    public static String[] getWifi(Context context) {
+    public static String[] getWifi(Context context, boolean isEth) {
 
         String[] datos = new String[5];
 
-        /*EthDevinfoParcel eth0Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH0_NAME);
-        EthDevinfoParcel eth1Info = Ethernet.getInstance().getEthConfig(EthDevinfoParcel.ETH1_NAME);
-        if (eth0Info != null) {
-            datos[0] = eth0Info.getNetMask();
-            datos[1] = eth0Info.getDnsAddr();
-            datos[2] = eth0Info.getDnsAddr();
-            datos[3] = eth0Info.getRouteAddr();
-            datos[4] = "eth0";
-        }else if (eth1Info != null) {
-            datos[0] = eth1Info.getNetMask();
-            datos[1] = eth1Info.getDnsAddr();
-            datos[2] = eth1Info.getDnsAddr();
-            datos[3] = eth1Info.getRouteAddr();
-            datos[4] = "eth1";
-        } else {*/
+        if (isEth) {
+
+            EthernetManager ether=EthernetManager.getInstance();
+            EthernetInfo etherinfo=ether.getEtherentConfigs();
+            datos[0] = etherinfo.getStaticIpConfigs().ipAddr;
+            datos[1] = getMask(Integer.parseInt(etherinfo.getStaticIpConfigs().prefixLen));
+            datos[3] = etherinfo.getStaticIpConfigs().gatewayAddr;
+
+        } else {
+
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
 
@@ -163,8 +161,32 @@ public class UtilNetwork {
             datos[2] = intToIp(dhcpInfo.dns2);
             datos[3] = intToIp(dhcpInfo.gateway);
             datos[4] = wifiManager.getConnectionInfo().getSSID();
+
+        }
         //}
         return datos;
+
+    }
+
+    private static String getMask(int prefijo) {
+        String ret;
+        String bits = "";
+
+        for (int i = 0; i < 32; i++) {
+            if (prefijo > 0) {
+                bits += "1";
+                prefijo --;
+            } else {
+                bits += "0";
+            }
+        }
+
+        ret = Integer.parseInt(bits.substring(0, 8), 2) + ".";
+        ret += Integer.parseInt(bits.substring(8, 16), 2) + ".";
+        ret += Integer.parseInt(bits.substring(16, 24), 2) + ".";
+        ret += String.valueOf(Integer.parseInt(bits.substring(24, 32), 2));
+
+        return ret;
 
     }
 

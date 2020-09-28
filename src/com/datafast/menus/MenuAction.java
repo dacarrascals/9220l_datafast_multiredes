@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.newpos.libpay.trans.translog.TransLog;
 import com.newpos.libpay.trans.translog.TransLogData;
 import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
+import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.printer.Printer;
 
 import cn.desert.newpos.payui.UIUtils;
@@ -45,6 +48,7 @@ import cn.desert.newpos.payui.master.MasterControl;
 import cn.desert.newpos.payui.setting.ui.simple.CommunSettings;
 import cn.desert.newpos.payui.transrecord.HistoryTrans;
 
+import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.android.newpos.pay.StartAppDATAFAST.batteryStatus;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.paperStatus;
@@ -344,12 +348,25 @@ public class MenuAction {
                 context.startActivity(intent);
                 break;
             case DefinesDATAFAST.ITEM_CONEXION:
-                String[] datos = UtilNetwork.getWifi(context);
-                UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
-                        "IP: " + UtilNetwork.getIPAddress(true) + "\n" +
-                        "GATWEY: " + datos[3] + "\n" +
-                        "MASK: " + datos[0] + "\n" +
-                        "RED: " + datos[4]);
+                String[] datos;
+                if (isWifiConnected()) {
+                    datos = UtilNetwork.getWifi(context, false);
+                    UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                            "IP: " + UtilNetwork.getIPAddress(true) + "\n" +
+                                    "GATEWAY: " + datos[3] + "\n" +
+                                    "MASK: " + datos[0] + "\n" +
+                                    "RED: " + datos[4]);
+                } else if (EthernetManager.getInstance().isEtherentEnabled()){
+
+                    datos = UtilNetwork.getWifi(context, true);
+                    UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                            "IP: " + datos[0] + "\n" +
+                                    "GATEWAY: " + datos[3] + "\n" +
+                                    "MASK: " + datos[1]);
+
+                }
+
+
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_WIFI:
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -369,10 +386,17 @@ public class MenuAction {
                 }
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_RED:
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setClass(context, ConfigRed.class);
-                context.startActivity(intent);
+                WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if (wifiManager.isWifiEnabled() || EthernetManager.getInstance().isEtherentEnabled()) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(context, ConfigRed.class);
+                    context.startActivity(intent);
+                } else {
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                }
                 break;
 
             default:
@@ -381,6 +405,11 @@ public class MenuAction {
                 context.startActivity(intent);
                 break;
         }
+    }
+
+    private boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
     }
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {

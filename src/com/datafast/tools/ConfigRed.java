@@ -3,6 +3,7 @@ package com.datafast.tools;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,12 +28,14 @@ import com.pos.device.net.eth.EthernetManager;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.BaseActivity;
 
+import static android.net.ConnectivityManager.TYPE_WIFI;
+
 public class ConfigRed extends BaseActivity implements View.OnClickListener{
 
     TextView tvIp1, tvIp2, tvIp3, tvIp4;
     EditText etIp1, etIp2, etIp3, etIp4;
 
-    TextView tvMask1, tvMask2, tvMask3, tvMask4;
+    TextView tvMask1, tvMask2, tvMask3, tvMask4, tvMask;
     EditText etMask1, etMask2, etMask3, etMask4;
 
     TextView tvGateway1, tvGateway2, tvGateway3, tvGateway4;
@@ -45,6 +48,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config_red);
         setNaviTitle("CONFIG RED POS");
+        tvMask = findViewById(R.id.tv_Mask);
 
         inputMethodManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -165,11 +169,23 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
     }
 
     public void initData() {
+        String[] datos, mask, gateway, ip;
 
-        String[] datos = UtilNetwork.getWifi(getApplicationContext());
-        String[] mask = datos[0].split("\\.");
-        String[] gateway = datos[3].split("\\.");
-        String[] ip = UtilNetwork.getIPAddress(true).split("\\.");
+        if (isWifiConnected()) {
+
+            datos = UtilNetwork.getWifi(getApplicationContext(), false);
+            mask = datos[0].split("\\.");
+            gateway = datos[3].split("\\.");
+            ip = UtilNetwork.getIPAddress(true).split("\\.");
+
+        } else {
+
+            datos = UtilNetwork.getWifi(getApplicationContext(), true);
+            ip = datos[0].split("\\.");
+            mask = datos[1].split("\\.");
+            gateway = datos[3].split("\\.");
+
+        }
 
         etIp1.setText(ip[0]);
         etIp2.setText(ip[1]);
@@ -192,32 +208,47 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
     }
 
     private void save() {
+        boolean change = false;
         inputMethodManager.hideSoftInputFromInputMethod(getWindow().getCurrentFocus().getWindowToken(), 0);
         String ip = concatIP();
         String mask = concatMask();
         String gateway = concatGateway();
 
         if (!ip.equals("") && !mask.equals("") && !gateway.equals("")) {
+
+                if (isWifiConnected()) {
+                    try {
+                        IpWifiConf.setStaticIpConfiguration(getApplicationContext(), ip, mask, gateway);
+                        change = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 if (EthernetManager.getInstance().isEtherentEnabled()) {
                     try {
                         IpEthernetConf.setConnectionStaticIP(ip, mask, gateway);
-                        UIUtils.startResult(ConfigRed.this,true,"DATOS DE RED ACTUALIZADOS",false);
+                        change = true;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+                if (change) {
+                    UIUtils.startResult(ConfigRed.this,true,"DATOS DE RED ACTUALIZADOS",false);
                 } else {
-                    try {
-                        IpWifiConf.setStaticIpConfiguration(getApplicationContext(), ip, mask, gateway);
-                        UIUtils.startResult(ConfigRed.this,true,"DATOS DE RED ACTUALIZADOS",false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    UIUtils.startResult(ConfigRed.this,false,"ERROR AL ACTUALIZAR DATOS",false);
                 }
 
         } else {
             UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher_1, "Debe Llenar todos los datos", Toast.LENGTH_SHORT);
         }
 
+    }
+
+    private boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
     }
 
     public String concatIP() {
