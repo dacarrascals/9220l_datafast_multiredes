@@ -1728,17 +1728,21 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             countDownTimerGeneral.cancel();
             countDownTimerGeneral = null;
         }
-        final int[] i = {Integer.parseInt(String.valueOf(timeout).substring(0, String.valueOf(timeout).length() - 3))};
+
         System.out.println("TIMEOUT " + timeout);
+        //final int[] i = {Integer.parseInt(String.valueOf(timeout).substring(0, String.valueOf(timeout).length() - 3))};
         countDownTimerGeneral = new CountDownTimer(timeout, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                textViewTitle.setText(i[0]-- + "");
+                String timeToString = String.valueOf(millisUntilFinished);
+                // textViewTitle.setText(i[0]-- + "");
+                textViewTitle.setText(timeToString.substring(0, timeToString.length() - 3));
             }
 
             public void onFinish() {
                 contFallback = 0;
                 countDownTimerGeneral.cancel();
+                listener.cancel();
                 /*inputContent = "false";
                 listener.confirm(InputManager.Style.COMMONINPUT);*/
             }

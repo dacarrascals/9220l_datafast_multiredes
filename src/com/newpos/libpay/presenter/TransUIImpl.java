@@ -148,6 +148,8 @@ public class TransUIImpl implements TransUI {
             Logger.error("Exception" + e.toString());
         }
 
+        PaySdk.getInstance().releaseCard();
+
         if (cInfo.getErrno()==0){//Validacion para control de ingreso de tarjeta manualmente
             if ((mode & INMODE_HAND) != 0) {
                 if (transView.getInput(InputManager.Mode.REFERENCE).equals("MANUAL")) {
@@ -187,6 +189,8 @@ public class TransUIImpl implements TransUI {
             Logger.error("Exception" + e.toString());
         }
 
+        PaySdk.getInstance().releaseCard();
+
         if (cInfo.getErrno()==0){//Validacion para control de ingreso de tarjeta manualmente
             if ((mode & INMODE_HAND) != 0) {
                 if (transView.getInput(InputManager.Mode.REFERENCE).equals("MANUAL")) {
@@ -225,6 +229,8 @@ public class TransUIImpl implements TransUI {
             Thread.currentThread().interrupt();
             Logger.error("Exception" + e.toString());
         }
+
+        PaySdk.getInstance().releaseCard();
 
         if (cInfo.getErrno()==0){//Validacion para control de ingreso de tarjeta manualmente
             if ((mode & INMODE_HAND) != 0) {
@@ -268,6 +274,8 @@ public class TransUIImpl implements TransUI {
             Thread.currentThread().interrupt();
             Logger.error("Exception" + e.toString());
         }
+
+        PaySdk.getInstance().releaseCard();
 
         return cInfo;
     }
