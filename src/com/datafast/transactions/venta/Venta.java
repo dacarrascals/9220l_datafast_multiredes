@@ -77,7 +77,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                     UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
                 }
                 if (aCmd.equals(PP)){
-                    if ((inputMode == ENTRY_MODE_MAG && !isPinExist)) {
+                    if ((inputMode == ENTRY_MODE_MAG && !isPinExist) && retVal == Tcode.T_user_cancel_input) {
                         try {
                             Thread.sleep(200);
                         } catch (InterruptedException e) {
