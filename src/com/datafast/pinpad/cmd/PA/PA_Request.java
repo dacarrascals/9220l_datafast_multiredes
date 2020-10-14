@@ -84,42 +84,6 @@ public class PA_Request {
 
         try
         {
-            //red adquiriente
-            tmp = new byte[1];
-            System.arraycopy(aData, offset, tmp, 0,1);
-            offset += 1;
-            this.idCodNetAcq = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp).trim());
-
-            //nombre del app a descargar
-            tmp = new byte[20];
-            System.arraycopy(aData, offset, tmp, 0,20);
-            offset += 20;
-            this.nameApp = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp).trim());
-
-            //TID
-            tmp = new byte[8];
-            System.arraycopy(aData, offset, tmp, 0, 8);
-            offset += 8;
-            this.TID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-
-            //MID
-            tmp = new byte[15];
-            System.arraycopy(aData, offset, tmp, 0, 15);
-            offset += 15;
-            this.MID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-
-            //ipPrimary
-            tmp = new byte[21];
-            System.arraycopy(aData, offset, tmp, 0, 21);
-            offset += 21;
-            this.ipPrimary = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-
-            //tipo de descarga
-            tmp = new byte[1];
-            System.arraycopy(aData, offset, tmp, 0,1);
-            offset += 1;
-            this.typeDownload = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp).trim());
-
             //hash
             tmp = new byte[32];
             System.arraycopy(aData, offset, tmp, 0, 32);

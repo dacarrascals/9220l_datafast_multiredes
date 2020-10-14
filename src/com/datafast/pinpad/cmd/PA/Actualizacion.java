@@ -46,6 +46,7 @@ public class Actualizacion{
         if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
             try{
                 Intent intentPack = ctx.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
+                intentPack.putExtra("appDF", true);
                 ctx.startActivity(intentPack);
                 processOk();
                 intentOK = true;
