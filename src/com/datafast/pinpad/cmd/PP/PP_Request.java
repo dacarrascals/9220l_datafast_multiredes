@@ -1,10 +1,10 @@
 package com.datafast.pinpad.cmd.PP;
 
-import android.util.Log;
-
 import com.newpos.libpay.utils.ISOUtil;
 
 public class PP_Request {
+
+    private int countValid;
 
     private String typeMsg;
     private String typeTrans;
@@ -32,8 +32,15 @@ public class PP_Request {
     private String invoiceNumber;
     private String pushSalesman;
     private String filler2;
-
     private String hash;
+
+    public int getCountValid() {
+        return countValid;
+    }
+
+    public void setCountValid(int countValid) {
+        this.countValid = countValid;
+    }
 
     public String getTypeMsg() {
         return typeMsg;
@@ -258,6 +265,8 @@ public class PP_Request {
 
         try
         {
+            this.countValid = 0;
+
             //typeTrans
             tmp = new byte[2];
             System.arraycopy(aData, offset, tmp, 0, 2);
@@ -341,6 +350,9 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.sequential = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (sequential.length() < 6 && typeTrans.equals("03")){
+                countValid += 1;
+            }
 
             //hourTrans
             tmp = new byte[6];
@@ -359,6 +371,9 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.authNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (authNumber.length() < 6 && typeTrans.equals("03")){
+                countValid += 1;
+            }
 
             //MID
             tmp = new byte[15];
@@ -371,6 +386,9 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 8);
             offset += 8;
             this.TID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (TID.length() < 8 ){
+                countValid += 1;
+            }
 
             //CID
             tmp = new byte[15];

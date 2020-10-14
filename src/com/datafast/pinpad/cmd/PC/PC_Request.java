@@ -4,6 +4,8 @@ import com.newpos.libpay.utils.ISOUtil;
 
 public class PC_Request {
 
+    private int countValid;
+
     private String typeMsg;
     private String batchNumber;
     private String tracerNumber;
@@ -15,6 +17,14 @@ public class PC_Request {
     private String filler3;
 
     private String hash;
+
+    public int getCountValid() {
+        return countValid;
+    }
+
+    public void setCountValid(int countValid) {
+        this.countValid = countValid;
+    }
 
     public String getTypeMsg() {
         return typeMsg;
@@ -100,20 +110,27 @@ public class PC_Request {
 
         byte[] tmp = null;
         int offset = 0;
-
         try {
+
+            this.countValid = 0;
 
             //batchNumber
             tmp = new byte[6];
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.batchNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (batchNumber.length() < 6){
+                countValid += 1;
+            }
 
             //tracerNumber
             tmp = new byte[6];
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.tracerNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (tracerNumber.length() < 6){
+                countValid += 1;
+            }
 
             //filler1
             tmp = new byte[12];
@@ -132,6 +149,9 @@ public class PC_Request {
             System.arraycopy(aData, offset, tmp, 0, 8);
             offset += 8;
             this.TID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (TID.length() < 8 ){
+                countValid += 1;
+            }
 
             //filler2
             tmp = new byte[23];

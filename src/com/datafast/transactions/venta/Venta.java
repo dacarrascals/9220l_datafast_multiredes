@@ -4,12 +4,12 @@ import android.content.Context;
 import android.media.ToneGenerator;
 import android.util.Log;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
+import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.transactions.callbacks.waitRspReverse;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.datafast.transactions.common.GetAmount;
 import com.newpos.libpay.Logger;
-import com.newpos.libpay.PaySdk;
 import com.newpos.libpay.helper.iso8583.ISO8583;
 import com.newpos.libpay.presenter.TransPresenter;
 import com.newpos.libpay.trans.Tcode;
@@ -62,6 +62,12 @@ public class Venta extends FinanceTrans implements TransPresenter {
 
     @Override
     public void start() {
+
+        if (ServerTCP.count > 0){
+            transUI.showError(timeout, Tcode.T_err_trm,processPPFail);
+            return;
+        }
+
         int reverso = validateReverseCash();
         if (reverso != 1995){
             return;
@@ -91,7 +97,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                                 retVal = status;
                                 if (Reverse() != 0){
                                     if (retVal != Tcode.T_not_reverse){
-                                        transUI.showError(timeout,retVal);
+                                        transUI.showError(timeout, retVal);
                                     }else {
                                         transUI.showfinish();
                                     }
