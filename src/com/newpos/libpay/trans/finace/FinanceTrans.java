@@ -1650,6 +1650,8 @@ public class FinanceTrans extends Trans {
             TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).deleteTransLog(indexRev);
         }
 
+        TransLog.clearReveral(true);
+
         if (para.isNeedPrint()) {
             retVal = printData(logData);
         }
@@ -1715,7 +1717,7 @@ public class FinanceTrans extends Trans {
                 if (retVal == 0) {
                     RspCode = iso8583.getfield(39);
                     if (!RspCode.equals("00")) {
-                        return Tcode.T_receive_refuse;
+                        return Tcode.T_err_batch_trans;
                     }
                 } else {
                     Logger.debug("Revesal result :" + retVal);
