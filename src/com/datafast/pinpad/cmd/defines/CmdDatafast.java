@@ -10,6 +10,7 @@ public class CmdDatafast {
     public static final String NN = "NN";
     public static final String PC = "PC";
     public static final String PA = "PA";
+    public static final String CB = "CB";
 
 
     //rsp code pp

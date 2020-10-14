@@ -95,6 +95,8 @@ public class Tcode {
     public static final int T_err_send_rev = 185 ; //ERROR ENVIANDO REVERSO
     public static final int T_mid_tid_invalid = 186 ; //Transaccion no permitida
     public static final int T_not_reverse = 187;//No existe reverso
+    public static final int T_err_batch_trans = 188 ;
+    public static final int T_err_trm = 189 ;
     public static final int T_unknow_err = 999 ;//未知错误
 
     public interface Status{
