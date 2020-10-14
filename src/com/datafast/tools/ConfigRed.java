@@ -1,12 +1,11 @@
 package com.datafast.tools;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.SearchRecentSuggestionsProvider;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -14,14 +13,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
-import com.datafast.server.activity.ServerTCP;
-import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.net.eth.EthernetManager;
 
@@ -30,10 +28,12 @@ import cn.desert.newpos.payui.base.BaseActivity;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
 
-public class ConfigRed extends BaseActivity implements View.OnClickListener{
+public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
     TextView tvIp1, tvIp2, tvIp3, tvIp4;
     EditText etIp1, etIp2, etIp3, etIp4;
+    private final static String DHCP = "DHCP";
+    private final static String STATIC = "ESTATICO";
 
     TextView tvMask1, tvMask2, tvMask3, tvMask4, tvMask;
     EditText etMask1, etMask2, etMask3, etMask4;
@@ -43,17 +43,19 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
 
     InputMethodManager inputMethodManager;
 
+    Switch switchConnectionType;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config_red);
         setNaviTitle("CONFIG RED POS");
-        tvMask = findViewById(R.id.tv_Mask);
 
+        tvMask = findViewById(R.id.tv_Mask);
         inputMethodManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        switchConnectionType = findViewById(R.id.sw_conf_ip);
 
         mapObjects();
-
         initData();
 
         tvIp1.setOnClickListener(ConfigRed.this);
@@ -86,6 +88,38 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
         etGateway3.setSelection(etGateway3.getText().length());
         etGateway4.setSelection(etGateway4.getText().length());
 
+        String stateIp = null;
+        if (isWifiConnected()){
+            stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
+        }
+
+        if (EthernetManager.getInstance().isEtherentEnabled()) {
+            stateIp = IpEthernetConf.getConnectionTypeEther();
+        }
+
+        if (stateIp.equals(DHCP)) {
+            switchConnectionType.setChecked(false);
+            switchConnectionType.setText(DHCP);
+            disableComponents(false, R.color.des_color);
+        } else {
+            switchConnectionType.setChecked(true);
+            switchConnectionType.setText(STATIC);
+            disableComponents(true, R.color.transparent);
+        }
+
+
+        switchConnectionType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (switchConnectionType.isChecked()) {
+                    switchConnectionType.setText(STATIC);
+                    disableComponents(true, R.color.transparent);
+                } else {
+                    switchConnectionType.setText(DHCP);
+                    disableComponents(false, R.color.des_color);
+                }
+            }
+        });
 
         setRightClickListener(new View.OnClickListener() {
             @Override
@@ -168,23 +202,65 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
 
     }
 
+    private void disableComponents(boolean isEnable, int color) {
+        tvIp1.setEnabled(isEnable);
+        tvIp2.setEnabled(isEnable);
+        tvIp3.setEnabled(isEnable);
+        tvIp4.setEnabled(isEnable);
+
+        etIp1.setEnabled(isEnable);
+        etIp1.setBackgroundColor(getResources().getColor(color));
+        etIp2.setEnabled(isEnable);
+        etIp2.setBackgroundColor(getResources().getColor(color));
+        etIp3.setEnabled(isEnable);
+        etIp3.setBackgroundColor(getResources().getColor(color));
+        etIp4.setEnabled(isEnable);
+        etIp4.setBackgroundColor(getResources().getColor(color));
+
+        tvMask1.setEnabled(isEnable);
+        tvMask2.setEnabled(isEnable);
+        tvMask3.setEnabled(isEnable);
+        tvMask4.setEnabled(isEnable);
+
+        etMask1.setEnabled(isEnable);
+        etMask1.setBackgroundColor(getResources().getColor(color));
+        etMask2.setEnabled(isEnable);
+        etMask2.setBackgroundColor(getResources().getColor(color));
+        etMask3.setEnabled(isEnable);
+        etMask3.setBackgroundColor(getResources().getColor(color));
+        etMask4.setEnabled(isEnable);
+        etMask4.setBackgroundColor(getResources().getColor(color));
+
+        tvGateway1.setEnabled(isEnable);
+        tvGateway2.setEnabled(isEnable);
+        tvGateway3.setEnabled(isEnable);
+        tvGateway4.setEnabled(isEnable);
+
+        etGateway1.setEnabled(isEnable);
+        etGateway1.setBackgroundColor(getResources().getColor(color));
+        etGateway2.setEnabled(isEnable);
+        etGateway2.setBackgroundColor(getResources().getColor(color));
+        etGateway3.setEnabled(isEnable);
+        etGateway3.setBackgroundColor(getResources().getColor(color));
+        etGateway4.setEnabled(isEnable);
+        etGateway4.setBackgroundColor(getResources().getColor(color));
+    }
+
+
     public void initData() {
         String[] datos, mask, gateway, ip;
 
         if (isWifiConnected()) {
-
             datos = UtilNetwork.getWifi(getApplicationContext(), false);
             mask = datos[0].split("\\.");
             gateway = datos[3].split("\\.");
             ip = UtilNetwork.getIPAddress(true).split("\\.");
 
-        } else {
-
+        }else {
             datos = UtilNetwork.getWifi(getApplicationContext(), true);
             ip = datos[0].split("\\.");
             mask = datos[1].split("\\.");
             gateway = datos[3].split("\\.");
-
         }
 
         etIp1.setText(ip[0]);
@@ -208,13 +284,15 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
     }
 
     private void save() {
-        boolean change = false;
-        inputMethodManager.hideSoftInputFromInputMethod(getWindow().getCurrentFocus().getWindowToken(), 0);
-        String ip = concatIP();
-        String mask = concatMask();
-        String gateway = concatGateway();
 
-        if (!ip.equals("") && !mask.equals("") && !gateway.equals("")) {
+        if (switchConnectionType.isChecked()) {
+            boolean change = false;
+            inputMethodManager.hideSoftInputFromInputMethod(getWindow().getCurrentFocus().getWindowToken(), 0);
+            String ip = concatIP();
+            String mask = concatMask();
+            String gateway = concatGateway();
+
+            if (!ip.equals("") && !mask.equals("") && !gateway.equals("")) {
 
                 if (isWifiConnected()) {
                     try {
@@ -235,19 +313,40 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
                 }
 
                 if (change) {
-                    UIUtils.startResult(ConfigRed.this,true,"DATOS DE RED ACTUALIZADOS",false);
+                    UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
                 } else {
-                    UIUtils.startResult(ConfigRed.this,false,"ERROR AL ACTUALIZAR DATOS",false);
+                    UIUtils.startResult(ConfigRed.this, false, "ERROR AL ACTUALIZAR DATOS", false);
                 }
 
+            } else {
+                UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher_1, "Debe Llenar todos los datos", Toast.LENGTH_SHORT);
+            }
         } else {
-            UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher_1, "Debe Llenar todos los datos", Toast.LENGTH_SHORT);
+
+            if (isWifiConnected()) {
+                try {
+                    IpWifiConf.wifiDhcp(getApplicationContext());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (EthernetManager.getInstance().isEtherentEnabled()) {
+                try {
+                    IpEthernetConf.etherDhcp();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
+
         }
 
     }
 
     private boolean isWifiConnected() {
-        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
     }
 
@@ -361,9 +460,10 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
     private String mTextIP3;
     private String mTextIP4;
     private SharedPreferences mPreferences;
+
     private void operatingEditTextIP() {
 
-        mPreferences = getApplicationContext().getSharedPreferences("config_IP",Context.MODE_PRIVATE);
+        mPreferences = getApplicationContext().getSharedPreferences("config_IP", Context.MODE_PRIVATE);
 
         etIp1.addTextChangedListener(new TextWatcher() {
             @Override
@@ -386,7 +486,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0){
+                if (s.length() > 0) {
                     if (Integer.parseInt(String.valueOf(s)) > 255) {
                         etIp1.setText("");
                     }
@@ -430,7 +530,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
                 }
 
                 if (start == 0 && s != null && s.length() == 0
-                        && ! PAYUtils.isNullWithTrim(etIp1.getText().toString())
+                        && !PAYUtils.isNullWithTrim(etIp1.getText().toString())
                         && etIp1.length() > 1 && borrado) {
                     borrado = false;
                     etIp1.setFocusable(true);
@@ -565,7 +665,6 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
     }
 
 
-
     boolean borradoM = false;
     int lenTxtM = 0;
     private String mTextMA1;
@@ -573,9 +672,10 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
     private String mTextMA3;
     private String mTextMA4;
     private SharedPreferences mPreferencesMA;
+
     private void operatingEditTextMA() {
 
-        mPreferencesMA = getApplicationContext().getSharedPreferences("config_MASK",Context.MODE_PRIVATE);
+        mPreferencesMA = getApplicationContext().getSharedPreferences("config_MASK", Context.MODE_PRIVATE);
 
         etMask1.addTextChangedListener(new TextWatcher() {
             @Override
@@ -598,7 +698,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0){
+                if (s.length() > 0) {
                     if (Integer.parseInt(String.valueOf(s)) > 255) {
                         etMask1.setText("");
                     }
@@ -642,7 +742,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
                 }
 
                 if (start == 0 && s != null && s.length() == 0
-                        && ! PAYUtils.isNullWithTrim(etMask1.getText().toString())
+                        && !PAYUtils.isNullWithTrim(etMask1.getText().toString())
                         && etMask1.length() > 1 && borradoM) {
                     borradoM = false;
                     etMask1.setFocusable(true);
@@ -784,9 +884,10 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
     private String mTextGA3;
     private String mTextGA4;
     private SharedPreferences mPreferencesGA;
+
     private void operatingEditTextGA() {
 
-        mPreferencesGA = getApplicationContext().getSharedPreferences("config_MASK",Context.MODE_PRIVATE);
+        mPreferencesGA = getApplicationContext().getSharedPreferences("config_MASK", Context.MODE_PRIVATE);
 
         etGateway1.addTextChangedListener(new TextWatcher() {
             @Override
@@ -809,7 +910,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0){
+                if (s.length() > 0) {
                     if (Integer.parseInt(String.valueOf(s)) > 255) {
                         etGateway1.setText("");
                     }
@@ -853,7 +954,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener{
                 }
 
                 if (start == 0 && s != null && s.length() == 0
-                        && ! PAYUtils.isNullWithTrim(etGateway1.getText().toString())
+                        && !PAYUtils.isNullWithTrim(etGateway1.getText().toString())
                         && etGateway1.length() > 1 && borradoG) {
                     borradoG = false;
                     etGateway1.setFocusable(true);
