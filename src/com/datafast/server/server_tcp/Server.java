@@ -20,7 +20,7 @@ public class Server extends AppCompatActivity {
 
     ServerTCP activity;
     ServerSocket serverSocket;
-    static final int socketServerPORT = 9999;
+    public static int socketServerPORT = 9999;
     public static dataReceived dataReceived;
 
     public static String cmd = "";

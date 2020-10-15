@@ -1,5 +1,6 @@
 package com.datafast.pinpad.cmd.CP;
 
+import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.utils.ISOUtil;
 
 public class CP_Request {
@@ -201,7 +202,9 @@ public class CP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.portListenPinpad = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-
+            if (portListenPinpad != null && !portListenPinpad.equals("")){
+                Server.socketServerPORT = Integer.parseInt(portListenPinpad);
+            }
             //hash
             tmp = new byte[32];
             System.arraycopy(aData, offset, tmp, 0, 32);
