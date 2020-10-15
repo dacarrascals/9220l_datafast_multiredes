@@ -1,7 +1,15 @@
 package com.datafast.pinpad.cmd.CP;
 
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+
 import com.pos.device.net.eth.EthernetInfo;
 import com.pos.device.net.eth.EthernetManager;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 public class IpEthernetConf {
@@ -21,6 +29,26 @@ public class IpEthernetConf {
         EthernetManager manager = EthernetManager.getInstance();
         manager.setEtherentConfigs(info);
 
+    }
+
+
+    public static String getConnectionTypeEther() {
+        String ret = null;
+        EthernetInfo info = EthernetManager.getInstance().getEtherentConfigs();
+        if (info.getConnectionType() == EthernetInfo.NetType.DHCP) {
+            ret = "DHCP";
+        } else if (info.getConnectionType() == EthernetInfo.NetType.STATIC_IP) {
+            ret = "STATIC";
+        }
+
+        return ret;
+    }
+
+    public static void etherDhcp() throws Exception {
+        EthernetInfo info = new EthernetInfo();
+        info.setConnectionType(EthernetInfo.NetType.DHCP);
+        EthernetManager manager = EthernetManager.getInstance();
+        manager.setEtherentConfigs(info);
     }
 
 

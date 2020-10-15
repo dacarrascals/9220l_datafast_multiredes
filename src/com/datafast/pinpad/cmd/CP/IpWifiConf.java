@@ -6,6 +6,10 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
 
+import com.datafast.tools.Wifi;
+import com.pos.device.net.eth.EthernetManager;
+
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -34,9 +38,11 @@ public class IpWifiConf {
         WifiManager manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         WifiConfiguration config = null;
         WifiInfo connectionInfo = manager.getConnectionInfo();
+
         List<WifiConfiguration> configuredNetworks = manager.getConfiguredNetworks();
 
         for (WifiConfiguration conf : configuredNetworks){
+
             if (conf.networkId == connectionInfo.getNetworkId()){
                 config = conf;
                 break;
@@ -63,10 +69,57 @@ public class IpWifiConf {
 
         callMethod(config, "setStaticIpConfiguration", new String[] { "android.net.StaticIpConfiguration" }, new Object[] { staticIpConfig });
         manager.updateNetwork(config);
-        manager.saveConfiguration();
 
+        manager.saveConfiguration();
         manager.disconnect();
         manager.reconnect();
+
+    }
+
+    public static String getConnectionTypeWifi(Context context){
+        String ret = null;
+        WifiManager manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo connectionInfo = manager.getConnectionInfo();
+
+        List<WifiConfiguration> configuredNetworks = manager.getConfiguredNetworks();
+        for (WifiConfiguration conf : configuredNetworks){
+            if (conf.networkId == connectionInfo.getNetworkId()){
+                if (conf.toString().toLowerCase().contains("DHCP".toLowerCase())){
+                    ret = "DHCP";
+                }else if(conf.toString().toLowerCase().contains("STATIC".toLowerCase())){
+                    ret = "STATIC";
+                }
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public static void wifiDhcp(Context context) throws Exception {
+        WifiManager manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+
+        WifiConfiguration config = null;
+        WifiInfo connectionInfo = manager.getConnectionInfo();
+
+        List<WifiConfiguration> configuredNetworks = manager.getConfiguredNetworks();
+
+        for (WifiConfiguration conf : configuredNetworks){
+
+            if (conf.networkId == connectionInfo.getNetworkId()){
+                config = conf;
+                break;
+            }
+        }
+
+        Object ipAssignment = getEnumValue("android.net.IpConfiguration$IpAssignment", "DHCP");
+        callMethod(config, "setIpAssignment", new String[] { "android.net.IpConfiguration$IpAssignment" }, new Object[] { ipAssignment });
+
+
+        manager.updateNetwork(config);
+        manager.saveConfiguration();
+        manager.disconnect();
+        manager.reconnect();
+
     }
 
     private static int countBits(String mask) throws Exception{

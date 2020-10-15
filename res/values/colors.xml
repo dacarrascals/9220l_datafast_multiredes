@@ -26,6 +26,8 @@
     <color name="new_text_color">#555771</color>
     <color name="white_text_color">#F0F0F0</color>
     <color name="gray_color">#4b4b58</color>
+    <color name="des_color">#dfe4ea</color>
+
     <color name="hard_color">#48495f</color>
     <color name="clickspan_color">#00ddb6</color>
     <color name="dull_blue">#3B4BBF</color>

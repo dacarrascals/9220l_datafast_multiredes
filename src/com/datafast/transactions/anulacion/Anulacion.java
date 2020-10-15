@@ -13,7 +13,7 @@ import com.datafast.inicializacion.pagoselectronicos.GrupoPagosElectronicos;
 import com.datafast.inicializacion.pagoselectronicos.PagosElectronicos;
 import com.datafast.menus.menus;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
-import com.datafast.server.server_tcp.Server;
+import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.newpos.libpay.Logger;
@@ -39,7 +39,6 @@ import com.pos.device.emv.IEMVHandler;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import cn.desert.newpos.payui.UIUtils;
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -48,7 +47,6 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_CTL;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_ICC;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_SWIPE;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PAGOS_ELECTRONICOS;
-import static com.datafast.definesDATAFAST.DefinesDATAFAST.TITULO_ANULACION;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.newpos.libpay.trans.Tcode.T_err_cod;
 import static com.newpos.libpay.trans.Tcode.T_search_card_err;
@@ -83,6 +81,12 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
     @Override
     public void start() {
+
+        if (ServerTCP.count > 0){
+            transUI.showError(timeout, Tcode.T_err_trm,processPPFail);
+            return;
+        }
+
         keySecurity = pp_request.getHash();
 
         if (!checkBatchAndSettle(false,true)){
@@ -94,7 +98,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
         if (!requestTracer()){
             retVal = Tcode.T_user_cancel_input;
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
             return;
         }
 
@@ -192,7 +196,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
             } else {
                 retVal = T_search_card_err;
-                transUI.showError(timeout, T_search_card_err,processPPFail);
+                transUI.showError(timeout, T_search_card_err, processPPFail);
             }
         }
 
@@ -452,7 +456,9 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 PBOCTrans();
             }
         } else {
-            transUI.showError(timeout, info.getErrno(),processPPFail);
+            if (info.getErrno() == 0) {
+                transUI.showError(timeout, Tcode.T_user_cancel_input, processPPFail);
+            }
         }
     }
 

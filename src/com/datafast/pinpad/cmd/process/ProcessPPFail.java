@@ -222,6 +222,13 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));
                     pp_response.setFiller(ISOUtil.spacepadRight("", 27));
                 }
+
+                if (codRet == Tcode.T_not_reverse){
+                    pp_response.setTID(ISOUtil.spacepadRight("", 8));
+                    pp_response.setMID(ISOUtil.spacepadRight("", 15));
+                    pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight("", 64));
+                }
+
                 pp_response.setHash(keySecurity);
 
                 ppResponse = pp_response.packData();

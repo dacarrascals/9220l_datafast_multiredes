@@ -119,7 +119,7 @@ public class RevesalTrans extends Trans {
             } else {
                 data.setRspCode("06");
                 rspCode = "06";
-                retVal =  Tcode.T_receive_refuse;
+                retVal =  Tcode.T_err_send_rev;
             }
         } else if (retVal == Tcode.T_package_mac_err) {
             data.setRspCode("A0");

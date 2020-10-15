@@ -35,7 +35,6 @@ public class PP_Response {
     private String expDateCard;
     private String numberCardEncrypt;
     private String filler;
-
     private String hash;
 
     public String getTypeMsg() {

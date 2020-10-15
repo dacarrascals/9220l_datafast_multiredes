@@ -21,6 +21,7 @@ import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.menus.MenuAction;
 import com.datafast.menus.menus;
+import com.datafast.pinpad.cmd.CB.ConfiguracionBasica;
 import com.datafast.pinpad.cmd.PA.Actualizacion;
 import com.datafast.pinpad.cmd.PC.Control;
 import com.datafast.pinpad.cmd.PP.PP_Request;
@@ -37,6 +38,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
@@ -53,10 +55,12 @@ public class ServerTCP extends AppCompatActivity {
     private Wifi wifi;
     private Control control = null;
     private Actualizacion actualizacion = null;
+    private ConfiguracionBasica configuracionBasica = null;
     private slide slide;
     private boolean ret;
     private String[] tipoVenta;
     private int seleccion = 0;
+    public static int count = 0;
 
     public static waitResponse listenerServer;
 
@@ -65,6 +69,12 @@ public class ServerTCP extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        if (Control.echoTest){
+            Control.echoTest = false;
+            MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
+            menuAction.SelectAction();
+        }
 
         slide = new slide( ServerTCP.this, true);
         slide.galeria(this, R.id.adcolumn);
@@ -76,6 +86,7 @@ public class ServerTCP extends AppCompatActivity {
             wifi = new Wifi(ServerTCP.this);
             control = new Control(ServerTCP.this);
             actualizacion = new Actualizacion(ServerTCP.this);
+            configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
         } else {
             settings();
         }
@@ -109,12 +120,19 @@ public class ServerTCP extends AppCompatActivity {
                 if (checkCardPresent(aCmd)){
                     Intent intent = new Intent();
                     seleccion = 0;
+                    count = 0;
 
                     switch (aCmd) {
+                        case CB:
+                            configuracionBasica.procesoCb(aDat);
+                            listenerServer.waitRspHost(configuracionBasica.getCb_response().packData());
+                            UIUtils.startResult(ServerTCP.this,true,"CONFIGURACION BASICA\nEXITOSA",false);
+                            break;
                         case PP:
                             PP_Request pp_request = new PP_Request();
                             pp_request.UnPackData(aDat);
                             seleccion = Integer.parseInt(pp_request.getTypeTrans());
+                            count = pp_request.getCountValid();
                         case LT:
                         case CT:
                             if (seleccion == 0){
@@ -124,7 +142,6 @@ public class ServerTCP extends AppCompatActivity {
                             MenuAction menuAction =  new MenuAction(ServerTCP.this, tipoVenta[seleccion - 1]);
                             menuAction.SelectAction();
                             break;
-
                         case CP:
                             ret = wifi.comunicacion(aDat, listenerServer);
                             if (ret){
@@ -133,11 +150,17 @@ public class ServerTCP extends AppCompatActivity {
                             }
                             break;
                         case PC:
-                            ret = control.actualizacionControl(aDat);
+                            int pcRet = control.actualizacionControl(aDat);
                             listenerServer.waitRspHost(control.getPc_response().packData());
-                            if (ret){
+
+                            if (pcRet == 0){
+                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                            }
+
+                            if (pcRet == 1){
                                 UIUtils.startResult(ServerTCP.this,true,"TRANS. BORRADAS\nINICIO DE DIA REALIZADO",false);
                             }
+
                             break;
                         case NN:
                             break;

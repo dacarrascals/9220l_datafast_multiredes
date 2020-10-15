@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.newpos.libpay.utils.ISOUtil;
 
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
@@ -82,6 +83,9 @@ public class dataReceived {
                     break;
                 case PA:
                     setCmd(PA);
+                    break;
+                case CB:
+                    setCmd(CB);
                     break;
                 default:
                     setCmd(NN);
