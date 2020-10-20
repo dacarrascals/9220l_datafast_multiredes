@@ -19,6 +19,7 @@ import com.pos.device.net.eth.EthernetManager;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 
@@ -46,6 +47,12 @@ public class Wifi {
         boolean ret = false;
 
         cp_request.UnPackData(aDat);
+
+        if (cp_request.getCountValid() > 0){
+            processInvalid();
+            listener.waitRspHost(getCp_response().packData());
+            return false;
+        }
 
         preferences = ctx.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         edit = preferences.edit();
@@ -116,6 +123,13 @@ public class Wifi {
     private void processOk() {
         cp_response.setRspCodeMsg(OK);
         cp_response.setRspMessage(ISOUtil.padright(getStatusInfo(String.valueOf(58)) + "", 20, ' '));
+        cp_response.setTypeMsg(CP);
+        cp_response.setHash(cp_request.getHash());
+    }
+
+    private void processInvalid() {
+        cp_response.setRspCodeMsg(ERROR_TRAMA);
+        cp_response.setRspMessage(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         cp_response.setTypeMsg(CP);
         cp_response.setHash(cp_request.getHash());
     }

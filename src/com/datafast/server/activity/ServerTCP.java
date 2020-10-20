@@ -147,7 +147,11 @@ public class ServerTCP extends AppCompatActivity {
                             if (ret){
                                 stopServer();
                                 UIUtils.startResult(ServerTCP.this,true,"DATOS DE RED ACTUALIZADOS",false);
+                            }else {
+                                stopServer();
+                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                             }
+
                             break;
                         case PC:
                             int pcRet = control.actualizacionControl(aDat);

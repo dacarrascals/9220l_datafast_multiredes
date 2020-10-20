@@ -1,10 +1,14 @@
 package com.datafast.pinpad.cmd.CP;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.utils.ISOUtil;
 
 public class CP_Request {
 
+    private int countValid;
     private String ip;
     private String mask;
     private String gateway;
@@ -19,6 +23,14 @@ public class CP_Request {
     private String portListenPinpad;
 
     private String hash;
+
+    public int getCountValid() {
+        return countValid;
+    }
+
+    public void setCountValid(int countValid) {
+        this.countValid = countValid;
+    }
 
     public String getIp() {
         return ip;
@@ -202,14 +214,28 @@ public class CP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.portListenPinpad = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (portListenPinpad != null && !portListenPinpad.equals("")){
-                Server.socketServerPORT = Integer.parseInt(portListenPinpad);
+            if (portListenPinpad != null && !portListenPinpad.equals("") && !portListenPinpad.equals("000000")){
+                if (!portListenPinpad.matches(".*[A-Z].*")){
+                    if (portListenPinpad.length() < 6){
+                        countValid += 1;
+                    }else {
+                        Server.socketServerPORT =Integer.parseInt(portListenPinpad);
+                    }
+                }else{
+                    countValid += 1;
+                }
+
             }
             //hash
             tmp = new byte[32];
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (hash.length() < 32){
+                countValid += 1;
+                int len = portListenPinpad.length();
+                hash = portListenPinpad.substring(len - 2) + hash;
+            }
 
         }
         catch(Exception e) {
