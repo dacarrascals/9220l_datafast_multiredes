@@ -19,10 +19,12 @@ import com.newpos.libpay.utils.PAYUtils;
 
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.newpos.libpay.presenter.TransUIImpl.getErrInfo;
+import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 
 public class ProcessPPFail extends FinanceTrans {
 
@@ -63,6 +65,32 @@ public class ProcessPPFail extends FinanceTrans {
     }
     public void setARQCFail(String ARQC){
         this.ARQCFail = ARQC;
+    }
+
+    public void responseLTInvalid(String keySecurity) {
+        ltResponse.setTypeMsg(LT);
+        ltResponse.setRspCodeMsg(ERROR_TRAMA);
+        ltResponse.setIdCodNetCte(" ");
+        ltResponse.setIdCodNetDef(" ");
+        ltResponse.setCardNumber(ISOUtil.spacepadRight("", 25));
+        ltResponse.setCardExpDate(ISOUtil.spacepadRight("", 4));
+        ltResponse.setCardNumEncryp(ISOUtil.spacepadRight("", 64));
+        ltResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
+        ltResponse.setFiller("");
+        ltResponse.setHash(keySecurity);
+        listenerServer.waitRspHost(ltResponse.packData());
+    }
+
+    public void responseCTInvalid(String keySecurity) {
+        ctResponse.setTypeMsg(CT);
+        ctResponse.setRspCodeMsg(ERROR_TRAMA);
+        ctResponse.setCardNumber(ISOUtil.spacepad("", 64));
+        ctResponse.setBinCard(ISOUtil.spacepad("", 6));
+        ctResponse.setCardExpDate(ISOUtil.spacepad("", 4));
+        ctResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
+        ctResponse.setFiller("");
+        ctResponse.setHash(keySecurity);
+        listenerServer.waitRspHost(ctResponse.packData());
     }
 
     public void cmdCancel(String cmd, int codRet){
@@ -223,7 +251,7 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setFiller(ISOUtil.spacepadRight("", 27));
                 }
 
-                if (codRet == Tcode.T_not_reverse){
+                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans){
                     pp_response.setTID(ISOUtil.spacepadRight("", 8));
                     pp_response.setMID(ISOUtil.spacepadRight("", 15));
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight("", 64));

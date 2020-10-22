@@ -1,5 +1,6 @@
 package com.datafast.pinpad.cmd.PP;
 
+import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
 
 public class PP_Request {
@@ -301,6 +302,9 @@ public class PP_Request {
             tmp = new byte[1];
             System.arraycopy(aData, offset, tmp, 0, 1);
             offset += 1;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 1){
+                countValid ++;
+            }
             this.filler1 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //amountTotal
@@ -350,8 +354,8 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.sequential = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (sequential.length() < 6 && typeTrans.equals("03")){
-                countValid += 1;
+            if (sequential.length() != 6 && typeTrans.equals("03")){
+                countValid ++;
             }
 
             //hourTrans
@@ -371,8 +375,8 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.authNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (authNumber.length() < 6 && typeTrans.equals("03")){
-                countValid += 1;
+            if (authNumber.length() != 6 && typeTrans.equals("03")){
+                countValid ++;
             }
 
             //MID
@@ -380,14 +384,25 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
             this.MID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (!MID.isEmpty()){
+                if (MID.length() != 15){
+                    countValid ++;
+                }
+            }else {
+                MID = TMConfig.getInstance().getMerchID();
+            }
 
             //TID
             tmp = new byte[8];
             System.arraycopy(aData, offset, tmp, 0, 8);
             offset += 8;
             this.TID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (TID.length() < 8 ){
-                countValid += 1;
+            if (!TID.isEmpty()){
+                if (TID.length() != 8){
+                    countValid ++;
+                }
+            }else {
+                TID = TMConfig.getInstance().getMerchID();
             }
 
             //CID
@@ -395,12 +410,20 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
             this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (CID.length() != 15){
+                countValid ++;
+            }
 
             //OTT
             tmp = new byte[8];
             System.arraycopy(aData, offset, tmp, 0, 8);
             offset += 8;
             this.OTT = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (!OTT.isEmpty()){
+                if (OTT.length() != 6 && typeTrans.equals("03")){
+                    countValid ++;
+                }
+            }
 
             //providerOTT
             tmp = new byte[2];
@@ -424,6 +447,9 @@ public class PP_Request {
             tmp = new byte[20];
             System.arraycopy(aData, offset, tmp, 0, 20);
             offset += 20;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 20){
+                countValid ++;
+            }
             this.filler2 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //hash
@@ -431,7 +457,9 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-
+            if (hash.length() != 32){
+                countValid ++;
+            }
         }
         catch(Exception e)
         {

@@ -2,7 +2,12 @@ package com.datafast.pinpad.cmd.CB;
 
 import android.content.Context;
 
+import com.newpos.libpay.utils.ISOUtil;
+
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
+import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 
 public class ConfiguracionBasica {
 
@@ -20,11 +25,29 @@ public class ConfiguracionBasica {
         return cb_response;
     }
 
-    public void procesoCb(byte[] aDat) {
+    public boolean procesoCb(byte[] aDat) {
         cb_request.UnPackData(aDat);
+        
+        if (cb_request.getCountValid() > 0){
+            processInvalid();
+            return false;
+        }
+        
+        processOk();
+        return true;
+    }
 
+    private void processInvalid() {
         cb_response.setTypeMsg(CB);
-        cb_response.setRspCodeMsg("00");
+        cb_response.setRspCodeMsg(ERROR_TRAMA);
+        cb_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
+        cb_response.setFiller("");
+        cb_request.setHash(cb_request.getHash());
+    }
+
+    private void processOk() {
+        cb_response.setTypeMsg(CB);
+        cb_response.setRspCodeMsg(OK);
         cb_response.setMsgRsp(cb_request.getLPORT()
                 + cb_request.getBoxCOMM()
                 + cb_request.getBoxBAUD()

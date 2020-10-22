@@ -1,5 +1,6 @@
 package com.datafast.pinpad.cmd.PC;
 
+import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
 
 public class PC_Request {
@@ -106,7 +107,7 @@ public class PC_Request {
         this.hash = hash;
     }
 
-    public void UnPackData(byte[] aData){
+    public void UnPackData(byte[] aData) {
 
         byte[] tmp = null;
         int offset = 0;
@@ -119,8 +120,8 @@ public class PC_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.batchNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (batchNumber.length() < 6){
-                countValid += 1;
+            if (batchNumber.length() != 6) {
+                countValid ++;
             }
 
             //tracerNumber
@@ -128,14 +129,17 @@ public class PC_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.tracerNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (tracerNumber.length() < 6){
-                countValid += 1;
+            if (tracerNumber.length() != 6) {
+                countValid ++;
             }
 
             //filler1
             tmp = new byte[12];
             System.arraycopy(aData, offset, tmp, 0, 12);
             offset += 12;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 12){
+                countValid ++;
+            }
             this.filler1 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //MID
@@ -143,20 +147,34 @@ public class PC_Request {
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
             this.MID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (!MID.isEmpty()){
+                if (MID.length() != 15){
+                    countValid ++;
+                }
+            }else {
+                MID = TMConfig.getInstance().getMerchID();
+            }
 
             //TID
             tmp = new byte[8];
             System.arraycopy(aData, offset, tmp, 0, 8);
             offset += 8;
             this.TID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (TID.length() < 8 ){
-                countValid += 1;
+            if (!TID.isEmpty()){
+                if (TID.length() != 8) {
+                    countValid ++;
+                }
+            }else {
+                TID = TMConfig.getInstance().getTermID();
             }
 
             //filler2
             tmp = new byte[23];
             System.arraycopy(aData, offset, tmp, 0, 23);
             offset += 23;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 23){
+                countValid ++;
+            }
             this.filler2 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //CID
@@ -164,11 +182,17 @@ public class PC_Request {
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
             this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (CID.length() != 15) {
+                countValid ++;
+            }
 
             //filler3
             tmp = new byte[1];
             System.arraycopy(aData, offset, tmp, 0, 1);
             offset += 1;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 1){
+                countValid ++;
+            }
             this.filler3 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //hash
@@ -176,10 +200,11 @@ public class PC_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (hash.length() != 32) {
+                countValid += 1;
+            }
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.getMessage();
         }
 

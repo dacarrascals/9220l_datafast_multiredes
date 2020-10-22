@@ -105,6 +105,7 @@ public class Control {
                 TMConfig.getInstance().setBatchNopc(val).save();
                 TransLog.getInstance(idAcquirer).clearAll(idAcquirer);
                 CommonFunctionalities.limpiarPanTarjGasolinera("");
+                TransLog.clearReveral(true);
             }
 
             if (TransLogReverse.getInstance().getSize() > 0){

@@ -189,24 +189,36 @@ public class CP_Request {
             tmp = new byte[15];
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 15){
+                countValid ++;
+            }
             this.filler1 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //filler2
             tmp = new byte[6];
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 6){
+                countValid ++;
+            }
             this.filler2 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //filler3
             tmp = new byte[15];
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 15){
+                countValid ++;
+            }
             this.filler3 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //filler4
             tmp = new byte[6];
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 6){
+                countValid ++;
+            }
             this.filler4 = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //
@@ -219,20 +231,19 @@ public class CP_Request {
                     if (portListenPinpad.length() < 6){
                         countValid += 1;
                     }else {
-                        Server.socketServerPORT =Integer.parseInt(portListenPinpad);
+                        Server.socketServerPORT = Integer.parseInt(portListenPinpad);
                     }
                 }else{
                     countValid += 1;
                 }
-
             }
             //hash
             tmp = new byte[32];
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (hash.length() < 32){
-                countValid += 1;
+            if (hash.length() != 32){
+                countValid ++;
                 int len = portListenPinpad.length();
                 hash = portListenPinpad.substring(len - 2) + hash;
             }
