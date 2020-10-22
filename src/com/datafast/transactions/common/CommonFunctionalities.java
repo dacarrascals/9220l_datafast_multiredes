@@ -271,7 +271,6 @@ public class CommonFunctionalities {
                 break;
             } else {
                 ret = Tcode.T_user_cancel_input;
-                transUI.showError(timeout, ret);
                 break;
             }
         }

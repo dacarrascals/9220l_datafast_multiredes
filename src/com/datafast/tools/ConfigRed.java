@@ -95,9 +95,9 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
         }
 
-//        if (EthernetManager.getInstance().isEtherentEnabled()) {
-//            stateIp = IpEthernetConf.getConnectionTypeEther();
-//        }
+        if (EthernetManager.getInstance().isEtherentEnabled()) {
+            stateIp = IpEthernetConf.getConnectionTypeEther();
+        }
 
         if (stateIp.equals(DHCP)) {
             etPort.setImeOptions(6);
@@ -318,14 +318,14 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-//                if (EthernetManager.getInstance().isEtherentEnabled()) {
-//                    try {
-//                        IpEthernetConf.setConnectionStaticIP(ip, mask, gateway);
-//                        change = true;
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
+                if (EthernetManager.getInstance().isEtherentEnabled()) {
+                    try {
+                        IpEthernetConf.setConnectionStaticIP(ip, mask, gateway);
+                        change = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 if (change) {
                     UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
@@ -346,13 +346,13 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                 }
             }
 
-//            if (EthernetManager.getInstance().isEtherentEnabled()) {
-//                try {
-//                    IpEthernetConf.etherDhcp();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            if (EthernetManager.getInstance().isEtherentEnabled()) {
+                try {
+                    IpEthernetConf.etherDhcp();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
 
         }

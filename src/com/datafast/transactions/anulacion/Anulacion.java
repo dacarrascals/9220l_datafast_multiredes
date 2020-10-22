@@ -807,9 +807,12 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
                 if (index >= 0) {
 
-                    if ((retVal = CommonFunctionalities.setOTT_Token(timeout, data.getTransEName(),ITEM_PAGOS_ELECTRONICOS,data.getTypeTransElectronic(),
+                    retVal = CommonFunctionalities.setOTT_Token(timeout, data.getTransEName(),ITEM_PAGOS_ELECTRONICOS,data.getTypeTransElectronic(),
                             Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MINIMA()),
-                            Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()),transUI)) != 0) {
+                            Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()),transUI);
+
+                    if (retVal != 0) {
+                        transUI.showError(timeout, retVal, processPPFail);
                         return;
                     }
 
