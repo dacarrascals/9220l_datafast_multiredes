@@ -12,6 +12,7 @@ import com.newpos.libpay.utils.PAYUtils;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.INICIO_DIA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
@@ -21,9 +22,9 @@ public class Actualizacion{
 
     PA_Request pa_request;
     PA_Response pa_response;
-    waitResponse listenerResponse;
     Context ctx;
     public boolean intentOK = false;
+    public int tramaValida;
     public String msgfail = "ERROR EN PROCESO ACTUALIZACION";
 
     public Actualizacion(Context context){
@@ -35,30 +36,36 @@ public class Actualizacion{
     public PA_Response getPa_response(){
         return pa_response;
     }
-    public void procesoActualizacion(byte[] data){
+    public boolean procesoActualizacion(byte[] data){
         //this.listenerResponse = listener;
         pa_request.UnPackData(data);
 
+        if (pa_request.getCountValid() > 0){
+            processFail(ERROR_TRAMA, "ERROR EN TRAMA");
+            tramaValida = -1;
+            return false;
+        }
+
         if (!PAYUtils.isNullWithTrim(pa_request.getMID()) && !PAYUtils.isNullWithTrim(pa_request.getTID())){
-            TMConfig.getInstance().setMerchID(pa_request.getMID())
-                    .setTermID(pa_request.getTID()).save();
+            TMConfig.getInstance().setMerchID(pa_request.getMID()).setTermID(pa_request.getTID()).save();
         }
         if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
             try{
                 Intent intentPack = ctx.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
-                intentPack.putExtra("appDF", true);
+                intentPack.putExtra("ipConnection", pa_request.getIpPrimary());
                 ctx.startActivity(intentPack);
                 processOk();
                 intentOK = true;
-            }catch (Exception e){
+            } catch(Exception e) {
                 intentOK = false;
                 processFail(ERROR_PROCESO, "ERROR EN TRAMA");
             }
-        }else {
+        } else {
             intentOK = false;
             msgfail = "REALICE PROCESO DE CONTROL";
             processFail(INICIO_DIA, "REALICE PROCESO DE CONTROL");
         }
+        return true;
     }
 
     private void processOk(){

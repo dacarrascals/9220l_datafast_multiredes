@@ -170,11 +170,15 @@ public class ServerTCP extends AppCompatActivity {
                             break;
                         case PA:
                             actualizacion.procesoActualizacion(aDat);
-                            if (actualizacion.intentOK){
-                                resumePA = true;
-                                //UIUtils.startResult(ServerTCP.this,true,"PROCESO DE ACTUALIZACION INICIADO",true);
-                            }else {
-                                UIUtils.startResult(ServerTCP.this,false,actualizacion.msgfail,false);
+                            if (actualizacion.tramaValida == -1) {
+                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                            } else {
+                                if (actualizacion.intentOK){
+                                    resumePA = true;
+                                    //UIUtils.startResult(ServerTCP.this,true,"PROCESO DE ACTUALIZACION INICIADO",true);
+                                }else {
+                                    UIUtils.startResult(ServerTCP.this,false,actualizacion.msgfail,false);
+                                }
                             }
                             listenerServer.waitRspHost(actualizacion.getPa_response().packData());
                             break;

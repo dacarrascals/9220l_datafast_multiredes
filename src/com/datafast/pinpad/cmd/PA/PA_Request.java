@@ -12,6 +12,7 @@ public class PA_Request {
     private String ipPrimary;
     private String typeDownload;
     private String requestPA;
+    private int countValid;
 
     public String getIdCodNetAcq() {
         return idCodNetAcq;
@@ -77,6 +78,14 @@ public class PA_Request {
         this.hash = hash;
     }
 
+    public int getCountValid() {
+        return countValid;
+    }
+
+    public void setCountValid(int countValid) {
+        this.countValid = countValid;
+    }
+
     public void UnPackData(byte[] aData){
 
         byte[] tmp = null;
@@ -84,11 +93,70 @@ public class PA_Request {
 
         try
         {
+
+            //codRedACQ
+            tmp = new byte[1];
+            System.arraycopy(aData, offset, tmp, 0, 1);
+            offset += 1;
+            this.idCodNetAcq = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (idCodNetAcq.length() != 1) {
+                countValid ++;
+            }
+
+            //nameApp
+            tmp = new byte[20];
+            System.arraycopy(aData, offset, tmp, 0, 20);
+            offset += 20;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 20) {
+                countValid ++;
+            }
+            this.nameApp = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+
+            //TID
+            tmp = new byte[8];
+            System.arraycopy(aData, offset, tmp, 0, 8);
+            offset += 8;
+            this.TID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (TID.length() != 8) {
+                countValid ++;
+            }
+
+            //MID
+            tmp = new byte[15];
+            System.arraycopy(aData, offset, tmp, 0, 15);
+            offset += 15;
+            this.MID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (MID.length() != 15) {
+                countValid ++;
+            }
+
+            //ipPolaris
+            tmp = new byte[21];
+            System.arraycopy(aData, offset, tmp, 0, 21);
+            offset += 21;
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).contains(":")) {
+                this.ipPrimary = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            } else {
+                countValid ++;
+            }
+
+            //typeDownload
+            tmp = new byte[1];
+            System.arraycopy(aData, offset, tmp, 0, 1);
+            offset += 1;
+            this.typeDownload = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (typeDownload.length() != 1) {
+                countValid ++;
+            }
+
             //hash
             tmp = new byte[32];
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (hash.length() != 32) {
+                countValid ++;
+            }
 
         }
         catch(Exception e)
