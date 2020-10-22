@@ -1,5 +1,7 @@
 package com.datafast.server.server_tcp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.callback.waitResponse;
@@ -20,7 +22,7 @@ public class Server extends AppCompatActivity {
 
     ServerTCP activity;
     ServerSocket serverSocket;
-    public static int socketServerPORT = 9999;
+    public static int socketServerPORT;
     public static dataReceived dataReceived;
 
     public static String cmd = "";
@@ -28,6 +30,7 @@ public class Server extends AppCompatActivity {
 
     public Server(ServerTCP activity) {
         this.activity = activity;
+        socketServerPORT = getListeningPort();
         Thread socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
         dataReceived = new dataReceived();
@@ -51,6 +54,11 @@ public class Server extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private int getListeningPort(){
+        SharedPreferences preferences = activity.getSharedPreferences("listening_port", Context.MODE_PRIVATE);
+        return Integer.parseInt(preferences.getString("port", "9999"));
     }
 
     private class SocketServerThread extends Thread {
