@@ -386,12 +386,26 @@ public class MenuAction {
                 }
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_RED:
-                WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                if (wifiManager.isWifiEnabled() || EthernetManager.getInstance().isEtherentEnabled()) {
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setClass(context, ConfigRed.class);
-                    context.startActivity(intent);
+                if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
+                    if (!isWifiConnected() && EthernetManager.getInstance().isEtherentEnabled()) {
+                        try {
+                            datos = UtilNetwork.getWifi(context, true);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.setClass(context, ConfigRed.class);
+                            context.startActivity(intent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                        }
+                    } else if (isWifiConnected()) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(context, ConfigRed.class);
+                        context.startActivity(intent);
+                    }
                 } else {
                     UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
