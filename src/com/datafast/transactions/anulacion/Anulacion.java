@@ -82,21 +82,21 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        if (ServerTCP.count > 0){
-            transUI.showError(timeout, Tcode.T_err_trm,processPPFail);
+        if (ServerTCP.count > 0) {
+            transUI.showError(timeout, Tcode.T_err_trm, processPPFail);
             return;
         }
 
         keySecurity = pp_request.getHash();
 
-        if (!checkBatchAndSettle(false,true)){
+        if (!checkBatchAndSettle(false, true)) {
             return;
         }
 
         if (!haveTrans())
             return;
 
-        if (!requestTracer()){
+        if (!requestTracer()) {
             retVal = Tcode.T_user_cancel_input;
             transUI.showError(timeout, retVal, processPPFail);
             return;
@@ -123,13 +123,12 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                     Field57 = data.getField57();
                 }
                 AuthCode = data.getAuthCode();
-                if (AuthCode.equals(pp_request.getAuthNumber())){
+                if (AuthCode.equals(pp_request.getAuthNumber())) {
                     processVoid();
-                }else {
+                } else {
                     processErrVoid();
                 }
-            }
-            else {
+            } else {
                 processErrVoid();
             }
         } else {
@@ -139,9 +138,9 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             if (data != null && !data.getIsVoided() && transEnableVoid() && data.getTransEName().equals(Type.AMPLIACION)) {
                 AuthCode = data.getAuthCode();
                 ProcCode = data.getProcCode();
-                if (AuthCode.equals(pp_request.getAuthNumber())){
+                if (AuthCode.equals(pp_request.getAuthNumber())) {
                     processVoid();
-                }else {
+                } else {
                     processErrVoid();
                 }
             } else {
@@ -175,11 +174,26 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 isHandle();
                 return;
             } else if (data.getEntryMode().equals("101") || data.getEntryMode().equals("102")) {
-                isHandle();
+                if (PAYUtils.isNullWithTrim(pp_request.getOTT())) {
+                    isHandle();
+                } else {
+                    llenarListPagosElectronico();
+                    if (listPagoElectronico == null || listPagoElectronico.isEmpty()) {
+                        retVal = Tcode.T_not_list_pe;
+                        transUI.showError(timeout, retVal, processPPFail);
+                        return;
+                    }
+                    procesarSeleccion(data.getTypeTransElectronic());
+                    Pan = listPagoElectronico.get(index).getNUM_TARJETA();
+                    Pan += pp_request.getOTT();
+                    inputMode = Integer.parseInt(data.getEntryMode());
+                    TypeTransElectronic = data.getTypeTransElectronic();
+                    prepareOnline();
+                }
                 return;
             } else {
                 retVal = Tcode.T_unknow_err;
-                transUI.showError(timeout, retVal,processPPFail);
+                transUI.showError(timeout, retVal, processPPFail);
                 return;
             }
 
@@ -211,14 +225,14 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
      * Permite al usuario confirmar si los datos de la trans que desea
      * anular son correctos
      */
-    private boolean confirmVoid(){
+    private boolean confirmVoid() {
 
         //retVal = transUI.showTransInfo(timeout, data);
-        retVal = transUI.showTransInfo(30*1000, data);
+        retVal = transUI.showTransInfo(30 * 1000, data);
 
-        if(0!=retVal){
+        if (0 != retVal) {
             retVal = Tcode.T_user_cancel_operation;
-            transUI.showError(timeout, Tcode.T_user_cancel_operation,processPPFail);
+            transUI.showError(timeout, Tcode.T_user_cancel_operation, processPPFail);
             return false;
         }
         return true;
@@ -231,18 +245,18 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         if (data != null) {
             if (data.getIsVoided()) {
                 retVal = Tcode.T_trans_is_voided;
-                transUI.showError(timeout, Tcode.T_trans_is_voided,processPPFail);
+                transUI.showError(timeout, Tcode.T_trans_is_voided, processPPFail);
             } else if (!mtransEnableVoid) {
                 retVal = Tcode.T_not_allow;
-                transUI.showError(timeout, retVal,processPPFail);
+                transUI.showError(timeout, retVal, processPPFail);
             } else {
                 retVal = Tcode.T_err_void_not_allow;
-                transUI.showError(timeout, retVal,processPPFail);
+                transUI.showError(timeout, retVal, processPPFail);
             }
 
         } else {
             retVal = Tcode.T_not_find_trans;
-            transUI.showError(timeout, Tcode.T_not_find_trans,processPPFail);
+            transUI.showError(timeout, Tcode.T_not_find_trans, processPPFail);
         }
     }
 
@@ -254,7 +268,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
     private boolean haveTrans() {
         if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idLote + FILE_NAME_PREAUTO)) {
             retVal = Tcode.T_err_no_trans;
-            transUI.showError(timeout, Tcode.T_err_no_trans,processPPFail);
+            transUI.showError(timeout, Tcode.T_err_no_trans, processPPFail);
             return false;
         }
 
@@ -268,11 +282,11 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
      */
     private boolean requestTracer() {
 
-        if (PAYUtils.isNullWithTrim(pp_request.getAuthNumber())){
+        if (PAYUtils.isNullWithTrim(pp_request.getAuthNumber())) {
             return false;
         }
 
-        if (!PAYUtils.isNullWithTrim(pp_request.getSequential())){
+        if (!PAYUtils.isNullWithTrim(pp_request.getSequential())) {
             info = pp_request.getSequential();
             return true;
         }
@@ -318,7 +332,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         montoFijo = data.getMontoFijo();
         Amount = data.getAmount();//DE4
 
-        if (data.getTipoMontoFijo()!=null)
+        if (data.getTipoMontoFijo() != null)
             tipoMontoFijo = data.getTipoMontoFijo();
 
         if (EntryMode.equals(MODE_ICC + CapPinPOS()))
@@ -382,50 +396,50 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             AuthCode = data.getAuthCode();
         }
 
-        if (data.getPagoVarioSeleccionado() != null){
+        if (data.getPagoVarioSeleccionado() != null) {
             pagoVarioSeleccionado = data.getPagoVarioSeleccionado();
         }
 
-        if (data.getIssuerName() != null){
+        if (data.getIssuerName() != null) {
             issuerName = data.getIssuerName();
         }
 
-        if (data.getLabelCard() != null){
+        if (data.getLabelCard() != null) {
             labelName = data.getLabelCard();
         }
 
-        if (data.getField54()!=null){
+        if (data.getField54() != null) {
             ExtAmount = data.getField54();
         }
 
-        if (data.getField57()!=null){
+        if (data.getField57() != null) {
             Field57 = data.getField57();
         }
 
-        if (data.getField58()!=null){
+        if (data.getField58() != null) {
             Field58 = data.getField58();
         }
 
-        if (data.getField61()!=null){
+        if (data.getField61() != null) {
             Field61 = data.getField61();
         }
 
-        if (data.getToken()!=null){
+        if (data.getToken() != null) {
             TokenElectronic = data.getToken();
         }
 
-        if (data.getOTT()!=null){
+        if (data.getOTT() != null) {
             CodOTT = data.getOTT();
         }
 
-        if (data.isMulticomercio()){
+        if (data.isMulticomercio()) {
             multicomercio = data.isMulticomercio();
 
-            if (data.getIdComercio()!=null){
+            if (data.getIdComercio() != null) {
                 idComercio = data.getIdComercio();
             }
 
-            if (data.getNameMultAcq() !=null){
+            if (data.getNameMultAcq() != null) {
                 nameMultAcq = data.getNameMultAcq();
             }
         }
@@ -491,17 +505,17 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 setICCData();
                 if (data.getPanNormal().equals(Pan)) {
                     prepareOnline();
-                } else{
-                    transUI.showError(timeout, T_void_card_not_same,processPPFail);
+                } else {
+                    transUI.showError(timeout, T_void_card_not_same, processPPFail);
                 }
 
             } else {
                 retVal = Tcode.T_user_cancel_pin_err;
-                transUI.showError(timeout, Tcode.T_user_cancel_pin_err,processPPFail);
+                transUI.showError(timeout, Tcode.T_user_cancel_pin_err, processPPFail);
             }
 
         } else {
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
         }
     }
 
@@ -512,7 +526,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         if (0 == retVal) {
             String cn = qpboc.getCardNO();
             if (cn == null) {
-                transUI.showError(timeout, Tcode.T_qpboc_read_err,processPPFail);
+                transUI.showError(timeout, Tcode.T_qpboc_read_err, processPPFail);
             } else {
                 Pan = cn;
                 retVal = transUI.showCardConfirm(timeout, cn);
@@ -520,11 +534,11 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                     PinInfo info = transUI.getPinpadOnlinePin(timeout, String.valueOf(Amount), cn);
                     afterQpbocGetPin(info);
                 } else {
-                    transUI.showError(timeout, Tcode.T_user_cancel_operation,processPPFail);
+                    transUI.showError(timeout, Tcode.T_user_cancel_operation, processPPFail);
                 }
             }
         } else {
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
         }
     }
 
@@ -547,7 +561,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             setICCData();
             prepareOnline();
         } else {
-            transUI.showError(timeout, info.getErrno(),processPPFail);
+            transUI.showError(timeout, info.getErrno(), processPPFail);
         }
     }
 
@@ -578,22 +592,22 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             data3 = new String(tracks[2]);
         }
         if (retVal != 0) {
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
         } else {
             if (msgLen == 0) {
                 retVal = T_search_card_err;
-                transUI.showError(timeout, T_search_card_err,processPPFail);
+                transUI.showError(timeout, T_search_card_err, processPPFail);
             } else {
 
                 try {
                     if (!incardTable(data2.substring(0, data2.indexOf('=')), TransEName)) {
                         retVal = Tcode.T_unsupport_card;
-                        transUI.showError(timeout, Tcode.T_unsupport_card,processPPFail);
+                        transUI.showError(timeout, Tcode.T_unsupport_card, processPPFail);
                         return;
                     }
-                }catch (IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e) {
                     retVal = Tcode.T_read_app_data_err;
-                    transUI.showError(timeout, Tcode.T_read_app_data_err,processPPFail);
+                    transUI.showError(timeout, Tcode.T_read_app_data_err, processPPFail);
                     return;
                 }
 
@@ -612,13 +626,13 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
                         if ((iccChar == '2' || iccChar == '6') && (!isFallBack)) {
                             retVal = Tcode.T_ic_not_allow_swipe;
-                            transUI.showError(timeout, Tcode.T_ic_not_allow_swipe,processPPFail);
+                            transUI.showError(timeout, Tcode.T_ic_not_allow_swipe, processPPFail);
                         } else {
                             afterMAGJudge(data1, data2, data3);
                         }
                     } else {
                         retVal = Tcode.T_search_card_err;
-                        transUI.showError(timeout, Tcode.T_search_card_err,processPPFail);
+                        transUI.showError(timeout, Tcode.T_search_card_err, processPPFail);
                     }
                 } else {
                     afterMAGJudge(data1, data2, data3);
@@ -636,11 +650,9 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
         if (data.getPanNormal().equals(Pan))
             prepareOnline();
-        else{
-            transUI.showError(timeout, T_void_card_not_same,processPPFail);
+        else {
+            transUI.showError(timeout, T_void_card_not_same, processPPFail);
         }
-
-
     }
 
     private void NotNeedCard(TransLogData data) {
@@ -703,7 +715,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                     retVal = Tcode.T_err_not_file_entry_point;
                     break;
             }
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
             return;
         }
         emvl2.SetAmount(Amount, 0);
@@ -713,7 +725,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         Logger.debug("EmvL2Process return = " + code);
         if (code != 0) {
             retVal = Tcode.T_err_detect_card_failed;
-            transUI.showError(timeout, Tcode.T_err_detect_card_failed,processPPFail);
+            transUI.showError(timeout, Tcode.T_err_detect_card_failed, processPPFail);
             return;
         }
 
@@ -725,14 +737,14 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
         if (!incardTable(Pan, TransEName)) {
             retVal = Tcode.T_unsupport_card;
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
             return;
         }
 
         if (data.getPanNormal().equals(Pan)) {
             handlePBOCode(PBOCode.PBOC_REQUEST_ONLINE);
         } else {
-            transUI.showError(timeout, T_void_card_not_same,processPPFail);
+            transUI.showError(timeout, T_void_card_not_same, processPPFail);
             return;
         }
     }
@@ -744,7 +756,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
      */
     private void handlePBOCode(int code) {
         if (code != PBOCode.PBOC_REQUEST_ONLINE) {
-            transUI.showError(timeout, code,processPPFail);
+            transUI.showError(timeout, code, processPPFail);
             return;
         }
         if (inputMode != ENTRY_MODE_NFC)
@@ -753,21 +765,21 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         prepareOnline();
     }
 
-    private void llenarListPagosElectronico(){
+    private void llenarListPagosElectronico() {
         listPagoElectronico = new ArrayList<>();
         listPagoElectronico = GrupoPagosElectronicos.GetListaPagosElectronicos(tconf.getGRUPO_PAGOS_ELECTRONICOS(), context);
-        if (listPagoElectronico == null){
+        if (listPagoElectronico == null) {
             listPagoElectronico = new ArrayList<>();
             listPagoElectronico.clear();
-        }else  if (listPagoElectronico.isEmpty())
+        } else if (listPagoElectronico.isEmpty())
             listPagoElectronico.clear();
     }
 
-    private int procesarSeleccion(String seleccion){
+    private int procesarSeleccion(String seleccion) {
         Iterator<PagosElectronicos> itrPagosElectronicos = listPagoElectronico.iterator();
-        while (itrPagosElectronicos.hasNext()){
+        while (itrPagosElectronicos.hasNext()) {
             PagosElectronicos pagosElectActual = itrPagosElectronicos.next();
-            if (seleccion.equals(pagosElectActual.getNOMBRE_PAGO_ELECTRONICO())){
+            if (seleccion.equals(pagosElectActual.getNOMBRE_PAGO_ELECTRONICO())) {
                 break;
             }
             index++;
@@ -780,14 +792,14 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
         inputMode = ENTRY_MODE_HAND;
 
-        switch (data.getTransEName()){
+        switch (data.getTransEName()) {
             case Type.ELECTRONIC:
             case Type.ELECTRONIC_DEFERRED:
 
                 llenarListPagosElectronico();
                 if (listPagoElectronico == null || listPagoElectronico.isEmpty()) {
                     retVal = Tcode.T_not_list_pe;
-                    transUI.showError(timeout, retVal,processPPFail);
+                    transUI.showError(timeout, retVal, processPPFail);
                     return;
                 }
 
@@ -812,11 +824,11 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                                 prepareOnline();
                             } else {
                                 retVal = T_err_cod;
-                                transUI.showError(timeout, T_err_cod,processPPFail);
+                                transUI.showError(timeout, T_err_cod, processPPFail);
                             }
-                        }else {
+                        } else {
                             retVal = T_err_cod;
-                            transUI.showError(timeout, T_err_cod,processPPFail);
+                            transUI.showError(timeout, T_err_cod, processPPFail);
                         }
                     } else if (data.getTypeTransElectronic().equals(Type.PAYBLUE)) {
                         if (data.getToken() != null) {
@@ -829,16 +841,16 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                                 prepareOnline();
                             } else {
                                 retVal = T_err_cod;
-                                transUI.showError(timeout, T_err_cod,processPPFail);
+                                transUI.showError(timeout, T_err_cod, processPPFail);
                             }
-                        }else {
+                        } else {
                             retVal = T_err_cod;
-                            transUI.showError(timeout, T_err_cod,processPPFail);
+                            transUI.showError(timeout, T_err_cod, processPPFail);
                         }
                     }
-                }else{
+                } else {
                     retVal = Tcode.T_not_allow;
-                    transUI.showError(timeout, retVal,processPPFail);
+                    transUI.showError(timeout, retVal, processPPFail);
                     return;
                 }
                 break;
@@ -851,7 +863,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
                 if (!incardTable(Pan, TransEName)) {
                     retVal = Tcode.T_unsupport_card;
-                    transUI.showError(timeout, Tcode.T_unsupport_card,processPPFail);
+                    transUI.showError(timeout, Tcode.T_unsupport_card, processPPFail);
                     return;
                 }
 
@@ -864,10 +876,9 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                     ExpDate = CommonFunctionalities.getExpDate();
 
                     prepareOnline();
-                }
-                else {
+                } else {
                     retVal = T_void_card_not_same;
-                    transUI.showError(timeout, T_void_card_not_same,processPPFail);
+                    transUI.showError(timeout, T_void_card_not_same, processPPFail);
                 }
 
                 break;
@@ -876,7 +887,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
     private void prepareOnline() {
 
-        if (!confirmVoid()){
+        if (!confirmVoid()) {
             return;
         }
 
@@ -925,7 +936,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             }
 
         } else {
-            transUI.showError(timeout, retVal,processPPFail);
+            transUI.showError(timeout, retVal, processPPFail);
         }
 
     }
