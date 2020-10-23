@@ -1,6 +1,7 @@
 package com.datafast.pinpad.cmd.CP;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import com.datafast.server.server_tcp.Server;
@@ -228,10 +229,10 @@ public class CP_Request {
             this.portListenPinpad = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
             if (portListenPinpad != null && !portListenPinpad.equals("") && !portListenPinpad.equals("000000")){
                 if (!portListenPinpad.matches(".*[A-Z].*")){
-                    if (portListenPinpad.length() < 6){
-                        countValid += 1;
-                    }else {
-                        Server.socketServerPORT = Integer.parseInt(portListenPinpad);
+                    if (portListenPinpad.length() != 4){
+                        if (Integer.parseInt(portListenPinpad) > 9999){
+                            countValid ++;
+                        }
                     }
                 }else{
                     countValid += 1;

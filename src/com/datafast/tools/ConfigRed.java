@@ -252,7 +252,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     }
 
     private int getListeningPort() {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("listening_port", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         return Integer.parseInt(preferences.getString("port", "9999"));
     }
 
@@ -357,7 +357,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
         }
 
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("listening_port", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = preferences.edit();
         edit.putString("port", etPort.getText().toString());
         edit.apply();

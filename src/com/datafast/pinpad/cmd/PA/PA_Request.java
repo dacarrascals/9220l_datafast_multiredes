@@ -1,5 +1,6 @@
 package com.datafast.pinpad.cmd.PA;
 
+import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
 
 public class PA_Request {
@@ -117,8 +118,12 @@ public class PA_Request {
             System.arraycopy(aData, offset, tmp, 0, 8);
             offset += 8;
             this.TID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (TID.length() != 8) {
-                countValid ++;
+            if (!TID.isEmpty()){
+                if (TID.length() != 8){
+                    countValid ++;
+                }
+            }else {
+                TID = TMConfig.getInstance().getMerchID();
             }
 
             //MID
@@ -126,10 +131,13 @@ public class PA_Request {
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
             this.MID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (MID.length() != 15) {
-                countValid ++;
+            if (!MID.isEmpty()){
+                if (MID.length() != 10){
+                    countValid ++;
+                }
+            }else {
+                MID = TMConfig.getInstance().getMerchID();
             }
-
             //ipPolaris
             tmp = new byte[21];
             System.arraycopy(aData, offset, tmp, 0, 21);

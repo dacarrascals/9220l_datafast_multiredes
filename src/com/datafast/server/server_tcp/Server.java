@@ -57,7 +57,7 @@ public class Server extends AppCompatActivity {
     }
 
     private int getListeningPort(){
-        SharedPreferences preferences = activity.getSharedPreferences("listening_port", Context.MODE_PRIVATE);
+        SharedPreferences preferences = activity.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         return Integer.parseInt(preferences.getString("port", "9999"));
     }
 

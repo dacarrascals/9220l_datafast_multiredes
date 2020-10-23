@@ -57,6 +57,10 @@ public class Wifi {
         preferences = ctx.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         edit = preferences.edit();
 
+        if (!cp_request.getPortListenPinpad().equals("000000")){
+            edit.putString("port", cp_request.getPortListenPinpad());
+        }
+
         if (!PAYUtils.isNullWithTrim(cp_request.getIpPrimary()) && !PAYUtils.isNullWithTrim(cp_request.getPortPrimary())) {
             data[0] = cp_request.getIpPrimary();
             data[1] = cp_request.getPortPrimary();

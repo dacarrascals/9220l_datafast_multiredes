@@ -26,6 +26,7 @@ public class Actualizacion{
     public boolean intentOK = false;
     public int tramaValida;
     public String msgfail = "ERROR EN PROCESO ACTUALIZACION";
+    public static boolean echoTest;
 
     public Actualizacion(Context context){
         this.ctx = context;
@@ -43,6 +44,7 @@ public class Actualizacion{
         if (pa_request.getCountValid() > 0){
             processFail(ERROR_TRAMA, "ERROR EN TRAMA");
             tramaValida = -1;
+            echoTest = false;
             return false;
         }
 
@@ -56,12 +58,15 @@ public class Actualizacion{
                 ctx.startActivity(intentPack);
                 processOk();
                 intentOK = true;
+                echoTest = true;
             } catch(Exception e) {
                 intentOK = false;
+                echoTest = false;
                 processFail(ERROR_PROCESO, "ERROR EN TRAMA");
             }
         } else {
             intentOK = false;
+            echoTest = false;
             msgfail = "REALICE PROCESO DE CONTROL";
             processFail(INICIO_DIA, "REALICE PROCESO DE CONTROL");
         }
