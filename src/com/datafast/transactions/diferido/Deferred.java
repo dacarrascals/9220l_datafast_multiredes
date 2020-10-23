@@ -20,6 +20,7 @@ import cn.desert.newpos.payui.UIUtils;
 
 import static cn.desert.newpos.payui.master.MasterControl.callbackFallback;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
+import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.contFallback;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
@@ -54,6 +55,11 @@ public class Deferred extends FinanceTrans implements TransPresenter {
 
     @Override
     public void start() {
+
+        if (ISOUtil.stringToBoolean(tconf.getTRANSACCION_DIFERIDO())){
+            transUI.showError(timeout, Tcode.T_err_deferred, processPPFail);
+            return;
+        }
 
         if (!checkBatchAndSettle(true,true)){
             return;

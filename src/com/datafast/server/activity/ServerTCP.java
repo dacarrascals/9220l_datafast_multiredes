@@ -70,8 +70,9 @@ public class ServerTCP extends AppCompatActivity {
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if (Control.echoTest){
+        if (Control.echoTest || Actualizacion.echoTest){
             Control.echoTest = false;
+            Actualizacion.echoTest = false;
             MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
             menuAction.SelectAction();
         }
@@ -124,9 +125,13 @@ public class ServerTCP extends AppCompatActivity {
 
                     switch (aCmd) {
                         case CB:
-                            configuracionBasica.procesoCb(aDat);
+                            boolean cbRet = configuracionBasica.procesoCb(aDat);
                             listenerServer.waitRspHost(configuracionBasica.getCb_response().packData());
-                            UIUtils.startResult(ServerTCP.this,true,"CONFIGURACION BASICA\nEXITOSA",false);
+                            if (cbRet){
+                                UIUtils.startResult(ServerTCP.this,true,"CONFIGURACION BASICA\nEXITOSA",false);
+                            }else {
+                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                            }
                             break;
                         case PP:
                             PP_Request pp_request = new PP_Request();
@@ -151,7 +156,6 @@ public class ServerTCP extends AppCompatActivity {
                                 stopServer();
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                             }
-
                             break;
                         case PC:
                             int pcRet = control.actualizacionControl(aDat);

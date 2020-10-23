@@ -35,6 +35,8 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     private final static String DHCP = "DHCP";
     private final static String STATIC = "ESTATICO";
 
+    EditText etPort;
+
     TextView tvMask1, tvMask2, tvMask3, tvMask4, tvMask;
     EditText etMask1, etMask2, etMask3, etMask4;
 
@@ -89,7 +91,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         etGateway4.setSelection(etGateway4.getText().length());
 
         String stateIp = null;
-        if (isWifiConnected()){
+        if (isWifiConnected()) {
             stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
         }
 
@@ -98,15 +100,16 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         }
 
         if (stateIp.equals(DHCP)) {
+            etPort.setImeOptions(6);
             switchConnectionType.setChecked(false);
             switchConnectionType.setText(DHCP);
             disableComponents(false, R.color.des_color);
         } else {
+            etPort.setImeOptions(5);
             switchConnectionType.setChecked(true);
             switchConnectionType.setText(STATIC);
             disableComponents(true, R.color.transparent);
         }
-
 
         switchConnectionType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +172,8 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     }
 
     public void mapObjects() {
+
+        etPort = findViewById(R.id.et_Port);
 
         tvIp1 = findViewById(R.id.tvIp1);
         tvIp2 = findViewById(R.id.tvIp2);
@@ -246,6 +251,10 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         etGateway4.setBackgroundColor(getResources().getColor(color));
     }
 
+    private int getListeningPort() {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("listening_port", Context.MODE_PRIVATE);
+        return Integer.parseInt(preferences.getString("port", "9999"));
+    }
 
     public void initData() {
         String[] datos, mask, gateway, ip;
@@ -256,12 +265,14 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             gateway = datos[3].split("\\.");
             ip = UtilNetwork.getIPAddress(true).split("\\.");
 
-        }else {
+        } else {
             datos = UtilNetwork.getWifi(getApplicationContext(), true);
             ip = datos[0].split("\\.");
             mask = datos[1].split("\\.");
             gateway = datos[3].split("\\.");
         }
+
+        etPort.setText(String.valueOf(getListeningPort()));
 
         etIp1.setText(ip[0]);
         etIp2.setText(ip[1]);
@@ -279,7 +290,11 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         etGateway4.setText(gateway[3]);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        etIp4.requestFocus();
+        if (switchConnectionType.isChecked()){
+            etIp4.requestFocus();
+        }else {
+            etPort.requestFocus();
+        }
 
     }
 
@@ -338,10 +353,14 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     e.printStackTrace();
                 }
             }
-
             UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
 
         }
+
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("listening_port", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putString("port", etPort.getText().toString());
+        edit.apply();
 
     }
 

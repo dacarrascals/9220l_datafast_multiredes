@@ -11,6 +11,8 @@ import static android.net.ConnectivityManager.TYPE_WIFI;
 
 public class CB_Request {
 
+    private int countValid;
+
     private Context context;
     private String LPORT;
     private String ip;
@@ -26,6 +28,14 @@ public class CB_Request {
     private String dateEVOCIP;
     private String dataDF;
     private String filler;
+
+    public int getCountValid() {
+        return countValid;
+    }
+
+    public void setCountValid(int countValid) {
+        this.countValid = countValid;
+    }
 
     public CB_Request() { }
 
@@ -168,7 +178,7 @@ public class CB_Request {
                     + ";"
                     + "1.0.1;" //Obtener desde Version de app
                     + ";"
-                    + "20201008"; //Obtener desde Version de app
+                    + "20201008;"; //Obtener desde Version de app
 
             //hash
             this.filler = "               ";
@@ -177,6 +187,9 @@ public class CB_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (hash.length() != 32){
+                countValid ++;
+            }
 
         } catch (Exception e) {
             e.getMessage();
@@ -189,7 +202,6 @@ public class CB_Request {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
     }
-
 
     public void initData() {
         String[] datos;
