@@ -48,7 +48,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="20dp"
-            android:text="PUERTO ESCUCHA"
+            android:text="PUERTO ESCUCHA:"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold" />

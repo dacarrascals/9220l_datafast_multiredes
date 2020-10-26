@@ -4,9 +4,17 @@ import com.newpos.libpay.utils.ISOUtil;
 
 public class LT_Request {
 
+    private int countValid;
     private String requestLT;
     private String hash;
 
+    public int getCountValid() {
+        return countValid;
+    }
+
+    public void setCountValid(int countValid) {
+        this.countValid = countValid;
+    }
 
     public String getRequestLT() {
         return requestLT;
@@ -36,6 +44,13 @@ public class LT_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+
+            String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+            correctHash = correctHash.substring(correctHash.length() - 32);
+            if (!correctHash.equals(hash)){
+                hash = correctHash;
+                countValid ++;
+            }
 
         }
         catch(Exception e)

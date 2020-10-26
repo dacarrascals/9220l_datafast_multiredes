@@ -36,33 +36,28 @@ public class dataReceived {
 
     public void identifyCommand(byte[] aMsg)
     {
-        byte[] cmd = new byte[2];
-        byte[] packLen = new byte[2];
-        byte[] resP = null ;
-        int len, lenTmp;
+        byte[] packLen;
+        int len, correctLen;
         int offset = 0;
 
         try
         {
-            //Len
-            System.arraycopy(aMsg, 0, packLen, 0, 2);
-            len = lenTmp = Integer.parseInt(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(packLen)),16);
-            resP = new byte[len];
-            offset+=2;
-            //cmd+Data
-            while (lenTmp > 0) {
-                System.arraycopy(aMsg, offset, resP, 0, lenTmp);
-                offset+=lenTmp;
-                lenTmp -= offset;
+            //len
+            packLen = new byte[2];
+            System.arraycopy(aMsg, offset, packLen, 0, 2);
+            offset += 2;
+            len = Integer.parseInt(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(packLen)),16);
+            correctLen = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aMsg)).trim().length() - 2;
+
+            if (len != correctLen){
+                len = correctLen;
             }
 
             //cmd
-            System.arraycopy(resP, 0, cmd, 0, 2);
-
-            dataRaw = new byte[len-2];
-            System.arraycopy(resP, 2, dataRaw, 0, len-2);
-
-            switch (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(cmd))) {
+            packLen = new byte[2];
+            System.arraycopy(aMsg, offset, packLen, 0, 2);
+            offset += 2;
+            switch (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(packLen))) {
                 case LT:
                     Log.i("CMD" , "LT");
                     setCmd(LT);
@@ -91,6 +86,9 @@ public class dataReceived {
                     setCmd(NN);
                     break;
             }
+
+            dataRaw = new byte[len];
+            System.arraycopy(aMsg, offset, dataRaw, 0, len);
 
         }
         catch(Exception e)

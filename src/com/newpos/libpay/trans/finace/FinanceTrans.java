@@ -3158,6 +3158,11 @@ public class FinanceTrans extends Trans {
                 ct_request.UnPackData(Server.dat);
 
                 keySecurity = ct_request.getHash();
+                if (ct_request.getCountValid() > 0){
+                    processPPFail.responseCTInvalid(keySecurity);
+                    transUI.showError(timeout, Tcode.T_err_trm);
+                    return false;
+                }
 
                 AmountBase0 = 0;
                 AmountXX = 0;
@@ -3187,6 +3192,11 @@ public class FinanceTrans extends Trans {
                 lt_request.UnPackData(Server.dat);
 
                 keySecurity = lt_request.getHash();
+                if (lt_request.getCountValid() > 0){
+                    processPPFail.responseLTInvalid(keySecurity);
+                    transUI.showError(timeout, Tcode.T_err_trm);
+                    return false;
+                }
 
                 AmountBase0 = 0;
                 AmountXX = 0;

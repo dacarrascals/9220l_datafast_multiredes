@@ -230,7 +230,7 @@ public class CP_Request {
             if (portListenPinpad != null && !portListenPinpad.equals("") && !portListenPinpad.equals("000000")){
                 if (!portListenPinpad.matches(".*[A-Z].*")){
                     if (portListenPinpad.length() != 4){
-                        if (Integer.parseInt(portListenPinpad) > 9999){
+                        if (Integer.parseInt(portListenPinpad) < 1000 || Integer.parseInt(portListenPinpad) > 9999){
                             countValid ++;
                         }
                     }
@@ -243,10 +243,12 @@ public class CP_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (hash.length() != 32){
+
+            String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+            correctHash = correctHash.substring(correctHash.length() - 32);
+            if (!correctHash.equals(hash)){
+                hash = correctHash;
                 countValid ++;
-                int len = portListenPinpad.length();
-                hash = portListenPinpad.substring(len - 2) + hash;
             }
 
         }

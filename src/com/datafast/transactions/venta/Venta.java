@@ -78,17 +78,6 @@ public class Venta extends FinanceTrans implements TransPresenter {
         }
 
         if (setAmountPP()) {
-            if (keySecurity.length() != 32){
-                if (aCmd.equals(CT)){
-                    processPPFail.responseCTInvalid(keySecurity);
-                }
-                if (aCmd.equals(LT)){
-                    processPPFail.responseLTInvalid(keySecurity);
-                }
-                transUI.showError(timeout, Tcode.T_err_trm);
-                return;
-            }
-
             if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)){
                 if(!prepareOnline()) {
                     UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);

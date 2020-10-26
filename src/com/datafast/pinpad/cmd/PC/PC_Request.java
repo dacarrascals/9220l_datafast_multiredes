@@ -200,8 +200,12 @@ public class PC_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (hash.length() != 32) {
-                countValid += 1;
+
+            String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+            correctHash = correctHash.substring(correctHash.length() - 32);
+            if (!correctHash.equals(hash)){
+                hash = correctHash;
+                countValid ++;
             }
 
         } catch (Exception e) {
