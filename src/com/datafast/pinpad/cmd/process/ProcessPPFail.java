@@ -251,7 +251,8 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setFiller(ISOUtil.spacepadRight("", 27));
                 }
 
-                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans){
+                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans
+                        || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation){
                     pp_response.setTID(ISOUtil.spacepadRight("", 8));
                     pp_response.setMID(ISOUtil.spacepadRight("", 15));
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight("", 64));

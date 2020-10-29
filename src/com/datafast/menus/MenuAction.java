@@ -349,24 +349,33 @@ public class MenuAction {
                 break;
             case DefinesDATAFAST.ITEM_CONEXION:
                 String[] datos;
-                if (isWifiConnected()) {
-                    datos = UtilNetwork.getWifi(context, false);
-                    UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
-                            "IP: " + UtilNetwork.getIPAddress(true) + "\n" +
-                                    "MASK: " + datos[0] + "\n" +
-                                    "GATEWAY: " + datos[3] + "\n" +
-                                    "RED: " + datos[4]);
-                } else if (EthernetManager.getInstance().isEtherentEnabled()){
-
-                    datos = UtilNetwork.getWifi(context, true);
-                    UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
-                            "IP: " + datos[0] + "\n" +
-                                    "MASK: " + datos[1] + "\n" +
-                                    "GATEWAY: " + datos[3]);
-
+                if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
+                    if (isWifiConnected()) {
+                        datos = UtilNetwork.getWifi(context, false);
+                        UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                                "IP: " + UtilNetwork.getIPAddress(true) + "\n" +
+                                        "MASK: " + datos[0] + "\n" +
+                                        "GATEWAY: " + datos[3] + "\n" +
+                                        "RED: " + datos[4]);
+                    } else if (EthernetManager.getInstance().isEtherentEnabled()){
+                        try {
+                            datos = UtilNetwork.getWifi(context, true);
+                            UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                                    "IP: " + datos[0] + "\n" +
+                                            "MASK: " + datos[1] + "\n" +
+                                            "GATEWAY: " + datos[3]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                        }
+                    }
+                }else{
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
-
-
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_WIFI:
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

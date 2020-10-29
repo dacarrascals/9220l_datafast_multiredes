@@ -47,7 +47,7 @@ public class dataReceived {
             System.arraycopy(aMsg, offset, packLen, 0, 2);
             offset += 2;
             len = Integer.parseInt(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(packLen)),16);
-            correctLen = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aMsg)).trim().length() - 2;
+            correctLen = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aMsg)).trim().length() - 4;
 
             if (len != correctLen){
                 len = correctLen;

@@ -1,6 +1,8 @@
 package com.datafast.pinpad.cmd.CB;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 
 import com.datafast.tools.UtilNetwork;
@@ -8,6 +10,7 @@ import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
+import static com.android.newpos.pay.StartAppDATAFAST.VERSION;
 
 public class CB_Request {
 
@@ -172,13 +175,14 @@ public class CB_Request {
             this.dateEVOCIP = ";";
 
             initData();
+            String[] dataVersion = getVersion().split("_");
 
             this.dataDF = config.getTermID() + ";"
                     + ";"
                     + ";"
-                    + "1.0.1;" //Obtener desde Version de app
+                    + dataVersion[0] + ";"
                     + ";"
-                    + "20201008;"; //Obtener desde Version de app
+                    + dataVersion[1] + ";";
 
             //hash
             this.filler = "               ";
@@ -187,19 +191,33 @@ public class CB_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-
-            String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
-            correctHash = correctHash.substring(correctHash.length() - 32);
-            if (!correctHash.equals(hash)){
-                hash = correctHash;
-                countValid ++;
-            }
+            setCorrectHash(aData);
 
         } catch (Exception e) {
             e.getMessage();
+            setCorrectHash(aData);
         }
 
         return;
+    }
+
+    private void setCorrectHash(byte[] aData){
+        String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+        correctHash = correctHash.substring(correctHash.length() - 32);
+        if (hash == null || !correctHash.equals(hash)){
+            hash = correctHash;
+            countValid ++;
+        }
+    }
+
+    private String getVersion() {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo.versionName;
     }
 
     private boolean isWifiConnected() {

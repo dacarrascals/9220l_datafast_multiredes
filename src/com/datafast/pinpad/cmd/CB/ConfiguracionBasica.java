@@ -42,7 +42,7 @@ public class ConfiguracionBasica {
         cb_response.setRspCodeMsg(ERROR_TRAMA);
         cb_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         cb_response.setFiller("");
-        cb_request.setHash(cb_request.getHash());
+        cb_response.setHash(cb_request.getHash());
     }
 
     private void processOk() {

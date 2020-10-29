@@ -299,9 +299,8 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     }
 
     private void save() {
-
+        boolean change = false;
         if (switchConnectionType.isChecked()) {
-            boolean change = false;
             inputMethodManager.hideSoftInputFromInputMethod(getWindow().getCurrentFocus().getWindowToken(), 0);
             String ip = concatIP();
             String mask = concatMask();
@@ -341,6 +340,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             if (isWifiConnected()) {
                 try {
                     IpWifiConf.wifiDhcp(getApplicationContext());
+                    change = true;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -349,11 +349,17 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             if (EthernetManager.getInstance().isEtherentEnabled()) {
                 try {
                     IpEthernetConf.etherDhcp();
+                    change = true;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
+
+            if (change) {
+                UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
+            } else {
+                UIUtils.startResult(ConfigRed.this, false, "ERROR AL ACTUALIZAR DATOS", false);
+            }
 
         }
 

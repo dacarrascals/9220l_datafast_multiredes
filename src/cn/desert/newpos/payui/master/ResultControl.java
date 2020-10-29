@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.newpos.pay.R;
-import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.Logger;
@@ -23,12 +23,10 @@ import com.pos.device.icc.SlotType;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.BaseActivity;
 
-import static com.android.newpos.pay.StartAppDATAFAST.isInit;
-import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.datafast.menus.MenuAction.callBackSeatle;
+import static com.datafast.menus.menus.contFallback;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static java.lang.Thread.sleep;
 
@@ -71,6 +69,13 @@ public class ResultControl extends BaseActivity {
             if (bundle.getBoolean("boton")) {
                 confirm.setVisibility(View.VISIBLE);
                 buttonActive = true;
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        //over();
+                        removeCard();
+                    }
+                }, 5 * second);
             } else {
                 timer.schedule(new TimerTask() {
                     @Override
@@ -78,7 +83,7 @@ public class ResultControl extends BaseActivity {
                         //over();
                         removeCard();
                     }
-                }, 3 * second);
+                }, 5 * second);
             }
             over();
         } else {

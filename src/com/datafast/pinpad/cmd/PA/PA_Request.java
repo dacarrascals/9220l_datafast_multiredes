@@ -162,20 +162,24 @@ public class PA_Request {
             System.arraycopy(aData, offset, tmp, 0, 32);
             offset += 32;
             this.hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-
-            String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
-            correctHash = correctHash.substring(correctHash.length() - 32);
-            if (!correctHash.equals(hash)){
-                hash = correctHash;
-                countValid ++;
-            }
+            setCorrectHash(aData);
 
         }
         catch(Exception e)
         {
             e.getMessage();
+            setCorrectHash(aData);
         }
 
         return;
+    }
+
+    private void setCorrectHash(byte[] aData){
+        String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+        correctHash = correctHash.substring(correctHash.length() - 32);
+        if (hash == null || !correctHash.equals(hash)){
+            hash = correctHash;
+            countValid ++;
+        }
     }
 }
