@@ -202,11 +202,19 @@ public class CB_Request {
     }
 
     private void setCorrectHash(byte[] aData){
-        String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
-        correctHash = correctHash.substring(correctHash.length() - 32);
-        if (hash == null || !correctHash.equals(hash)){
-            hash = correctHash;
-            countValid ++;
+        try{
+            String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+            correctHash = correctHash.substring(correctHash.length() - 32);
+            if (hash == null || !correctHash.equals(hash)){
+                hash = correctHash;
+                countValid ++;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).length() != 32){
+                hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+                countValid ++;
+            }
         }
     }
 
