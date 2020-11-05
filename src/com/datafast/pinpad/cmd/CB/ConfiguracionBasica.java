@@ -5,6 +5,7 @@ import android.content.Context;
 import com.newpos.libpay.utils.ISOUtil;
 
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
@@ -39,7 +40,7 @@ public class ConfiguracionBasica {
 
     private void processInvalid() {
         cb_response.setTypeMsg(CB);
-        cb_response.setRspCodeMsg(ERROR_TRAMA);
+        cb_response.setRspCodeMsg(ERROR_PROCESO);
         cb_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         cb_response.setFiller("");
         cb_response.setHash(cb_request.getHash());

@@ -19,6 +19,7 @@ import com.newpos.libpay.utils.PAYUtils;
 
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
@@ -69,7 +70,7 @@ public class ProcessPPFail extends FinanceTrans {
 
     public void responseLTInvalid(String keySecurity) {
         ltResponse.setTypeMsg(LT);
-        ltResponse.setRspCodeMsg(ERROR_TRAMA);
+        ltResponse.setRspCodeMsg(ERROR_PROCESO);
         ltResponse.setIdCodNetCte(" ");
         ltResponse.setIdCodNetDef(" ");
         ltResponse.setCardNumber(ISOUtil.spacepadRight("", 25));
@@ -83,7 +84,7 @@ public class ProcessPPFail extends FinanceTrans {
 
     public void responseCTInvalid(String keySecurity) {
         ctResponse.setTypeMsg(CT);
-        ctResponse.setRspCodeMsg(ERROR_TRAMA);
+        ctResponse.setRspCodeMsg(ERROR_PROCESO);
         ctResponse.setCardNumber(ISOUtil.spacepad("", 64));
         ctResponse.setBinCard(ISOUtil.spacepad("", 6));
         ctResponse.setCardExpDate(ISOUtil.spacepad("", 4));

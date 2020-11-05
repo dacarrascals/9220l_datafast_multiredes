@@ -18,6 +18,7 @@ import com.pos.device.net.eth.EthernetManager;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_EN_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
@@ -132,7 +133,7 @@ public class Wifi {
     }
 
     private void processInvalid() {
-        cp_response.setRspCodeMsg(ERROR_TRAMA);
+        cp_response.setRspCodeMsg(ERROR_PROCESO);
         cp_response.setRspMessage(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         cp_response.setTypeMsg(CP);
         cp_response.setHash(cp_request.getHash());

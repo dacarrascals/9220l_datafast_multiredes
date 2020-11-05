@@ -74,15 +74,15 @@ public class Control {
 
     private void processOk(){
         pc_response.setRspCodeMsg(OK);
-        pc_response.setFiller(ISOUtil.padright("",2,'0'));
+        pc_response.setFiller("");
         pc_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(56)) + "", 20, ' '));
         pc_response.setTypeMsg(PC);
         pc_response.setHash(pc_request.getHash());
     }
 
     private void processInvalid(){
-        pc_response.setRspCodeMsg(ERROR_TRAMA);
-        pc_response.setFiller(ISOUtil.padright("",2,'0'));
+        pc_response.setRspCodeMsg(ERROR_PROCESO);
+        pc_response.setFiller("");
         pc_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         pc_response.setTypeMsg(PC);
         pc_response.setHash(pc_request.getHash());
@@ -90,7 +90,7 @@ public class Control {
 
     private void processFail(){
         pc_response.setRspCodeMsg(ERROR_PROCESO);
-        pc_response.setFiller(ISOUtil.padright("",2,'0'));
+        pc_response.setFiller("");
         pc_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         pc_response.setTypeMsg(PC);
         pc_response.setHash(pc_request.getHash());

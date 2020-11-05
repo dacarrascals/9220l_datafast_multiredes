@@ -42,7 +42,7 @@ public class Actualizacion{
         pa_request.UnPackData(data);
 
         if (pa_request.getCountValid() > 0){
-            processFail(ERROR_TRAMA, "ERROR EN TRAMA");
+            processFail(ERROR_PROCESO, "ERROR EN TRAMA");
             tramaValida = -1;
             echoTest = false;
             return false;
@@ -62,27 +62,28 @@ public class Actualizacion{
             } catch(Exception e) {
                 intentOK = false;
                 echoTest = false;
-                processFail(ERROR_PROCESO, "ERROR EN TRAMA");
+                msgfail = getStatusInfo(String.valueOf(61));
+                processFail(ERROR_TRAMA, msgfail);
             }
         } else {
             intentOK = false;
             echoTest = false;
             msgfail = "REALICE PROCESO DE CONTROL";
-            processFail(INICIO_DIA, "REALICE PROCESO DE CONTROL");
+            processFail(INICIO_DIA, msgfail);
         }
         return true;
     }
 
     private void processOk(){
         pa_response.setRspCodeMsg(OK);
-        pa_response.setFiller(ISOUtil.padright("",2,'0'));
+        pa_response.setFiller("");
         pa_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(56)) + "", 20, ' '));
         pa_response.setTypeMsg(PA);
         pa_response.setHash(pa_request.getHash());
     }
     private void processFail(String msg, String codRet){
         pa_response.setRspCodeMsg(msg);
-        pa_response.setFiller(ISOUtil.padright("",2,'0'));
+        pa_response.setFiller("");
         pa_response.setMsgRsp(ISOUtil.padright(codRet + "", 20, ' '));
         pa_response.setTypeMsg(PA);
         pa_response.setHash(pa_request.getHash());
