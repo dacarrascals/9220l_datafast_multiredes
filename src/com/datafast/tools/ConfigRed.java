@@ -95,7 +95,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
         }
 
-        if (EthernetManager.getInstance().isEtherentEnabled()) {
+        if (EthernetManager.getInstance().isEtherentEnabled() && stateIp == null) {
             stateIp = IpEthernetConf.getConnectionTypeEther();
         }
 
@@ -298,75 +298,73 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
     }
 
-    private void save() {
-        boolean change = false;
-        if (switchConnectionType.isChecked()) {
-            inputMethodManager.hideSoftInputFromInputMethod(getWindow().getCurrentFocus().getWindowToken(), 0);
-            String ip = concatIP();
-            String mask = concatMask();
-            String gateway = concatGateway();
+    private String[] getDataConnection(){
+        String[] dataCon = {concatIP(), concatMask(), concatGateway()};
+        for(String data : dataCon){
+            if (data.equals("")){
+                dataCon = null;
+                break;
+            }
+        }
+        return dataCon;
+    }
 
-            if (!ip.equals("") && !mask.equals("") && !gateway.equals("")) {
-
-                if (isWifiConnected()) {
-                    try {
-                        IpWifiConf.setStaticIpConfiguration(getApplicationContext(), ip, mask, gateway);
-                        change = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (EthernetManager.getInstance().isEtherentEnabled()) {
-                    try {
-                        IpEthernetConf.setConnectionStaticIP(ip, mask, gateway);
-                        change = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (change) {
-                    UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
+    private boolean setConnection(String[] dataConnection, boolean staticConnection){
+        if (isWifiConnected()) {
+            try {
+                if (staticConnection) {
+                    IpWifiConf.setStaticIpConfiguration(getApplicationContext(), dataConnection[0], dataConnection[1], dataConnection[2]);
                 } else {
-                    UIUtils.startResult(ConfigRed.this, false, "ERROR AL ACTUALIZAR DATOS", false);
-                }
-
-            } else {
-                UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher_1, "Debe Llenar todos los datos", Toast.LENGTH_SHORT);
-            }
-        } else {
-
-            if (isWifiConnected()) {
-                try {
                     IpWifiConf.wifiDhcp(getApplicationContext());
-                    change = true;
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            if (EthernetManager.getInstance().isEtherentEnabled()) {
-                try {
-                    IpEthernetConf.etherDhcp();
-                    change = true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (change) {
-                UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
-            } else {
-                UIUtils.startResult(ConfigRed.this, false, "ERROR AL ACTUALIZAR DATOS", false);
-            }
-
         }
 
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("config_ip", Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.putString("port", etPort.getText().toString());
-        edit.apply();
+        if (EthernetManager.getInstance().isEtherentEnabled()) {
+            try {
+                if (staticConnection) {
+                    IpEthernetConf.setConnectionStaticIP(dataConnection[0], dataConnection[1], dataConnection[2]);
+                } else {
+                    IpEthernetConf.etherDhcp();
+                }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    private void save() {
+        boolean change = false;
+        boolean invalidDataConnection = false;
+        if (switchConnectionType.isChecked()) {
+            inputMethodManager.hideSoftInputFromInputMethod(getWindow().getCurrentFocus().getWindowToken(), 0);
+            String[] dataConnection = getDataConnection();
+            if (dataConnection != null) {
+                change = setConnection(dataConnection, true);
+            } else {
+                UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher_1, "Debe Llenar todos los datos", Toast.LENGTH_SHORT);
+                invalidDataConnection = true;
+            }
+        }else {
+            change = setConnection(null, false);
+        }
+
+        if (change) {
+            SharedPreferences preferences = getApplicationContext().getSharedPreferences("config_ip", Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putString("port", etPort.getText().toString());
+            edit.apply();
+
+            UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
+        } else if (!invalidDataConnection) {
+            UIUtils.startResult(ConfigRed.this, false, "ERROR AL ACTUALIZAR DATOS", false);
+        }
 
     }
 
