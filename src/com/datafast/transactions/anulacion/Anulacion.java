@@ -244,8 +244,8 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
     private void processErrVoid() {
         if (data != null) {
             if (data.getIsVoided()) {
-                retVal = Tcode.T_trans_is_voided;
-                transUI.showError(timeout, Tcode.T_trans_is_voided, processPPFail);
+                retVal = Tcode.T_trans_voided;
+                transUI.showError(timeout, retVal, processPPFail);
             } else if (!mtransEnableVoid) {
                 retVal = Tcode.T_not_allow;
                 transUI.showError(timeout, retVal, processPPFail);
@@ -255,8 +255,8 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             }
 
         } else {
-            retVal = Tcode.T_not_find_trans;
-            transUI.showError(timeout, Tcode.T_not_find_trans, processPPFail);
+            retVal = Tcode.T_trans_not_exist;
+            transUI.showError(timeout, retVal, processPPFail);
         }
     }
 

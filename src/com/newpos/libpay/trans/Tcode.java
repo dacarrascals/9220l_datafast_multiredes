@@ -98,6 +98,8 @@ public class Tcode {
     public static final int T_err_batch_trans = 188 ;
     public static final int T_err_trm = 189 ;
     public static final int T_err_deferred = 190 ;
+    public static final int T_trans_voided = 191 ;
+    public static final int T_trans_not_exist = 192 ;
     public static final int T_unknow_err = 999 ;//未知错误
 
     public interface Status{
