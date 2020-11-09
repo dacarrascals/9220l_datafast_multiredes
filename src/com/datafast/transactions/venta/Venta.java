@@ -63,11 +63,6 @@ public class Venta extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        if (ServerTCP.count > 0){
-            transUI.showError(timeout, Tcode.T_err_trm,processPPFail);
-            return;
-        }
-
         int reverso = validateReverseCash();
         if (reverso != 1995){
             return;

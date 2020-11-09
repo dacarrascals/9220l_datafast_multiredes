@@ -18,6 +18,7 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
+import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
@@ -40,6 +41,11 @@ public class ProcessPPFail extends FinanceTrans {
     private String expDateFail = "";
     private String cardHolderNameFail = "";
     private String ARQCFail = "";
+
+    public ProcessPPFail(Context ctx){
+        super(ctx);
+        this.pp_response = new PP_Response();
+    }
 
     public ProcessPPFail(Context ctx, ISO8583 iso8583) {
         super(ctx);
@@ -92,6 +98,43 @@ public class ProcessPPFail extends FinanceTrans {
         ctResponse.setFiller("");
         ctResponse.setHash(keySecurity);
         listenerServer.waitRspHost(ctResponse.packData());
+    }
+
+    public void responsePPInvalid(PP_Request ppRequestData){
+        pp_response.setTypeMsg(PP);
+        pp_response.setRspCodeMsg(ERROR_PROCESO);
+        pp_response.setIdCodNetAcq(ISOUtil.padleft(ppRequestData.getIdCodNetAcq() + "", 2, '0'));
+        pp_response.setRspCode("00");
+        pp_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
+        pp_response.setSecuencialTrans(ISOUtil.spacepadRight("", 6));
+        pp_response.setHourTrans(ISOUtil.spacepadRight("", 6));
+        pp_response.setDateTrans(ISOUtil.spacepadRight("", 8));
+        pp_response.setNumberAuth(ISOUtil.spacepadRight("", 6));
+        pp_response.setTID(ISOUtil.spacepadRight("", 8));
+        pp_response.setMID(ISOUtil.spacepadRight("", 15));
+        pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
+        pp_response.setMsgPrintAwards(ISOUtil.spacepadRight("", 80));
+        pp_response.setCodBankAcq(ISOUtil.spacepad("", 3));
+        pp_response.setNameBankAcq(ISOUtil.spacepad("", 30));
+        pp_response.setNumberBatch(ISOUtil.spacepadRight("", 6));
+        pp_response.setNameGroupCard(ISOUtil.spacepadRight("", 25));
+        pp_response.setModeReadCard(PAYUtils.entryModePP(inputModeFail, isFallBack));
+        pp_response.setFixedAmount(ISOUtil.padleft("", 12, ' '));
+        pp_response.setValidatePIN(ISOUtil.spacepad("", 15));
+        pp_response.setNameCardHolder(ISOUtil.spacepadRight(cardHolderNameFail, 40));
+        pp_response.setARQC(ISOUtil.spacepadRight("", 16));
+        pp_response.setTVR(ISOUtil.spacepadRight("", 10));
+        pp_response.setTSI(ISOUtil.spacepadRight("", 4));
+        pp_response.setAppEMV(ISOUtil.spacepad("", 20));
+        pp_response.setAIDEMV(ISOUtil.spacepad("", 20));
+        pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
+        pp_response.setExpDateCard(ISOUtil.spacepadRight("", 4));
+        pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(PANFail), 25));
+        pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight("", 64));
+        pp_response.setFiller(ISOUtil.spacepadRight("", 27));
+        pp_response.setHash(ppRequestData.getHash());
+
+        listenerServer.waitRspHost(pp_response.packData());
     }
 
     public void cmdCancel(String cmd, int codRet){
@@ -251,8 +294,7 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));
                     pp_response.setFiller(ISOUtil.spacepadRight("", 27));
                 }
-
-                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans
+                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans || codRet == Tcode.T_wait_timeout
                         || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation){
                     pp_response.setTID(ISOUtil.spacepadRight("", 8));
                     pp_response.setMID(ISOUtil.spacepadRight("", 15));

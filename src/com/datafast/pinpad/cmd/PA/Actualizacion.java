@@ -77,7 +77,7 @@ public class Actualizacion{
     private void processOk(){
         pa_response.setRspCodeMsg(OK);
         pa_response.setFiller("");
-        pa_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(56)) + "", 20, ' '));
+        pa_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(62)) + "", 20, ' '));
         pa_response.setTypeMsg(PA);
         pa_response.setHash(pa_request.getHash());
     }

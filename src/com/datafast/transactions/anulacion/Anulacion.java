@@ -82,11 +82,6 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        if (ServerTCP.count > 0) {
-            transUI.showError(timeout, Tcode.T_err_trm, processPPFail);
-            return;
-        }
-
         keySecurity = pp_request.getHash();
 
         if (!checkBatchAndSettle(false, true)) {
@@ -231,8 +226,8 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         retVal = transUI.showTransInfo(30 * 1000, data);
 
         if (0 != retVal) {
-            retVal = Tcode.T_user_cancel_operation;
-            transUI.showError(timeout, Tcode.T_user_cancel_operation, processPPFail);
+            retVal = Tcode.T_user_cancel_input;
+            transUI.showError(timeout, retVal, processPPFail);
             return false;
         }
         return true;
@@ -472,6 +467,8 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         } else {
             if (info.getErrno() == 0) {
                 transUI.showError(timeout, Tcode.T_user_cancel_input, processPPFail);
+            }else {
+                transUI.showError(timeout, info.getErrno(), processPPFail);
             }
         }
     }

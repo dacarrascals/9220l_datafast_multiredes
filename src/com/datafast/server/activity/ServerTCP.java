@@ -25,6 +25,7 @@ import com.datafast.pinpad.cmd.CB.ConfiguracionBasica;
 import com.datafast.pinpad.cmd.PA.Actualizacion;
 import com.datafast.pinpad.cmd.PC.Control;
 import com.datafast.pinpad.cmd.PP.PP_Request;
+import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
@@ -60,7 +61,6 @@ public class ServerTCP extends AppCompatActivity {
     private boolean ret;
     private String[] tipoVenta;
     private int seleccion = 0;
-    public static int count = 0;
 
     public static waitResponse listenerServer;
 
@@ -121,7 +121,6 @@ public class ServerTCP extends AppCompatActivity {
                 if (checkCardPresent(aCmd)){
                     Intent intent = new Intent();
                     seleccion = 0;
-                    count = 0;
 
                     switch (aCmd) {
                         case CB:
@@ -137,7 +136,12 @@ public class ServerTCP extends AppCompatActivity {
                             PP_Request pp_request = new PP_Request();
                             pp_request.UnPackData(aDat);
                             seleccion = Integer.parseInt(pp_request.getTypeTrans());
-                            count = pp_request.getCountValid();
+                            if (pp_request.getCountValid() > 0){
+                                ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
+                                processPPFail.responsePPInvalid(pp_request);
+                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                                break;
+                            }
                         case LT:
                         case CT:
                             if (seleccion == 0){
