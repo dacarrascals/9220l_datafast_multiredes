@@ -402,7 +402,7 @@ public class PP_Request {
                     countValid ++;
                 }
             }else {
-                TID = TMConfig.getInstance().getMerchID();
+                TID = TMConfig.getInstance().getTermID();
             }
 
             //CID

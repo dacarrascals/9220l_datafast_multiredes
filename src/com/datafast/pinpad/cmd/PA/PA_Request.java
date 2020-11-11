@@ -123,7 +123,7 @@ public class PA_Request {
                     countValid ++;
                 }
             }else {
-                TID = TMConfig.getInstance().getMerchID();
+                TID = TMConfig.getInstance().getTermID();
             }
 
             //MID

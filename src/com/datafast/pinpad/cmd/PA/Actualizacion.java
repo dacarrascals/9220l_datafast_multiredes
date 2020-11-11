@@ -69,7 +69,7 @@ public class Actualizacion{
             intentOK = false;
             echoTest = false;
             msgfail = "REALICE PROCESO DE CONTROL";
-            processFail(INICIO_DIA, msgfail);
+            processFail(INICIO_DIA, "PROCESO CONTROL");
         }
         return true;
     }
