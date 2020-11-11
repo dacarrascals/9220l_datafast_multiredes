@@ -63,7 +63,7 @@ public class PwMasterKey extends AppCompatActivity {
         btn_cnl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //finish();
+                UIUtils.startResult(PwMasterKey.this,false,"INYECCION MASTER KEY CANCELADA" ,false);
             }
         });
     }
