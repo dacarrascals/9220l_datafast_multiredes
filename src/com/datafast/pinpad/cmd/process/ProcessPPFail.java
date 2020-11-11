@@ -83,7 +83,7 @@ public class ProcessPPFail extends FinanceTrans {
         ltResponse.setCardExpDate(ISOUtil.spacepadRight("", 4));
         ltResponse.setCardNumEncryp(ISOUtil.spacepadRight("", 64));
         ltResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
-        ltResponse.setFiller("");
+        ltResponse.setFiller(ISOUtil.spacepad("", 27));
         ltResponse.setHash(keySecurity);
         listenerServer.waitRspHost(ltResponse.packData());
     }
@@ -95,43 +95,43 @@ public class ProcessPPFail extends FinanceTrans {
         ctResponse.setBinCard(ISOUtil.spacepad("", 6));
         ctResponse.setCardExpDate(ISOUtil.spacepad("", 4));
         ctResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
-        ctResponse.setFiller("");
+        ctResponse.setFiller(ISOUtil.spacepad("", 27));
         ctResponse.setHash(keySecurity);
         listenerServer.waitRspHost(ctResponse.packData());
     }
 
-    public void responsePPInvalid(PP_Request ppRequestData){
+    public void responsePPInvalid(PP_Request ppRequestData, String mensaje, String code){
         pp_response.setTypeMsg(PP);
-        pp_response.setRspCodeMsg(ERROR_PROCESO);
+        pp_response.setRspCodeMsg(code);
         pp_response.setIdCodNetAcq(ISOUtil.padleft(ppRequestData.getIdCodNetAcq() + "", 2, '0'));
         pp_response.setRspCode("00");
-        pp_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
-        pp_response.setSecuencialTrans(ISOUtil.spacepadRight("", 6));
-        pp_response.setHourTrans(ISOUtil.spacepadRight("", 6));
-        pp_response.setDateTrans(ISOUtil.spacepadRight("", 8));
-        pp_response.setNumberAuth(ISOUtil.spacepadRight("", 6));
-        pp_response.setTID(ISOUtil.spacepadRight("", 8));
-        pp_response.setMID(ISOUtil.spacepadRight("", 15));
-        pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
-        pp_response.setMsgPrintAwards(ISOUtil.spacepadRight("", 80));
+        pp_response.setMsgRsp(ISOUtil.padright(mensaje + "", 20, ' '));
+        pp_response.setSecuencialTrans(ISOUtil.spacepad("", 6));
+        pp_response.setHourTrans(ISOUtil.spacepad("", 6));
+        pp_response.setDateTrans(ISOUtil.spacepad("", 8));
+        pp_response.setNumberAuth(ISOUtil.spacepad("", 6));
+        pp_response.setTID(ISOUtil.spacepad("", 8));
+        pp_response.setMID(ISOUtil.spacepad("", 15));
+        pp_response.setInterestFinancingValue(ISOUtil.spacepad("", 12));
+        pp_response.setMsgPrintAwards(ISOUtil.spacepad("", 80));
         pp_response.setCodBankAcq(ISOUtil.spacepad("", 3));
         pp_response.setNameBankAcq(ISOUtil.spacepad("", 30));
-        pp_response.setNumberBatch(ISOUtil.spacepadRight("", 6));
-        pp_response.setNameGroupCard(ISOUtil.spacepadRight("", 25));
-        pp_response.setModeReadCard(PAYUtils.entryModePP(inputModeFail, isFallBack));
-        pp_response.setFixedAmount(ISOUtil.padleft("", 12, ' '));
+        pp_response.setNumberBatch(ISOUtil.spacepad("", 6));
+        pp_response.setNameGroupCard(ISOUtil.spacepad("", 25));
+        pp_response.setModeReadCard(ISOUtil.spacepadRight("", 2));
+        pp_response.setFixedAmount(ISOUtil.spacepad("", 12));
         pp_response.setValidatePIN(ISOUtil.spacepad("", 15));
-        pp_response.setNameCardHolder(ISOUtil.spacepadRight(cardHolderNameFail, 40));
-        pp_response.setARQC(ISOUtil.spacepadRight("", 16));
-        pp_response.setTVR(ISOUtil.spacepadRight("", 10));
-        pp_response.setTSI(ISOUtil.spacepadRight("", 4));
+        pp_response.setNameCardHolder(ISOUtil.spacepad("", 40));
+        pp_response.setARQC(ISOUtil.spacepad("", 16));
+        pp_response.setTVR(ISOUtil.spacepad("", 10));
+        pp_response.setTSI(ISOUtil.spacepad("", 4));
         pp_response.setAppEMV(ISOUtil.spacepad("", 20));
         pp_response.setAIDEMV(ISOUtil.spacepad("", 20));
         pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
-        pp_response.setExpDateCard(ISOUtil.spacepadRight("", 4));
-        pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(PANFail), 25));
-        pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight("", 64));
-        pp_response.setFiller(ISOUtil.spacepadRight("", 27));
+        pp_response.setExpDateCard(ISOUtil.spacepad("", 4));
+        pp_response.setNumberCardMask(ISOUtil.spacepad("", 25));
+        pp_response.setNumberCardEncrypt(ISOUtil.spacepad("", 64));
+        pp_response.setFiller(ISOUtil.spacepad("", 27));
         pp_response.setHash(ppRequestData.getHash());
 
         listenerServer.waitRspHost(pp_response.packData());
@@ -187,23 +187,38 @@ public class ProcessPPFail extends FinanceTrans {
             case PP:
                 PP_Request pp_request = new PP_Request();
                 pp_request.UnPackData(Server.dat);
-                keySecurity = pp_request.getHash();
 
-                pp_response.setTypeMsg(PP);
-                if (codRet == Tcode.T_err_batch_full){
-                    pp_response.setRspCodeMsg(PAYUtils.selectRspCode(20,iso8583.getfield(39)));
-                }else {
-                    pp_response.setRspCodeMsg(PAYUtils.selectRspCode(codRet,iso8583.getfield(39)));
-                }
-                pp_response.setIdCodNetAcq(ISOUtil.padleft(pp_request.getIdCodNetAcq() + "", 2, '0'));
-                pp_response.setRspCode(ISOUtil.spacepadZero(iso8583.getfield(39), 2));
-                String mensaje = getErrInfo(String.valueOf(codRet));
+                String mensaje;
                 if (codRet == Tcode.T_err_batch_full) {
                     mensaje = "PROCESO CONTROL";
+                }else if (codRet == Tcode.T_err_deferred){
+                    mensaje = getErrInfo(String.valueOf(Tcode.T_user_cancel_input));
+                }else {
+                    mensaje = getErrInfo(String.valueOf(codRet));
                 }
                 if (mensaje.length() > 20) {
                     mensaje = mensaje.substring(0,20);
                 }
+
+                String code;
+                if (codRet == Tcode.T_err_batch_full){
+                    code = PAYUtils.selectRspCode(20,iso8583.getfield(39));
+                }else {
+                    code = PAYUtils.selectRspCode(codRet,iso8583.getfield(39));
+                }
+
+                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans || codRet == Tcode.T_wait_timeout || codRet == Tcode.T_err_deferred
+                        || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation){
+                    responsePPInvalid(pp_request, mensaje, code);
+                    break;
+                }
+
+                keySecurity = pp_request.getHash();
+
+                pp_response.setTypeMsg(PP);
+                pp_response.setRspCodeMsg(code);
+                pp_response.setIdCodNetAcq(ISOUtil.padleft(pp_request.getIdCodNetAcq() + "", 2, '0'));
+                pp_response.setRspCode(ISOUtil.spacepadZero(iso8583.getfield(39), 2));
                 pp_response.setMsgRsp(ISOUtil.padright( mensaje, 20, ' '));
                 pp_response.setSecuencialTrans(ISOUtil.spacepadRight(iso8583.getfield(11),6));
                 pp_response.setHourTrans(ISOUtil.spacepadRight(iso8583.getfield(12), 6));
@@ -293,12 +308,6 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(PANFail),25));
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));
                     pp_response.setFiller(ISOUtil.spacepadRight("", 27));
-                }
-                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans || codRet == Tcode.T_wait_timeout
-                        || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation){
-                    pp_response.setTID(ISOUtil.spacepadRight("", 8));
-                    pp_response.setMID(ISOUtil.spacepadRight("", 15));
-                    pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight("", 64));
                 }
 
                 pp_response.setHash(keySecurity);

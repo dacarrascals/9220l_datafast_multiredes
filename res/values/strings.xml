@@ -47,6 +47,7 @@
     <string name="dialog_title_listapp">SELECCIONE APLICACION</string>
     <string name="err_msg_pwmk">Debe ingresar una clave</string>
     <string name="err_msg_pwoperario">CODIGO DE ACCESO NO COINCIDE</string>
+    <string name="err_msg_password">INGRESE CONTRASEÑA</string>
     <string name="errlog_list">Errlog list</string>
     <string name="exit">Exit</string>
     <string name="feedback_advice">Feedback and advice</string>

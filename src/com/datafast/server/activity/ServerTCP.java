@@ -42,6 +42,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.NN;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
@@ -127,7 +128,7 @@ public class ServerTCP extends AppCompatActivity {
                             boolean cbRet = configuracionBasica.procesoCb(aDat);
                             listenerServer.waitRspHost(configuracionBasica.getCb_response().packData());
                             if (cbRet){
-                                UIUtils.startResult(ServerTCP.this,true,"CONFIGURACION BASICA\nEXITOSA",false);
+                                UIUtils.startResult(ServerTCP.this,true,"CONFIGURACION BASICA\nENVIADA",false);
                             }else {
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                             }
@@ -138,7 +139,7 @@ public class ServerTCP extends AppCompatActivity {
                             seleccion = Integer.parseInt(pp_request.getTypeTrans());
                             if (pp_request.getCountValid() > 0){
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
-                                processPPFail.responsePPInvalid(pp_request);
+                                processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO);
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                                 break;
                             }
@@ -273,6 +274,10 @@ public class ServerTCP extends AppCompatActivity {
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }
+                }else{
+                    UIUtils.toast(ServerTCP.this, R.drawable.ic_launcher_1, getString(R.string.err_msg_password), Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
             }
         });

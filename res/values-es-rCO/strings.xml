@@ -155,6 +155,7 @@
     <string name="title_operario">MENU OPERARIO</string>
     <string name="hint_pw_operario">Contraseña:</string>
     <string name="err_msg_pwoperario">CODIGO DE ACCESO NO COINCIDE</string>
+    <string name="err_msg_password">INGRESE CONTRASEÑA</string>
     <string name="conf_msg_pwoperario">ACCESO PERMITIDO</string>
     <string name="pw_operario">028510</string>
 
