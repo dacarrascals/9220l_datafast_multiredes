@@ -41,8 +41,9 @@ public class ConfiguracionBasica {
     private void processInvalid() {
         cb_response.setTypeMsg(CB);
         cb_response.setRspCodeMsg(ERROR_PROCESO);
-        cb_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
-        cb_response.setFiller("");
+        cb_response.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' ')
+                + ISOUtil.spacepadRight("", 62));
+        cb_response.setFiller(ISOUtil.spacepadRight("", 15));
         cb_response.setHash(cb_request.getHash());
     }
 

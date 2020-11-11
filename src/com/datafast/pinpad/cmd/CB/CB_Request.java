@@ -238,14 +238,14 @@ public class CB_Request {
 
         if (isWifiConnected()) {
             datos = UtilNetwork.getWifi(context, false);
-            ip = UtilNetwork.getIPAddress(true) + ";";
-            mask = datos[0] + ";";
-            gateway = datos[3] + ";";
+            ip = ISOUtil.spacepad(UtilNetwork.getIPAddress(true), 15) + ";";
+            mask = ISOUtil.spacepad(datos[0], 15) + ";";
+            gateway = ISOUtil.spacepad(datos[3], 15) + ";";
         } else {
             datos = UtilNetwork.getWifi(context, true);
-            ip = datos[0] + ";";
-            mask = datos[1] + ";";
-            gateway = datos[3] + ";";
+            ip = ISOUtil.spacepad(datos[0], 15) + ";";
+            mask = ISOUtil.spacepad(datos[1], 15) + ";";
+            gateway = ISOUtil.spacepad(datos[3], 15) + ";";
         }
     }
 
