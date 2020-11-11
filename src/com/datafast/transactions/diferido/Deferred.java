@@ -56,7 +56,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        if (ISOUtil.stringToBoolean(tconf.getTRANSACCION_DIFERIDO())){
+        if (!ISOUtil.stringToBoolean(tconf.getTRANSACCION_DIFERIDO())){
             transUI.showError(timeout, Tcode.T_err_deferred, processPPFail);
             return;
         }
