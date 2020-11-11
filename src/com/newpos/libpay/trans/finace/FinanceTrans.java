@@ -16,6 +16,7 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
+import com.datafast.inicializacion.trans_init.trans.Tools;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -3781,12 +3782,14 @@ public class FinanceTrans extends Trans {
         }
 
         if ((retVal = CommonFunctionalities.setFechaExp(timeout, TransEName, transUI, ISOUtil.stringToBoolean(rango.getFECHA_EXP()))) != 0) {
+            transUI.showError(timeout, retVal, processPPFail);
             return false;
         }
 
         ExpDate = CommonFunctionalities.getExpDate();
 
         if ((retVal = CommonFunctionalities.setCVV2(timeout, TransEName, transUI, ISOUtil.stringToBoolean(rango.getCVV2()))) != 0) {
+            transUI.showError(timeout, retVal, processPPFail);
             return false;
         }
 
