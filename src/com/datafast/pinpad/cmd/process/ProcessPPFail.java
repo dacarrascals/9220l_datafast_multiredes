@@ -191,7 +191,8 @@ public class ProcessPPFail extends FinanceTrans {
                 String mensaje;
                 if (codRet == Tcode.T_err_batch_full) {
                     mensaje = "PROCESO CONTROL";
-                }else if (codRet == Tcode.T_err_deferred){
+                }else if (codRet == Tcode.T_err_deferred || codRet == Tcode.T_search_card_err
+                        || codRet == Tcode.T_msg_err_gas || codRet == Tcode.T_err_detect_card_failed){
                     mensaje = getErrInfo(String.valueOf(Tcode.T_user_cancel_input));
                 }else {
                     mensaje = getErrInfo(String.valueOf(codRet));
@@ -207,8 +208,9 @@ public class ProcessPPFail extends FinanceTrans {
                     code = PAYUtils.selectRspCode(codRet,iso8583.getfield(39));
                 }
 
-                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_err_no_trans || codRet == Tcode.T_wait_timeout || codRet == Tcode.T_err_deferred
-                        || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation){
+                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_search_card_err || codRet == Tcode.T_err_no_trans || codRet == Tcode.T_wait_timeout || codRet == Tcode.T_err_deferred || codRet == Tcode.T_trans_not_exist
+                        || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation || codRet == Tcode.T_msg_err_gas
+                        || codRet == Tcode.T_err_detect_card_failed || codRet == Tcode.T_trans_voided || codRet == Tcode.T_void_card_not_same){
                     responsePPInvalid(pp_request, mensaje, code);
                     break;
                 }
@@ -300,14 +302,23 @@ public class ProcessPPFail extends FinanceTrans {
                 }
                 pp_response.setExpDateCard(ISOUtil.spacepadRight(expDateFail,4));
 
+                String numberCard;
                 if (pp_request.getTypeTrans().equals("06")){
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(PANFail,25));
-                    pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));
+                    numberCard = iso8583.getfield(2);
+                    /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));*/
                     pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
                 }else {
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(PANFail),25));
-                    pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));
+                    numberCard = PANFail;
+                    /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));*/
                     pp_response.setFiller(ISOUtil.spacepadRight("", 27));
+                }
+
+                if (tconf.getSIMBOLO_EURO().equals("0")){
+                    pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha1(numberCard),64));
+                }else {
+                    pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(numberCard),64));
                 }
 
                 pp_response.setHash(keySecurity);

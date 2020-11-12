@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static com.datafast.inicializacion.trans_init.trans.Tools.bytesToHexString;
 public class encryption {
 
     /**
@@ -66,5 +67,18 @@ public class encryption {
         }
 
         return sb.toString();
+    }
+
+
+    public static String hashSha1(String hashThis) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            byte[] hash = md.digest(hashThis.getBytes());
+            return bytesToHexString(hash);
+        } catch (NoSuchAlgorithmException nsae) {
+            System.err.println("SHA-1 algorithm is not available...");
+            System.exit(2);
+        }
+        return null;
     }
 }

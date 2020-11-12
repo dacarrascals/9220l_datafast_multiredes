@@ -2883,14 +2883,28 @@ public class FinanceTrans extends Trans {
             pp_response.setExpDateCard(ISOUtil.spacepadRight(expDate,4));
         }
 
+        if (transEname.equals(Trans.Type.ANULACION) || transEname.equals("REVERSAL")){
+            pp_response.setExpDateCard(ISOUtil.spacepad("",4));
+        }
+
+        String numberCard;
         if (transEname.equals(Trans.Type.ELECTRONIC)){
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(Pan,25));
             pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));
+            numberCard = iso8583.getfield(2);
+            /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));*/
         }else {
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(Pan),25));
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));
+            numberCard = Pan;
+            /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));*/
         }
+
+        if (tconf.getSIMBOLO_EURO().equals("0")){
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha1(numberCard),64));
+        }else {
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(numberCard),64));
+        }
+
         String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
         if (isSignature.equals("1")) {
             pp_response.setFiller(ISOUtil.spacepadRight(decode64(), 27));
