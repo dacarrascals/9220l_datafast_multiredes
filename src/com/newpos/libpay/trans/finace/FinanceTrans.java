@@ -1473,7 +1473,7 @@ public class FinanceTrans extends Trans {
         byte[] respData = recive();
         netWork.close();
         if (respData == null || respData.length <= 0) {
-            return Tcode.T_receive_err;
+            return Tcode.T_no_answer;
         }
 
         retVal = iso8583.unPacketISO8583(respData);
@@ -2791,15 +2791,37 @@ public class FinanceTrans extends Trans {
             mensaje = mensaje.substring(0,20);
         }
         pp_response.setMsgRsp(ISOUtil.padright(mensaje + "", 20, ' '));
-        pp_response.setSecuencialTrans(ISOUtil.spacepadRight(TraceNo,6));
-        pp_response.setNumberBatch(ISOUtil.spacepadRight(BatchNo,6));
-        pp_response.setHourTrans(ISOUtil.spacepadRight(iso8583.getfield(12), 6));
-        pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getYear() + iso8583.getfield(13), 8));
+        if (mensaje.equals(getStatusInfo(String.valueOf(Tcode.Status.trans_approved)))){
+            pp_response.setSecuencialTrans(ISOUtil.spacepad("",6));
+            pp_response.setNumberBatch(ISOUtil.spacepadRight("",6));
+        }else {
+            pp_response.setSecuencialTrans(ISOUtil.spacepadRight(TraceNo,6));
+            pp_response.setNumberBatch(ISOUtil.spacepadRight(BatchNo,6));
+        }
+
+        if (iso8583.getfield(12) != null && !iso8583.getfield(12).isEmpty()){
+            pp_response.setHourTrans(ISOUtil.spacepadRight(iso8583.getfield(12), 6));
+        }else {
+            pp_response.setHourTrans(ISOUtil.spacepadRight(PAYUtils.getLocalTime(), 6));
+        }
+
+        if (iso8583.getfield(13) != null){
+            pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getYear() + iso8583.getfield(13), 8));
+        }else {
+            pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getLocalDate2(), 8));
+        }
+
         if (transEname.equals(Type.ANULACION)){
             AuthCode = "";
         }
         pp_response.setNumberAuth(ISOUtil.spacepadRight(AuthCode, 6));
-        pp_response.setTID(ISOUtil.spacepadRight(iso8583.getfield(41), 8));
+
+        if (iso8583.getfield(41) != null){
+            pp_response.setTID(ISOUtil.spacepadRight(iso8583.getfield(41), 8));
+        }else {
+            pp_response.setTID(TermID);
+        }
+
         if (iso8583.getfield(42) != null){
             pp_response.setMID(ISOUtil.spacepadRight(iso8583.getfield(42), 15));
         }else {
@@ -3049,7 +3071,7 @@ public class FinanceTrans extends Trans {
                 ret = Tcode.Status.pago_vario_succ;
                 break;*/
             case Type.REVERSAL:
-                ret = Tcode.Status.rev_receive_ok;
+                ret = Tcode.Status.trans_approved;
                 break;
         }
         return ret;
