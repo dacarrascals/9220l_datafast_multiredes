@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.view.View;
@@ -113,7 +114,19 @@ public class ServerTCP extends AppCompatActivity {
         }
     }
 
+    /**
+     * Enciende la pantalla cuando llega una transacción
+     * */
+    public static void unlockScreen(Context context){
+        PowerManager.WakeLock powerManager = ((PowerManager)context.getSystemService(POWER_SERVICE)).newWakeLock(
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tag:");
+        powerManager.acquire();
+        powerManager.release();
+    }
+
     public void startTrans(final String aCmd, final byte[] aDat, waitResponse l) {
+
+        unlockScreen(this);
 
         this.listenerServer = l;
         new Thread() {
