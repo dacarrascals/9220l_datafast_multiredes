@@ -62,12 +62,18 @@ public class LT_Request {
             correctHash = correctHash.substring(correctHash.length() - 32);
             if (hash == null || !correctHash.equals(hash)){
                 hash = correctHash;
+                if (hash.length() < 32){
+                    hash = ISOUtil.spacepad(hash, 32);
+                }
                 countValid ++;
             }
         }catch (Exception e){
             e.printStackTrace();
             if (ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).length() != 32){
                 hash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
+                if (hash.length() < 32){
+                    hash = ISOUtil.spacepad(hash, 32);
+                }
                 countValid ++;
             }
         }
