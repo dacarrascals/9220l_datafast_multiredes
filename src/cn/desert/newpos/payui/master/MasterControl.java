@@ -65,6 +65,7 @@ import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.device.user.OnUserResultListener;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.presenter.TransView;
+import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.trans.translog.TransLogData;
@@ -97,6 +98,7 @@ import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.server.activity.ServerTCP.listenerServer;
+import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC;
 import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC_DEFERRED;
 import static com.newpos.libpay.trans.Trans.idLote;
@@ -796,12 +798,18 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 btnTarjetaManual.setVisibility(View.INVISIBLE);
                 progressBar = findViewById(R.id.progress);
 
+                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RelativeTimeout);
+                if (status.equals(getStatusInfo(String.valueOf(Tcode.Status.process_trans)))){
+                    relativeLayout.setVisibility(View.VISIBLE);
+                    final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
+                    runTimeGeneral(textViewTitle, timeout);
+                }else {
+                    relativeLayout.setVisibility(View.GONE);
+                }
+
                 if (transaccion){
                     progressBar.setVisibility(View.INVISIBLE);
                 }
-                showHanding(status);
-
-                deleteTimer();
 
                 if (transaccion && ppResponse != null && !alreadySend){
                     new Handler().postDelayed(new Runnable() {
@@ -814,6 +822,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     alreadySend = true;
 
                 }
+
+                showHanding(status);
+
+                deleteTimer();
                 //counterDownTimer(timeout);
             }
         });

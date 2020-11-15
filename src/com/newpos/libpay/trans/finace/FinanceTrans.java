@@ -3671,7 +3671,7 @@ public class FinanceTrans extends Trans {
         property.setOtherAmounts(0);
         property.setIcCard(false);
 
-        transUI.handling(timeout, Tcode.Status.process_trans);
+        transUI.handling(timeout * 2, Tcode.Status.process_trans);
 
         emvl2 = new EmvL2Process(this.context, para);
         emvl2.setTraceNo(TraceNo);//JM
