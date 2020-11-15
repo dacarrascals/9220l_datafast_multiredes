@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
+import com.datafast.inicializacion.configuracioncomercio.TCONF;
 import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.PwMasterKey;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
@@ -42,6 +43,8 @@ import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
 import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.printer.Printer;
+
+import org.jpos.iso.IF_CHAR;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
@@ -339,8 +342,15 @@ public class MenuAction {
                     maintainPwd("CLAVE TECNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_MASTER_KEY, 6);
                 break;
             case DefinesDATAFAST.ITEM_DATOS_COMERCIO:
+                String mid = "000000000000000";
+                if (TMConfig.getInstance().getMerchID().equals(mid)){
+                    mid = tconf.getCARD_ACCP_MERCH();
+                }else {
+                    mid = TMConfig.getInstance().getMerchID();
+                }
+
                 UIUtils.dialogInformativo(context,"INFORMACION DEL COMERCIO",
-                        "Comercio: " + TMConfig.getInstance().getMerchID() + "\n" +
+                        "Comercio: " + mid + "\n" +
                         "Terminal: " + TMConfig.getInstance().getTermID());
                 break;
             case DefinesDATAFAST.ITEM_SETTINGS:
@@ -674,7 +684,10 @@ public class MenuAction {
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }
-
+                } else {
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, context.getString(R.string.err_msg_password), Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
             }
         });
