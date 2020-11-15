@@ -16,6 +16,10 @@ import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
+import org.jpos.iso.IF_CHAR;
+
+import java.sql.SQLOutput;
+
 import cn.desert.newpos.payui.UIUtils;
 
 import static cn.desert.newpos.payui.master.MasterControl.callbackFallback;
@@ -80,7 +84,11 @@ public class Deferred extends FinanceTrans implements TransPresenter {
         }
         Logger.debug("DiferidoTrans>>finish");
 
-        if (retVal != 106 && retVal != 104) {
+        if (retVal == Tcode.T_err_trm){
+            return;
+        }
+
+        if (retVal != 106 && retVal != 104 && retVal != 189) {
             if (aCmd.equals(PP)){
                 callbackRsp = new waitRspReverse() {
                     @Override
@@ -121,7 +129,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
             }
 
             if (!Cuotas()) {
-                retVal = Tcode.T_user_cancel_operation;
+                retVal = Tcode.T_err_trm;
                 transUI.showError(timeout, retVal,processPPFail);
                 return retVal;
             }
@@ -143,18 +151,14 @@ public class Deferred extends FinanceTrans implements TransPresenter {
     }
 
     private boolean Cuotas() {
-        boolean ret = false;
         if (!PAYUtils.isNullWithTrim(pp_request.getLimitDef())){
             numCuotasDeferred = pp_request.getLimitDef();
-
             if (numCuotasDeferred.equals("00") || numCuotasDeferred.equals("0")){
-                transUI.toasTrans(Tcode.T_err_invalid_len, true, true);
-                processPPFail.cmdCancel(Server.cmd, retVal);
-            }else{
-                ret = true;
+                return false;
             }
+            return true;
         }
-        return ret;
+        return false;
     }
 
     /**
