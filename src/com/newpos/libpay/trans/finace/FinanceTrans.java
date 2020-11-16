@@ -1453,6 +1453,8 @@ public class FinanceTrans extends Trans {
             TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).saveLog(Reveral, idAcquirer + FILE_NAME_REVERSE);
             indexRev = TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).getCurrentIndex(Reveral);
 
+            TransLog.clearReveral(true);
+
             TransLog.saveReversal(Reveral, true);
         }
 
@@ -1650,8 +1652,6 @@ public class FinanceTrans extends Trans {
         if (indexRev >= 0){
             TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).deleteTransLog(indexRev);
         }
-
-        TransLog.clearReveral(true);
 
         if (para.isNeedPrint()) {
             retVal = printData(logData);
@@ -2791,7 +2791,7 @@ public class FinanceTrans extends Trans {
             mensaje = mensaje.substring(0,20);
         }
         pp_response.setMsgRsp(ISOUtil.padright(mensaje + "", 20, ' '));
-        if (mensaje.equals(getStatusInfo(String.valueOf(Tcode.Status.trans_approved)))){
+        if ( pp_request.getTypeTrans().equals("04")){
             pp_response.setSecuencialTrans(ISOUtil.spacepad("",6));
             pp_response.setNumberBatch(ISOUtil.spacepadRight("",6));
         }else {
@@ -3818,14 +3818,12 @@ public class FinanceTrans extends Trans {
         }
 
         if ((retVal = CommonFunctionalities.setFechaExp(timeout, TransEName, transUI, ISOUtil.stringToBoolean(rango.getFECHA_EXP()))) != 0) {
-            transUI.showError(timeout, retVal, processPPFail);
             return false;
         }
 
         ExpDate = CommonFunctionalities.getExpDate();
 
         if ((retVal = CommonFunctionalities.setCVV2(timeout, TransEName, transUI, ISOUtil.stringToBoolean(rango.getCVV2()))) != 0) {
-            transUI.showError(timeout, retVal, processPPFail);
             return false;
         }
 

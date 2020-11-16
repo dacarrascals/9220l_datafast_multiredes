@@ -15,9 +15,16 @@ import com.newpos.libpay.presenter.TransPresenter;
 import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.TransInputPara;
 import com.newpos.libpay.trans.finace.FinanceTrans;
+import com.newpos.libpay.trans.translog.TransLog;
+import com.newpos.libpay.trans.translog.TransLogData;
+import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
+
+import java.util.List;
+
 import cn.desert.newpos.payui.UIUtils;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
@@ -27,6 +34,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
 
     waitRspReverse callbackRsp = null;
     private String aCmd;
+    boolean rev = false;
 
     /**
      * 金融交易类构造
@@ -63,7 +71,12 @@ public class Venta extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        int reverso = validateReverseCash();
+        TransLogData revesalData = TransLog.getReversal(true);
+        if (revesalData != null){
+            rev = true;
+        }
+
+        final int reverso = validateReverseCash();
         if (reverso != 1995){
             return;
         }
@@ -77,6 +90,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                 if(!prepareOnline()) {
                     UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
                 }
+
                 if (aCmd.equals(PP)){
                     if ((inputMode == ENTRY_MODE_MAG && !isPinExist) && retVal == Tcode.T_user_cancel_input) {
                         try {
@@ -86,21 +100,25 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         }
                         callbackRsp = null;
                     } else {
-                        callbackRsp = new waitRspReverse() {
-                            @Override
-                            public void getWaitRspReverse(int status) {
-                                retVal = status;
-                                if (Reverse() != 0){
-                                    if (retVal != Tcode.T_not_reverse){
-                                        transUI.showError(timeout, retVal);
-                                    }else {
-                                        transUI.showfinish();
+                        if (!rev && retVal == Tcode.T_no_answer){
+                            transUI.showError(timeout, retVal, processPPFail);
+                        }else {
+                            callbackRsp = new waitRspReverse() {
+                                @Override
+                                public void getWaitRspReverse(int status) {
+                                    retVal = status;
+                                    if (Reverse() != 0) {
+                                        if (retVal != Tcode.T_not_reverse) {
+                                            transUI.showError(timeout, retVal);
+                                        } else {
+                                            transUI.showfinish();
+                                        }
+                                    } else {
+                                        transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
                                     }
-                                }else {
-                                    transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
                                 }
-                            }
-                        };
+                            };
+                        }
                     }
                 }
             } else {
@@ -114,14 +132,15 @@ public class Venta extends FinanceTrans implements TransPresenter {
                 Log.i("Venta" , String.valueOf(retVal));
             }
         }
-        if (aCmd.equals(PP)){
-            if (callbackRsp != null){
+
+        if (aCmd.equals(PP) && rev) {
+            if (callbackRsp != null) {
                 callbackRsp.getWaitRspReverse(retVal);
             }
+        } else {
+            transUI.showfinish();
         }
-
         Logger.debug("SaleTrans>>finish");
-
     }
 
     /**
@@ -169,14 +188,16 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         }
                         if (retVal == 0) {
                             //Solo se usa en la venta (Gasolinera)
-                            CommonFunctionalities.obtenerBin(Pan);
                             msgAprob(Tcode.Status.sale_succ,true);
                             clearPan();
+                            CommonFunctionalities.obtenerBin(Pan);
                             return true;
                         } else {
-                            processPPFail.cmdCancel(Server.cmd,retVal);
-                            transUI.handlingError(timeout, retVal);
-                            //transUI.showError(timeout, retVal,processPPFail);
+                            if (rev){
+                                processPPFail.cmdCancel(Server.cmd,retVal);
+                                transUI.handlingError(timeout, retVal);
+                                //transUI.showError(timeout, retVal,processPPFail);
+                            }
                             clearPan();
                             return false;
                         }
