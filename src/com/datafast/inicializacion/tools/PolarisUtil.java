@@ -14,7 +14,7 @@ import static com.datafast.inicializacion.trans_init.Init.NAME_DB;
 
 public class PolarisUtil {
 
-
+    public static boolean isInitMsg = true;
     /**
      * isInitPolaris check Stis Table
      *

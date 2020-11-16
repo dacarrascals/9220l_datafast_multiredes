@@ -194,6 +194,9 @@ public class menus extends AppCompatActivity {
             case DefinesDATAFAST.ITEM_COMUNICACION:
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_INICIALIZACION, R.drawable.ic_inicializacion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_INICIAL, R.drawable.ic_configuracion));
+                if (!isInit){
+                    itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_RED, R.drawable.ic_configuracion));
+                }
                 break;
         }
 
@@ -281,12 +284,15 @@ public class menus extends AppCompatActivity {
              new Handler().postDelayed(new Runnable() {
                  @Override
                  public void run() {
-                     if (UIUtils.dialog != null) {
-                         if (!UIUtils.dialog.isShowing()) {
+                     if (PolarisUtil.isInitMsg){
+                         if (UIUtils.dialog != null) {
+                             if (!UIUtils.dialog.isShowing()) {
+                                 UIUtils.showAlertDialogInit("ATENCIÓN", DefinesDATAFAST.MSG_INIT, menus.this);
+                             }
+                         } else {
                              UIUtils.showAlertDialogInit("ATENCIÓN", DefinesDATAFAST.MSG_INIT, menus.this);
                          }
-                     } else {
-                         UIUtils.showAlertDialogInit("ATENCIÓN", DefinesDATAFAST.MSG_INIT, menus.this);
+                         PolarisUtil.isInitMsg = false;
                      }
                  }
              }, 500);
