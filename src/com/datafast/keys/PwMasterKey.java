@@ -16,6 +16,9 @@ import com.datafast.server.activity.ServerTCP;
 
 import cn.desert.newpos.payui.UIUtils;
 
+import static com.datafast.keys.InjectMasterKey.MASTERKEYIDX;
+import static com.datafast.keys.InjectMasterKey.threreIsKey;
+
 public class PwMasterKey extends AppCompatActivity {
 
     private Button btn_ok, btn_cnl;
@@ -63,7 +66,9 @@ public class PwMasterKey extends AppCompatActivity {
         btn_cnl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UIUtils.startResult(PwMasterKey.this,false,"INYECCION MASTER KEY CANCELADA" ,false);
+                if (threreIsKey(MASTERKEYIDX, "Debe cargar Master Key", PwMasterKey.this)){
+                    UIUtils.startResult(PwMasterKey.this,false,"INYECCION MASTER KEY CANCELADA" ,false);
+                }
             }
         });
     }

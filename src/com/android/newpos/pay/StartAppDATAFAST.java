@@ -1,12 +1,17 @@
 package com.android.newpos.pay;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextThemeWrapper;
 import android.widget.Toast;
 
 import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
@@ -26,8 +31,10 @@ import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
 import com.newpos.libpay.PaySdk;
 import com.newpos.libpay.global.TMConfig;
+import com.pos.device.ped.KeyType;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.PayApplication;
@@ -63,19 +70,46 @@ public class StartAppDATAFAST extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initSDK();
+        if (idioma()){
+            initSDK();
 
-        isInit = PolarisUtil.isInitPolaris(StartAppDATAFAST.this);
+            isInit = PolarisUtil.isInitPolaris(StartAppDATAFAST.this);
 
-        //TMConfig.getInstance().activeDebugMode(true);
+            //TMConfig.getInstance().activeDebugMode(true);
 
-        //kioske mode
-        kiosk();
+            //kioske mode
+            kiosk();
 
-        batteryStatus = new BatteryStatus();
-        paperStatus = new PaperStatus();
-        this.registerReceiver(batteryStatus, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            batteryStatus = new BatteryStatus();
+            paperStatus = new PaperStatus();
+            this.registerReceiver(batteryStatus, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }
 
+    }
+
+    private boolean idioma() {
+        boolean ret = false;
+        String idiomaLocal = Locale.getDefault().toString();
+        if (!idiomaLocal.equals("es_US")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Theme_AppCompat_Light_Dialog));
+
+            builder.setIcon(R.drawable.ic_launcher);
+            builder.setTitle("Advertencia");
+            builder.setMessage("Por favor cambia el idioma del dispositivo.\nPreferencia: Español - Estados Unidos");
+            builder.setCancelable(false);
+
+            builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
+                }
+            });
+            Dialog dialog = builder.create();
+            dialog.show();
+        } else {
+            ret = true;
+        }
+        return ret;
     }
 
     public void kiosk() {
@@ -91,12 +125,14 @@ public class StartAppDATAFAST extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //InjectMasterKey.injectMk("D573F8765B4975CB");//Master MediaNet
-        //InjectMasterKey.deleteKeys(KeyType.KEY_TYPE_MASTK, MASTERKEYIDX);
-        if (threreIsKey(MASTERKEYIDX, "Debe cargar Master Key", StartAppDATAFAST.this)){
-            initApp();
-        }else{
-            inyectarLlaves();
+        if (idioma()){
+            InjectMasterKey.injectMk("D573F8765B4975CB");//Master MediaNet
+//            InjectMasterKey.deleteKeys(KeyType.KEY_TYPE_MASTK, MASTERKEYIDX);
+            if (threreIsKey(MASTERKEYIDX, "Debe cargar Master Key", StartAppDATAFAST.this)){
+                initApp();
+            }else{
+                inyectarLlaves();
+            }
         }
     }
 
