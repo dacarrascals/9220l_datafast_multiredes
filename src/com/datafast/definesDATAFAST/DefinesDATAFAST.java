@@ -63,7 +63,7 @@ public final class DefinesDATAFAST {
     public static final String ITEM_MODE_KIOSKO = "MODO KIOSKO";
     public static final String MSG_REV_PEN = "REVERSO PENDIENTE";
     public static final String NAME_TRANS_PE = "PAGO CON CODIGO DIFERIDO";
-    public static final String MSG_INIT = "DEBE INICIALIZAR POS!";
+    public static final String MSG_INIT = "DEBE INICIALIZAR PINPAD!";
     public static final String ITEM_MASTER_KEY = "INYECTAR MASTER KEY";
     public static final String ITEM_POLARIS = "POLARIS";
     public static final String ITEM_CONEXION = "DATOS CONEXION";

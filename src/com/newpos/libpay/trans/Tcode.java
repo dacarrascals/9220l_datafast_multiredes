@@ -100,6 +100,7 @@ public class Tcode {
     public static final int T_err_deferred = 190 ;
     public static final int T_trans_voided = 191 ;
     public static final int T_trans_not_exist = 192 ;
+    public static final int T_no_answer = 193 ;
     public static final int T_unknow_err = 999 ;//未知错误
 
     public interface Status{
@@ -160,5 +161,6 @@ public class Tcode {
         public int read_card_ok = 55;
         public int trans_ok = 59;
         public int request_card_ok = 60;
+        public int trans_approved = 63;
     }
 }
