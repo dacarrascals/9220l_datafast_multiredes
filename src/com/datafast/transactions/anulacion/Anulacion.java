@@ -466,6 +466,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             }
         } else {
             if (info.getErrno() == 0) {
+
                 transUI.showError(timeout, Tcode.T_user_cancel_input, processPPFail);
             }else {
                 transUI.showError(timeout, info.getErrno(), processPPFail);
@@ -856,6 +857,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 break;
             default:
                 if ((retVal = CommonFunctionalities.setPanManual(timeout, data.getTransEName(), transUI)) != 0) {
+                    transUI.showError(timeout, retVal, processPPFail);
                     return;
                 }
 
@@ -870,6 +872,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 if (data.getPanNormal().equals(Pan)) {
 
                     if ((retVal = CommonFunctionalities.setFechaExp(timeout, TransEName, transUI, ISOUtil.stringToBoolean(rango.getFECHA_EXP()))) != 0) {
+                        transUI.showError(timeout, retVal, processPPFail);
                         return;
                     }
 
