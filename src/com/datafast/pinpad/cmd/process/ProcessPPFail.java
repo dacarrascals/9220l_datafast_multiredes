@@ -85,7 +85,7 @@ public class ProcessPPFail extends FinanceTrans {
         ltResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         ltResponse.setFiller(ISOUtil.spacepad("", 27));
         ltResponse.setHash(keySecurity);
-        listenerServer.waitRspHost(ltResponse.packData());
+        ppResponse = ltResponse.packData();
     }
 
     public void responseCTInvalid(String keySecurity) {
@@ -97,7 +97,7 @@ public class ProcessPPFail extends FinanceTrans {
         ctResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         ctResponse.setFiller(ISOUtil.spacepad("", 27));
         ctResponse.setHash(keySecurity);
-        listenerServer.waitRspHost(ctResponse.packData());
+        ppResponse = ctResponse.packData();
     }
 
     public void responsePPInvalid(PP_Request ppRequestData, String mensaje, String code){
@@ -134,8 +134,49 @@ public class ProcessPPFail extends FinanceTrans {
         pp_response.setFiller(ISOUtil.spacepad("", 27));
         pp_response.setHash(ppRequestData.getHash());
 
-        listenerServer.waitRspHost(pp_response.packData());
+        ppResponse = pp_response.packData();
     }
+
+    public static int[] codErrMsg = new int[]{
+            Tcode.T_err_deferred,
+            Tcode.T_search_card_err,
+            Tcode.T_msg_err_gas,
+            Tcode.T_err_detect_card_failed,
+            Tcode.T_no_answer,
+            Tcode.T_err_void_not_allow,
+            Tcode.T_insert_card,
+            Tcode.T_err_not_allow
+    };
+
+    public boolean validCodErrMsg(int codRet){
+        for(int cod : codErrMsg){
+            if (cod == codRet){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static int[] codErr = new int[]{
+            Tcode.T_not_reverse,
+            Tcode.T_search_card_err,
+            Tcode.T_err_no_trans,
+            Tcode.T_wait_timeout,
+            Tcode.T_err_deferred,
+            Tcode.T_trans_not_exist,
+            Tcode.T_user_cancel_input,
+            Tcode.T_err_trm,
+            Tcode.T_user_cancel_operation,
+            Tcode.T_msg_err_gas,
+            Tcode.T_unsupport_card,
+            Tcode.T_err_detect_card_failed,
+            Tcode.T_trans_voided,
+            Tcode.T_void_card_not_same,
+            Tcode.T_no_answer,
+            Tcode.T_err_void_not_allow,
+            Tcode.T_insert_card,
+            Tcode.T_err_not_allow
+    };
 
     public void cmdCancel(String cmd, int codRet){
         //iso8583.clearData();
@@ -191,8 +232,7 @@ public class ProcessPPFail extends FinanceTrans {
                 String mensaje;
                 if (codRet == Tcode.T_err_batch_full) {
                     mensaje = "PROCESO CONTROL";
-                }else if (codRet == Tcode.T_err_deferred || codRet == Tcode.T_search_card_err
-                        || codRet == Tcode.T_msg_err_gas || codRet == Tcode.T_err_detect_card_failed){
+                }else if (validCodErrMsg(codRet)){
                     mensaje = getErrInfo(String.valueOf(Tcode.T_user_cancel_input));
                 }else {
                     mensaje = getErrInfo(String.valueOf(codRet));
@@ -208,12 +248,25 @@ public class ProcessPPFail extends FinanceTrans {
                     code = PAYUtils.selectRspCode(codRet,iso8583.getfield(39));
                 }
 
-                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_search_card_err || codRet == Tcode.T_err_no_trans || codRet == Tcode.T_wait_timeout || codRet == Tcode.T_err_deferred || codRet == Tcode.T_trans_not_exist
-                        || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation || codRet == Tcode.T_msg_err_gas
-                        || codRet == Tcode.T_err_detect_card_failed || codRet == Tcode.T_trans_voided || codRet == Tcode.T_void_card_not_same){
-                    responsePPInvalid(pp_request, mensaje, code);
+                boolean finErr = false;
+                for (int cod : codErr){
+                    if (codRet == cod){
+                        responsePPInvalid(pp_request, mensaje, code);
+                        finErr = true;
+                        break;
+                    }
+                }
+
+                if (finErr){
                     break;
                 }
+
+/*                if (codRet == Tcode.T_not_reverse || codRet == Tcode.T_search_card_err || codRet == Tcode.T_err_no_trans || codRet == Tcode.T_wait_timeout || codRet == Tcode.T_err_deferred || codRet == Tcode.T_trans_not_exist
+                        || codRet == Tcode.T_user_cancel_input || codRet == Tcode.T_err_trm || codRet == Tcode.T_user_cancel_operation || codRet == Tcode.T_msg_err_gas || codRet == Tcode.T_unsupport_card
+                        || codRet == Tcode.T_err_detect_card_failed || codRet == Tcode.T_trans_voided || codRet == Tcode.T_void_card_not_same || codRet == Tcode.T_no_answer || codRet == Tcode.T_err_void_not_allow || codRet == Tcode.T_insert_card){
+                    responsePPInvalid(pp_request, mensaje, code);
+                    break;
+                }*/
 
                 keySecurity = pp_request.getHash();
 
