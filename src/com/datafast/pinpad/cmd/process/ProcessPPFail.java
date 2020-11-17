@@ -248,7 +248,7 @@ public class ProcessPPFail extends FinanceTrans {
                     mensaje = "PROCESO CONTROL";
                 } else if (validCodErrMsg(codRet)) {
                     mensaje = getErrInfo(String.valueOf(Tcode.T_user_cancel_input));
-                } else {
+                }else {
                     mensaje = getErrInfo(String.valueOf(codRet));
                 }
                 if (mensaje.length() > 20) {
@@ -284,7 +284,8 @@ public class ProcessPPFail extends FinanceTrans {
                 pp_response.setMsgRsp(ISOUtil.padright(mensaje, 20, ' '));
                 pp_response.setSecuencialTrans(ISOUtil.spacepadRight(iso8583.getfield(11), 6));
 
-                if (pp_request.getTypeTrans().equals("04") && codRet == Tcode.T_trans_rejected){
+                if (pp_request.getTypeTrans().equals("04") && codRet == Tcode.T_trans_rejected
+                         || pp_request.getTypeTrans().equals("04") && codRet == 3002){
                     pp_response.setHourTrans(ISOUtil.spacepadRight(PAYUtils.getLocalTime(), 6));
                     pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getLocalDate2(), 8));
                 }else {
@@ -296,7 +297,13 @@ public class ProcessPPFail extends FinanceTrans {
                     }
                 }
 
-                pp_response.setNumberAuth(ISOUtil.spacepadRight(iso8583.getfield(38), 6));
+                if ((pp_request.getTypeTrans().equals("01") && codRet == Tcode.T_trans_rejected) ||
+                        (pp_request.getTypeTrans().equals("06") || codRet == Tcode.T_trans_rejected)){
+                    pp_response.setNumberAuth(ISOUtil.spacepadRight("", 6));
+                }else {
+                    pp_response.setNumberAuth(ISOUtil.spacepadRight(iso8583.getfield(38), 6));
+                }
+
                 if (iso8583.getfield(41) != null) {
                     pp_response.setTID(ISOUtil.spacepadRight(iso8583.getfield(41), 8));
                 } else {
@@ -311,19 +318,26 @@ public class ProcessPPFail extends FinanceTrans {
                 pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
                 pp_response.setMsgPrintAwards(ISOUtil.spacepadRight("", 80));
 
-                try {
-                    String fld44 = iso8583.getfield(44);
-                    if (fld44 != null) {
-                        pp_response.setCodBankAcq(ISOUtil.spacepadRight(fld44.substring(0, 2), 3));
-                        if (fld44.length() == 5)
-                            pp_response.setNameBankAcq(ISOUtil.spacepadRight(CardType[Integer.parseInt(fld44.substring(0, 1)) - 1], 30));
-                        else
-                            pp_response.setNameBankAcq(ISOUtil.spacepadRight(CardType[Integer.parseInt(fld44.substring(1, 2)) - 1], 30));
-                    } else {
-                        pp_response.setCodBankAcq(ISOUtil.spacepad("", 3));
-                        pp_response.setNameBankAcq(ISOUtil.spacepad("", 30));
+                if ((pp_request.getTypeTrans().equals("01") && codRet == 3005)
+                        || (pp_request.getTypeTrans().equals("06") || codRet == 3005)
+                        ||  (pp_request.getTypeTrans().equals("03") || codRet == 3002)){
+                    pp_response.setCodBankAcq(ISOUtil.spacepad("", 3));
+                    pp_response.setNameBankAcq(ISOUtil.spacepad("", 30));
+                }else {
+                    try {
+                        String fld44 = iso8583.getfield(44);
+                        if (fld44 != null) {
+                            pp_response.setCodBankAcq(ISOUtil.spacepadRight(fld44.substring(0, 2), 3));
+                            if (fld44.length() == 5)
+                                pp_response.setNameBankAcq(ISOUtil.spacepadRight(CardType[Integer.parseInt(fld44.substring(0, 1)) - 1], 30));
+                            else
+                                pp_response.setNameBankAcq(ISOUtil.spacepadRight(CardType[Integer.parseInt(fld44.substring(1, 2)) - 1], 30));
+                        } else {
+                            pp_response.setCodBankAcq(ISOUtil.spacepad("", 3));
+                            pp_response.setNameBankAcq(ISOUtil.spacepad("", 30));
+                        }
+                    } catch (IndexOutOfBoundsException e) {
                     }
-                } catch (IndexOutOfBoundsException e) {
                 }
 
                 if (iso8583.getfield(39) != null) {
@@ -380,7 +394,6 @@ public class ProcessPPFail extends FinanceTrans {
                         }else {
                             pp_response.setNameCardHolder(ISOUtil.spacepadRight(cardHolderNameFail, 40));
                         }
-                        pp_response.setNumberAuth(ISOUtil.spacepad("", 6));
                         pp_response.setCodBankAcq(ISOUtil.spacepad("", 3));
                         pp_response.setNameBankAcq(ISOUtil.spacepad("", 30));
                         pp_response.setNumberCardMask(ISOUtil.spacepad("", 25));
@@ -402,7 +415,7 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setExpDateCard(ISOUtil.spacepadRight(expDateFail,4));
                 }
 
-                if (pp_request.getTypeTrans().equals("04") && codRet == Tcode.T_trans_rejected){
+                if (pp_request.getTypeTrans().equals("04") && (codRet == Tcode.T_trans_rejected || codRet == 3002 || codRet == Tcode.T_receive_err)){
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",64));
                 }else {
                     if (tconf.getSIMBOLO_EURO().equals("0")){

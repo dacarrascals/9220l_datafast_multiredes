@@ -114,12 +114,19 @@ public class RevesalTrans extends Trans {
         retVal = OnLineTrans();
         if (retVal == 0) {
             RspCode = iso8583.getfield(39);
+            System.out.println(" Rsp " + RspCode);
             if (RspCode.equals("00") || RspCode.equals("12") || RspCode.equals("25")) {
                 return retVal;
             } else {
-                data.setRspCode("06");
-                rspCode = "06";
-                retVal =  Tcode.T_err_send_rev;
+                if (RspCode.equals("02")){
+                    retVal = 3002;
+                }else if (RspCode.equals("05")){
+                    retVal = Tcode.T_trans_rejected;
+                }else {
+                    data.setRspCode("06");
+                    rspCode = "06";
+                    retVal =  Tcode.T_err_send_rev;
+                }
             }
         } else if (retVal == Tcode.T_package_mac_err) {
             data.setRspCode("A0");

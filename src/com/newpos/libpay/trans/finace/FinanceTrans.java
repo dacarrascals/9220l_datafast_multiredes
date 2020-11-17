@@ -49,6 +49,8 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.printer.Printer;
 
+import org.jpos.iso.IF_CHAR;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -1358,7 +1360,7 @@ public class FinanceTrans extends Trans {
                     return retVal;
                 } else {
                     if (retVal != 0) {
-                        return Tcode.T_trans_rejected;
+                        return retVal;
                     }
                 }
             }
