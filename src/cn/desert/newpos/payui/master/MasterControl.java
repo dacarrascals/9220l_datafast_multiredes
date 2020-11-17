@@ -950,9 +950,23 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     }
                 });
 
-                close.setOnClickListener(MasterControl.this);
+                close.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        InputMethodManager imm = (InputMethodManager) MasterControl.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(et_inputUser.getWindowToken(), 0);
+                        listener.cancel();
+                    }
+                });
                 //btnAcceptInputUser.setOnClickListener(MasterControl.this);
-                btnCancelInputUser.setOnClickListener(MasterControl.this);
+                btnCancelInputUser.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        InputMethodManager imm = (InputMethodManager) MasterControl.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(et_inputUser.getWindowToken(), 0);
+                        listener.cancel();
+                    }
+                });
 
                 tv_inputUser.setText(label);
 

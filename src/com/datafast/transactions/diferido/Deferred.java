@@ -73,8 +73,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
             //transUI.handling(timeout, Tcode.Status.diferido_exitoso);
             UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
         } else {
-            transUI.handlingError(timeout, retVal);
-            processPPFail.cmdCancel(Server.cmd,retVal);
+            transUI.showError(timeout, retVal, processPPFail);
             UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
             try{
                 Thread.sleep(2000);
