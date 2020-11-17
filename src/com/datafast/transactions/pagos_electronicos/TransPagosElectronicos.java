@@ -30,6 +30,7 @@ import cn.desert.newpos.payui.UIUtils;
 
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_OTT;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_TOKEN_PE;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
@@ -357,15 +358,18 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
 
     private int processWallet() {
         String msj;
+        String typeMsg;
         if (PAYUtils.isNullWithTrim(pp_request.getOTT())) {
 
             if (TypeTransElectronic.equals(Type.PAYCLUB)) {
+                typeMsg = GERCARD_MSG_OTT;
                 msj = "CODIGO OTT";
             } else {
+                typeMsg = GERCARD_MSG_TOKEN_PE;
                 msj = "TOKEN";
             }
 
-            CardInfo cardInfo = transUI.getCardUsePagosElect(GERCARD_MSG_TOKEN_PE + "|" + msj, timeout,
+            CardInfo cardInfo = transUI.getCardUsePagosElect(typeMsg + "|" + msj, timeout,
                     INMODE_NFC | INMODE_HAND, transEname, "Monto\nTotal : ", PAYUtils.getStrAmount(Amount),
                     Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MINIMA()),
                     Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()));

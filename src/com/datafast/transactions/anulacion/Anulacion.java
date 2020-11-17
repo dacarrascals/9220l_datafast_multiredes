@@ -46,6 +46,7 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_CTL;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_ICC;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_SWIPE;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PAGOS_CON_CODIGO;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PAGOS_ELECTRONICOS;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.newpos.libpay.trans.Tcode.T_err_cod;
@@ -805,7 +806,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
                 if (index >= 0) {
 
-                    retVal = CommonFunctionalities.setOTT_Token(timeout, data.getTransEName(),ITEM_PAGOS_ELECTRONICOS,data.getTypeTransElectronic(),
+                    retVal = CommonFunctionalities.setOTT_Token(timeout, data.getTransEName(),ITEM_PAGOS_CON_CODIGO,data.getTypeTransElectronic(),
                             Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MINIMA()),
                             Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()),transUI);
 

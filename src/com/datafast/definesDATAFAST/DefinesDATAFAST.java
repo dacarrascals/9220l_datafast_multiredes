@@ -17,6 +17,7 @@ public final class DefinesDATAFAST {
     public static final String ITEM_BORRAR_REVERSO = "BORRAR REVERSO";
     public static final String ITEM_REPORTE_DETALLADO = "REPORTE DETALLADO";
     public static final String ITEM_PAGOS_ELECTRONICOS = "PAGOS CON CODIGO";
+    public static final String ITEM_PAGOS_CON_CODIGO = "PAGOS CON\nCODIGO";
     public static final String ITEM_TIPO_COMUNICACION = "TIPO DE COMUNICACION";
     public static final String ITEM_INICIALIZACION = "INICIALIZACION \n POLARIS";
     public static final String ITEM_CONFIG_INICIAL = "CONFIGURACION \n POLARIS";
@@ -27,7 +28,8 @@ public final class DefinesDATAFAST {
     public static final String GERCARD_MSG_SWIPE = "DESLICE LA TARJETA";
     public static final String GERCARD_MSG_ICC = "INSERTE LA TARJETA";
     public static final String GERCARD_MSG_CTL = "ACERQUE LA TARJETA";
-    public static final String GERCARD_MSG_TOKEN_PE = "PASE O INGRESE  TOKEN";
+    public static final String GERCARD_MSG_TOKEN_PE = "PASE O INGRESE TOKEN";
+    public static final String GERCARD_MSG_OTT = "PASE O INGRESE CODIGO OTT";
     public static final String TITULO_ANULACION = "INGRESE NUMERO DE REFERENCIA";
     public static final String TIPO_LAYOUT_GRID = "GRID";
     public static final String TIPO_LAYOUT_LINEAR = "LINEAR";
