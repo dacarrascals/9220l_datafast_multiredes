@@ -34,7 +34,6 @@ public class Venta extends FinanceTrans implements TransPresenter {
 
     waitRspReverse callbackRsp = null;
     private String aCmd;
-    boolean rev = false;
 
     /**
      * 金融交易类构造
@@ -71,11 +70,6 @@ public class Venta extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        TransLogData revesalData = TransLog.getReversal(true);
-        if (revesalData != null){
-            rev = true;
-        }
-
         final int reverso = validateReverseCash();
         if (reverso != 1995){
             return;
@@ -100,25 +94,21 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         }
                         callbackRsp = null;
                     } else {
-                        if (!rev && retVal == Tcode.T_no_answer){
-                            transUI.showError(timeout, retVal, processPPFail);
-                        }else {
-                            callbackRsp = new waitRspReverse() {
-                                @Override
-                                public void getWaitRspReverse(int status) {
-                                    retVal = status;
-                                    if (Reverse() != 0) {
-                                        if (retVal != Tcode.T_not_reverse) {
-                                            transUI.showError(timeout, retVal);
-                                        } else {
-                                            transUI.showfinish();
-                                        }
+                        callbackRsp = new waitRspReverse() {
+                            @Override
+                            public void getWaitRspReverse(int status) {
+                                retVal = status;
+                                if (Reverse() != 0) {
+                                    if (retVal != Tcode.T_not_reverse) {
+                                        transUI.showError(timeout, retVal);
                                     } else {
-                                        transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
+                                        transUI.showfinish();
                                     }
+                                } else {
+                                    transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
                                 }
-                            };
-                        }
+                            }
+                        };
                     }
                 }
             } else {
@@ -133,7 +123,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
             }
         }
 
-        if (aCmd.equals(PP) && rev) {
+        if (aCmd.equals(PP) && retVal != Tcode.T_no_answer) {
             if (callbackRsp != null) {
                 callbackRsp.getWaitRspReverse(retVal);
             }
@@ -193,11 +183,9 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             CommonFunctionalities.obtenerBin(Pan);
                             return true;
                         } else {
-                            if (rev){
-                                processPPFail.cmdCancel(Server.cmd,retVal);
-                                transUI.handlingError(timeout, retVal);
-                                //transUI.showError(timeout, retVal,processPPFail);
-                            }
+                            processPPFail.cmdCancel(Server.cmd, retVal);
+                            transUI.handlingError(timeout, retVal);
+                            //transUI.showError(timeout, retVal,processPPFail);
                             clearPan();
                             return false;
                         }
