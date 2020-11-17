@@ -1358,7 +1358,7 @@ public class FinanceTrans extends Trans {
                     return retVal;
                 } else {
                     if (retVal != 0) {
-                        return Tcode.T_reversal_fail;
+                        return Tcode.T_trans_rejected;
                     }
                 }
             }
@@ -3433,6 +3433,7 @@ public class FinanceTrans extends Trans {
 
     private boolean fallback(CardInfo cardInfo){
         isFallBack = true;
+        processPPFail.setFallBack(true);
         retVal = 0;
         try {
             Thread.sleep(500);
@@ -3451,6 +3452,7 @@ public class FinanceTrans extends Trans {
                     return false;
             }
             para.setInputMode(inputMode);
+            processPPFail.setInputMode(inputMode);
 
             if (inputMode == ENTRY_MODE_MAG) {
                 isDebit = false;
