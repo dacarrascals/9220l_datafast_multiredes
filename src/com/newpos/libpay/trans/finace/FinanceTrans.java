@@ -2675,17 +2675,16 @@ public class FinanceTrans extends Trans {
             for (int i = 0; i < 3; i++) {
 
                 transUI.handling(timeout, Tcode.Status.msg_cod_diners);
-                while (true) {
-                    try {
-                        Thread.sleep(20*1000);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        Logger.error("Exception" + e.toString());
-                    }
-                    break;
+                 // espere 20 seg
+                try {
+                    Thread.sleep(20*1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    Logger.error("Exception" + e.toString());
                 }
 
                 transUI.handling(timeout, Tcode.Status.send_data_2_server);
+                isCodDinners = true;
                 retVal = OnLineTrans();
                 transUI.handling(timeout, Tcode.Status.send_over_2_recv);
                 if (retVal == 0) {
