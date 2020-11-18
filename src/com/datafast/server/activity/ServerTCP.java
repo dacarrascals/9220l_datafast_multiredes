@@ -66,15 +66,20 @@ public class ServerTCP extends AppCompatActivity {
 
     public static waitResponse listenerServer;
 
+    boolean isInEcho;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        isInEcho = false;
+
         if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.echoTest){
             Control.echoTest = false;
             Actualizacion.echoTest = false;
+            isInEcho = true;
             MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
             menuAction.SelectAction();
         }
@@ -85,11 +90,13 @@ public class ServerTCP extends AppCompatActivity {
         toolbar();
         MasterControl.setMcontext(ServerTCP.this);
         if (isInit) {
-            server = new Server(ServerTCP.this);
-            wifi = new Wifi(ServerTCP.this);
-            control = new Control(ServerTCP.this);
-            actualizacion = new Actualizacion(ServerTCP.this);
-            configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
+            if (!isInEcho) {
+                server = new Server(ServerTCP.this);
+                wifi = new Wifi(ServerTCP.this);
+                control = new Control(ServerTCP.this);
+                actualizacion = new Actualizacion(ServerTCP.this);
+                configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
+            }
         } else {
             settings();
         }
