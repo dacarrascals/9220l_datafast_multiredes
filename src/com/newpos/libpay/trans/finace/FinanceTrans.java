@@ -2924,9 +2924,9 @@ public class FinanceTrans extends Trans {
         }
 
         if (tconf.getSIMBOLO_EURO().equals("0")){
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha1(numberCard),64));
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
         }else {
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(numberCard),64));
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
         }
 
         String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
