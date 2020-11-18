@@ -430,6 +430,15 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 2);
             offset += 2;
             this.providerOTT = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            if (typeTrans.equals("06")){
+                if (!providerOTT.isEmpty()){
+                    if (providerOTT.length() != 2){
+                        countValid ++;
+                    }
+                }else {
+                    countValid ++;
+                }
+            }
 
             //invoiceNumber
             tmp = new byte[15];
