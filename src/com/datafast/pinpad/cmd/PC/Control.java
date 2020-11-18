@@ -24,6 +24,7 @@ public class Control {
     PC_Response pc_response;
     Context context;
     public static boolean echoTest;
+    public static boolean failEchoTest;
 
     public Control(Context context){
         this.context = context;
@@ -64,6 +65,7 @@ public class Control {
             processOk();
             ret = 1;
             echoTest = true;
+            failEchoTest = false;
 
         }else{
             processFail();

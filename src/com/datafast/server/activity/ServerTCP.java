@@ -72,7 +72,7 @@ public class ServerTCP extends AppCompatActivity {
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if (Control.echoTest || Actualizacion.echoTest){
+        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.echoTest){
             Control.echoTest = false;
             Actualizacion.echoTest = false;
             MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
@@ -155,6 +155,9 @@ public class ServerTCP extends AppCompatActivity {
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                                 break;
+                            }
+                            if (Control.echoTest && Control.failEchoTest){
+                                Control.failEchoTest = false;
                             }
                         case LT:
                         case CT:

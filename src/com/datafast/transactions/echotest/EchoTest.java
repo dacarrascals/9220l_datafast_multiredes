@@ -3,6 +3,7 @@ package com.datafast.transactions.echotest;
 import android.content.Context;
 import android.media.ToneGenerator;
 
+import com.datafast.pinpad.cmd.PC.Control;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.helper.iso8583.ISO8583;
@@ -80,7 +81,11 @@ public class EchoTest extends FinanceTrans implements TransPresenter {
         retVal = sendRcvdInit();
 
         if (retVal != 0) {
+            Control.failEchoTest = true;
             return retVal ;
+        }else {
+            Control.failEchoTest = false;
+            Control.echoTest = false;
         }
 
         rspCode = iso8583.getfield(39);
