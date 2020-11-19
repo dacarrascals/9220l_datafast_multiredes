@@ -676,8 +676,7 @@ public class FinanceTrans extends Trans {
                         AmountBase0 += CommonFunctionalities.getSumarTotales();
                     }
                 }
-
-                Amount = AmountBase0 + AmountXX + IvaAmount + TipAmount + ServiceAmount + CashOverAmount;
+                /*Amount = AmountBase0 + AmountXX + IvaAmount + TipAmount + ServiceAmount + CashOverAmount;*/
             }
         }
         AmoutData = ISOUtil.padleft(Amount + "", 12, '0');

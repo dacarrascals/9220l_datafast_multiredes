@@ -65,7 +65,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:multiprocess="true"
             android:theme="@style/AppTheme.WUZI"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
