@@ -180,11 +180,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                         return;
                     }
                     procesarSeleccion(data.getTypeTransElectronic());
-                    Pan = listPagoElectronico.get(index).getNUM_TARJETA();
-                    Pan += pp_request.getOTT();
-                    inputMode = Integer.parseInt(data.getEntryMode());
-                    TypeTransElectronic = data.getTypeTransElectronic();
-                    prepareOnline();
+                    compareOTTByType(pp_request.getOTT());
                 }
                 return;
             } else {
@@ -469,7 +465,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             if (info.getErrno() == 0) {
 
                 transUI.showError(timeout, Tcode.T_user_cancel_input, processPPFail);
-            }else {
+            } else {
                 transUI.showError(timeout, info.getErrno(), processPPFail);
             }
         }
@@ -806,50 +802,15 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
                 if (index >= 0) {
 
-                    retVal = CommonFunctionalities.setOTT_Token(timeout, data.getTransEName(),ITEM_PAGOS_CON_CODIGO,data.getTypeTransElectronic(),
+                    retVal = CommonFunctionalities.setOTT_Token(timeout, data.getTransEName(), ITEM_PAGOS_CON_CODIGO, data.getTypeTransElectronic(),
                             Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MINIMA()),
-                            Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()),transUI);
+                            Integer.parseInt(listPagoElectronico.get(index).getLONGITUD_MAXIMA()), transUI);
 
                     if (retVal != 0) {
                         transUI.showError(timeout, retVal, processPPFail);
                         return;
                     }
-
-                    if (data.getTypeTransElectronic().equals(Type.PAYCLUB)) {
-                        if (data.getOTT() != null) {
-                            Pan = listPagoElectronico.get(index).getNUM_TARJETA();
-                            Pan += CommonFunctionalities.getCodOTT();
-
-                            if (data.getOTT().equals(CommonFunctionalities.getCodOTT())) {
-                                inputMode = Integer.parseInt(data.getEntryMode());
-                                TypeTransElectronic = data.getTypeTransElectronic();
-                                prepareOnline();
-                            } else {
-                                retVal = T_err_cod;
-                                transUI.showError(timeout, T_err_cod, processPPFail);
-                            }
-                        } else {
-                            retVal = T_err_cod;
-                            transUI.showError(timeout, T_err_cod, processPPFail);
-                        }
-                    } else if (data.getTypeTransElectronic().equals(Type.PAYBLUE)) {
-                        if (data.getToken() != null) {
-                            Pan = listPagoElectronico.get(index).getNUM_TARJETA();
-                            Pan += CommonFunctionalities.getCodOTT();
-
-                            if (data.getToken().equals(CommonFunctionalities.getCodOTT())) {
-                                inputMode = Integer.parseInt(data.getEntryMode());
-                                TypeTransElectronic = data.getTypeTransElectronic();
-                                prepareOnline();
-                            } else {
-                                retVal = T_err_cod;
-                                transUI.showError(timeout, T_err_cod, processPPFail);
-                            }
-                        } else {
-                            retVal = T_err_cod;
-                            transUI.showError(timeout, T_err_cod, processPPFail);
-                        }
-                    }
+                    compareOTTByType(CommonFunctionalities.getCodOTT());
                 } else {
                     retVal = Tcode.T_not_allow;
                     transUI.showError(timeout, retVal, processPPFail);
@@ -886,6 +847,34 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 }
 
                 break;
+        }
+    }
+
+
+    private void compareOTTByType(String codOTT) {
+        if (data.getTypeTransElectronic().equals(Type.PAYCLUB)) {
+            compareOTT(data.getOTT(), codOTT);
+        } else if (data.getTypeTransElectronic().equals(Type.PAYBLUE)) {
+            compareOTT(data.getToken(), codOTT);
+        }
+    }
+
+    private void compareOTT(String dataInfo, String codOTT) {
+        if (dataInfo != null) {
+            Pan = listPagoElectronico.get(index).getNUM_TARJETA();
+            Pan += codOTT;
+
+            if (dataInfo.equals(codOTT)) {
+                inputMode = Integer.parseInt(data.getEntryMode());
+                TypeTransElectronic = data.getTypeTransElectronic();
+                prepareOnline();
+            } else {
+                retVal = T_err_cod;
+                transUI.showError(timeout, T_err_cod, processPPFail);
+            }
+        } else {
+            retVal = T_err_cod;
+            transUI.showError(timeout, T_err_cod, processPPFail);
         }
     }
 
