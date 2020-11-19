@@ -124,6 +124,35 @@ public class PAYUtils {
             0};
     // 0X8E, //CVM
 
+    public static final int wOnlineTagsUPI[] = {
+            0x9F26, // AC (Application Cryptogram)
+            0x9F27, // CID
+            0x9F10, // IAD (Issuer Application Data)
+            0x9F37, // Unpredicatable Number
+            0x9F36, // ATC (Application Transaction Counter)
+            0x95, // TVR
+            //0x9B,// TSI
+            0x9A, // Transaction Date
+            0x9C, // Transaction Type
+            0x9F02, // Amount Authorised
+            0x5F2A, // Transaction Currency Code
+            0x82, // AIP
+            0x9F1A, // Terminal Country Code
+            0x9F03, // Amount Other
+            0x9F33, // Terminal Capabilities
+            // opt
+            0x9F34, // CVM Result
+            //0x9F35, // Terminal Type
+            0x9F1E, // IFD Serial Number
+            0x84, // Dedicated File Name
+            0x9F09, // Application Version #
+            //0x9F41, // Transaction Sequence Counter
+            //0x4F,
+            0x5F34, // PAN Sequence Number
+            //0x50,//应用标签
+            0x9F53,//TxnCategoryCode
+            0 };
+
     /**
      * 冲正
      **/

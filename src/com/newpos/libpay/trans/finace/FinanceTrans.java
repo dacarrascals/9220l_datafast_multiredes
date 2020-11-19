@@ -357,7 +357,24 @@ public class FinanceTrans extends Trans {
 
         //55域数据
         temp = new byte[512];
-        len = PAYUtils.pack_tags(PAYUtils.wOnlineTags, temp);
+        //Se valida si la tarjeta es Unionpay para empaquetar otros tags
+        String AID = getAID();
+        String name = rango.getNOMBRE_EMISOR();
+        if (AID != null && !AID.equals("")) {
+            if (AID.substring(0, 10).equals("A000000333")) {
+                len = PAYUtils.pack_tags(PAYUtils.wOnlineTagsUPI, temp);
+            } else {
+                len = PAYUtils.pack_tags(PAYUtils.wOnlineTags, temp);
+            }
+        } else if (name != null && !name.equals("")){
+            if (name.equals("UNION PAY")) {
+                len = PAYUtils.pack_tags(PAYUtils.wOnlineTagsUPI, temp);
+            } else {
+                len = PAYUtils.pack_tags(PAYUtils.wOnlineTags, temp);
+            }
+        } else {
+            len = PAYUtils.pack_tags(PAYUtils.wOnlineTags, temp);
+        }
         if (len > 0) {
             ICCData = new byte[len];
             System.arraycopy(temp, 0, ICCData, 0, len);

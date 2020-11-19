@@ -3,6 +3,7 @@ package com.datafast.transactions.diferido;
 import android.content.Context;
 import android.media.ToneGenerator;
 
+import com.datafast.pinpad.cmd.PC.Control;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.transactions.callbacks.waitRspReverse;
@@ -73,13 +74,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
             //transUI.handling(timeout, Tcode.Status.diferido_exitoso);
             UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
         } else {
-            transUI.showError(timeout, retVal, processPPFail);
             UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-            try{
-                Thread.sleep(2000);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
         }
         Logger.debug("DiferidoTrans>>finish");
 
@@ -107,11 +102,19 @@ public class Deferred extends FinanceTrans implements TransPresenter {
             }
         }
 
-        if (aCmd.equals(PP)){
+        if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
             if (callbackRsp != null){
                 callbackRsp.getWaitRspReverse(retVal);
             }
+        } else {
+            transUI.showfinish();
         }
+
+        if (Control.failEchoTest) {
+            Control.failEchoTest = false;
+            Control.echoTest = true;
+        }
+
     }
 
     private int procesarDiferido() {
@@ -214,11 +217,15 @@ public class Deferred extends FinanceTrans implements TransPresenter {
                     transUI.handlingInfo(timeout, Tcode.Status.diferido_exitoso, "");
                     return true;
                 }
+            } else {
+                if (retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
+                    processPPFail.cmdCancel(Server.cmd, retVal);
+                    transUI.handlingError(timeout, retVal);
+                } else {
+                    transUI.showError(timeout, retVal,processPPFail);
+                }
             }
 
-            if (callbackFallback != null) {
-                callbackFallback.getResponseTransFallback(retVal, null);
-            }
         } else {
             transUI.showError(timeout, retVal,processPPFail);
         }

@@ -32,6 +32,7 @@ import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
 import com.datafast.tools.Wifi;
 import com.datafast.transactions.common.CommonFunctionalities;
+import com.datafast.updateapp.UpdateApk;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 import java.io.IOException;
@@ -88,7 +89,8 @@ public class ServerTCP extends AppCompatActivity {
 
         if (installApp) {
             installApp = false;
-            CommonFunctionalities.instalarApp(ServerTCP.this);
+            UpdateApk updateApk = new UpdateApk(ServerTCP.this);
+            updateApk.instalarApp(ServerTCP.this);
         }
 
         slide = new slide( ServerTCP.this, true);

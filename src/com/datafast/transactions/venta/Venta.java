@@ -3,6 +3,8 @@ package com.datafast.transactions.venta;
 import android.content.Context;
 import android.media.ToneGenerator;
 import android.util.Log;
+
+import com.datafast.pinpad.cmd.PC.Control;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
@@ -129,6 +131,10 @@ public class Venta extends FinanceTrans implements TransPresenter {
             }
         } else {
             transUI.showfinish();
+        }
+        if (Control.failEchoTest) {
+            Control.failEchoTest = false;
+            Control.echoTest = true;
         }
         Logger.debug("SaleTrans>>finish");
     }
