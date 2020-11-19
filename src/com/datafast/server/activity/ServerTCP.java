@@ -31,6 +31,7 @@ import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
 import com.datafast.tools.Wifi;
+import com.datafast.transactions.common.CommonFunctionalities;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 import java.io.IOException;
@@ -66,17 +67,28 @@ public class ServerTCP extends AppCompatActivity {
 
     public static waitResponse listenerServer;
 
+    boolean isInEcho;
+    public static boolean installApp = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        isInEcho = false;
+
         if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.echoTest){
             Control.echoTest = false;
             Actualizacion.echoTest = false;
+            isInEcho = true;
             MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
             menuAction.SelectAction();
+        }
+
+        if (installApp) {
+            installApp = false;
+            CommonFunctionalities.instalarApp(ServerTCP.this);
         }
 
         slide = new slide( ServerTCP.this, true);
@@ -85,11 +97,13 @@ public class ServerTCP extends AppCompatActivity {
         toolbar();
         MasterControl.setMcontext(ServerTCP.this);
         if (isInit) {
-            server = new Server(ServerTCP.this);
-            wifi = new Wifi(ServerTCP.this);
-            control = new Control(ServerTCP.this);
-            actualizacion = new Actualizacion(ServerTCP.this);
-            configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
+            if (!isInEcho) {
+                server = new Server(ServerTCP.this);
+                wifi = new Wifi(ServerTCP.this);
+                control = new Control(ServerTCP.this);
+                actualizacion = new Actualizacion(ServerTCP.this);
+                configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
+            }
         } else {
             settings();
         }

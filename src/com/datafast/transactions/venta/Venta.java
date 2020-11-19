@@ -123,7 +123,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
             }
         }
 
-        if (aCmd.equals(PP) && retVal != Tcode.T_no_answer) {
+        if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
             if (callbackRsp != null) {
                 callbackRsp.getWaitRspReverse(retVal);
             }
@@ -183,8 +183,12 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             CommonFunctionalities.obtenerBin(Pan);
                             return true;
                         } else {
-                            processPPFail.cmdCancel(Server.cmd, retVal);
-                            transUI.handlingError(timeout, retVal);
+                            if (retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
+                                processPPFail.cmdCancel(Server.cmd, retVal);
+                                transUI.handlingError(timeout, retVal);
+                            } else {
+                                transUI.showError(timeout, retVal,processPPFail);
+                            }
                             //transUI.showError(timeout, retVal,processPPFail);
                             clearPan();
                             return false;

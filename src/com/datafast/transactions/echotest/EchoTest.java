@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.ToneGenerator;
 
 import com.datafast.pinpad.cmd.PC.Control;
+import com.datafast.server.activity.ServerTCP;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.helper.iso8583.ISO8583;
@@ -19,7 +20,9 @@ import cn.desert.newpos.payui.UIUtils;
 
 import static com.android.newpos.pay.StartAppDATAFAST.VERSION;
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
+import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.datafast.menus.menus.idAcquirer;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 
 public class EchoTest extends FinanceTrans implements TransPresenter {
 
@@ -86,6 +89,9 @@ public class EchoTest extends FinanceTrans implements TransPresenter {
         }else {
             Control.failEchoTest = false;
             Control.echoTest = false;
+            if (lastCmd.equals(PC)) {
+                ServerTCP.installApp = true;
+            }
         }
 
         rspCode = iso8583.getfield(39);
