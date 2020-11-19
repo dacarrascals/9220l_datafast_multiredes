@@ -1,13 +1,20 @@
 package com.datafast.transactions.common;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.text.InputType;
 
 import com.android.desert.keyboard.InputInfo;
+import com.android.newpos.pay.R;
 import com.datafast.inicializacion.prompts.Prompt;
 import com.datafast.menus.menus;
 import com.newpos.libpay.Logger;
@@ -23,6 +30,7 @@ import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +41,7 @@ import java.util.Iterator;
 import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.NO_FALLBACK;
@@ -1080,4 +1089,97 @@ public class CommonFunctionalities {
         }
         return ret;
     }
+
+
+    public static final String DEFAULT_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() +
+            File.separator + "download";
+    public static String[] instalarApp(Context c) {
+        String[] listOfFiles = Environment.getExternalStoragePublicDirectory
+                (Environment.DIRECTORY_DOWNLOADS).list();
+
+        String[] ret = new String[listOfFiles.length];
+
+        String packageNameDisco = null;
+        String versionNameDisco = null;
+        String versionNameAppInstalada = null;
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+
+            String apkEnDisco = listOfFiles[i];
+
+
+            if (apkEnDisco.endsWith(".apk")) {
+
+                final PackageManager pm = c.getPackageManager();
+                String fullPath = DEFAULT_DOWNLOAD_PATH + "/" + apkEnDisco;
+                PackageInfo info = pm.getPackageArchiveInfo(fullPath, 0);
+
+                try {
+                    packageNameDisco = info.packageName;
+                    versionNameDisco = info.versionName;
+                } catch (Exception e) {
+                    ret[i] = apkEnDisco;
+                    e.printStackTrace();
+                }
+
+                if (packageNameDisco == null){
+                    packageNameDisco = "";
+                }
+
+                if (!estaInstaladaAplicacion(packageNameDisco.trim(), c)) {
+
+                    File file = new File(DEFAULT_DOWNLOAD_PATH + "/" + apkEnDisco);
+                    if (file.exists()) {
+                        openFile(c, new File(DEFAULT_DOWNLOAD_PATH + "/" + apkEnDisco));//install apk
+                    }
+
+                } else {
+                    PackageInfo pinfo = null;
+                    try {
+
+                        pinfo = c.getPackageManager().getPackageInfo(packageNameDisco, 0);
+                        versionNameAppInstalada = pinfo.versionName;
+
+                        if (!versionNameDisco.equals(versionNameAppInstalada)) {
+
+                            File file = new File(DEFAULT_DOWNLOAD_PATH + "/" + apkEnDisco);
+
+                            if (file.exists()) {
+                                openFile(c, new File(DEFAULT_DOWNLOAD_PATH + "/" + apkEnDisco));//install apk
+                            }
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }
+        return ret;
+    }
+
+    private static boolean estaInstaladaAplicacion(String nombrePaquete, Context context) {
+
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(nombrePaquete, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static void openFile(Context context, File file) {
+        try {
+            Intent intent = new Intent();
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            intent.setAction(android.content.Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(file),
+                    "application/vnd.android.package-archive");
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

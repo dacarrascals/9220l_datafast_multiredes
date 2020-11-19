@@ -676,8 +676,7 @@ public class FinanceTrans extends Trans {
                         AmountBase0 += CommonFunctionalities.getSumarTotales();
                     }
                 }
-
-                Amount = AmountBase0 + AmountXX + IvaAmount + TipAmount + ServiceAmount + CashOverAmount;
+                /*Amount = AmountBase0 + AmountXX + IvaAmount + TipAmount + ServiceAmount + CashOverAmount;*/
             }
         }
         AmoutData = ISOUtil.padleft(Amount + "", 12, '0');
@@ -2675,17 +2674,16 @@ public class FinanceTrans extends Trans {
             for (int i = 0; i < 3; i++) {
 
                 transUI.handling(timeout, Tcode.Status.msg_cod_diners);
-                while (true) {
-                    try {
-                        Thread.sleep(20*1000);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        Logger.error("Exception" + e.toString());
-                    }
-                    break;
+                 // espere 20 seg
+                try {
+                    Thread.sleep(20*1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    Logger.error("Exception" + e.toString());
                 }
 
                 transUI.handling(timeout, Tcode.Status.send_data_2_server);
+                isCodDinners = true;
                 retVal = OnLineTrans();
                 transUI.handling(timeout, Tcode.Status.send_over_2_recv);
                 if (retVal == 0) {
@@ -2924,9 +2922,9 @@ public class FinanceTrans extends Trans {
         }
 
         if (tconf.getSIMBOLO_EURO().equals("0")){
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha1(numberCard),64));
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
         }else {
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(numberCard),64));
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
         }
 
         String isSignature = checkNull(tconf.getHABILITAR_FIRMA());

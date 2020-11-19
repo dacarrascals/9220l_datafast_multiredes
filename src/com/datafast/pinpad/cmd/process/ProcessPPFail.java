@@ -150,6 +150,7 @@ public class ProcessPPFail extends FinanceTrans {
     public static int[] codErrMsg = new int[]{
             Tcode.T_err_deferred,
             Tcode.T_search_card_err,
+            Tcode.T_read_app_data_err,
             Tcode.T_msg_err_gas,
             Tcode.T_err_detect_card_failed,
             Tcode.T_no_answer,
@@ -172,6 +173,7 @@ public class ProcessPPFail extends FinanceTrans {
     public static int[] codErr = new int[]{
             Tcode.T_not_reverse,
             Tcode.T_search_card_err,
+            Tcode.T_read_app_data_err,
             Tcode.T_err_no_trans,
             Tcode.T_wait_timeout,
             Tcode.T_err_deferred,
@@ -419,9 +421,9 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",64));
                 }else {
                     if (tconf.getSIMBOLO_EURO().equals("0")){
-                        pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha1(numberCard),64));
+                        pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
                     }else {
-                        pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(numberCard),64));
+                        pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
                     }
                 }
 
