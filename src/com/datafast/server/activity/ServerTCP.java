@@ -31,6 +31,7 @@ import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
 import com.datafast.tools.Wifi;
+import com.datafast.transactions.common.CommonFunctionalities;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 import java.io.IOException;
@@ -67,6 +68,7 @@ public class ServerTCP extends AppCompatActivity {
     public static waitResponse listenerServer;
 
     boolean isInEcho;
+    public static boolean installApp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,11 @@ public class ServerTCP extends AppCompatActivity {
             isInEcho = true;
             MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
             menuAction.SelectAction();
+        }
+
+        if (installApp) {
+            installApp = false;
+            CommonFunctionalities.instalarApp(ServerTCP.this);
         }
 
         slide = new slide( ServerTCP.this, true);
