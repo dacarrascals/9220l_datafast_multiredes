@@ -182,6 +182,9 @@ public class PA_Request {
                 correctHash = correctHash.substring(1, correctHash.length());
             }
             hash = correctHash;
+            if (hash.length() < 32){
+                hash = ISOUtil.spacepad(hash, 32);
+            }
             countValid ++;
         }
     }
