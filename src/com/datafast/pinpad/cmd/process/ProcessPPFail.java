@@ -158,7 +158,8 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_insert_card,
             Tcode.T_err_not_allow,
             Tcode.T_select_app_err,
-            Tcode.T_err_cod
+            Tcode.T_err_cod,
+            Tcode.T_ic_not_allow_swipe
     };
 
     public boolean validCodErrMsg(int codRet){
@@ -191,7 +192,8 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_insert_card,
             Tcode.T_err_not_allow,
             Tcode.T_select_app_err,
-            Tcode.T_err_cod
+            Tcode.T_err_cod,
+            Tcode.T_ic_not_allow_swipe
     };
 
     public void cmdCancel(String cmd, int codRet){
@@ -389,7 +391,7 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setAIDEMV(ISOUtil.spacepadRight(getAID(), 20));
                     pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
                 } else {
-                    if (pp_request.getTypeTrans().equals("01") && codRet == 3005){
+                    if ((pp_request.getTypeTrans().equals("01") || pp_request.getTypeTrans().equals("02")) && codRet == 3005){
                         if (cardHolderNameFail.contains("^")){
                             String[] nameCard = cardHolderNameFail.split("\\^");
                             pp_response.setNameCardHolder(ISOUtil.spacepadRight(nameCard[1], 40));
