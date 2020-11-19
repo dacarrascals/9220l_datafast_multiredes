@@ -30,7 +30,6 @@ import java.util.Properties;
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tablaIp;
-import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 
@@ -115,6 +114,7 @@ public abstract class Trans {
      * 交易相关参数集合
      */
     protected TransInputPara para;
+    protected boolean isCodDinners = false;
 
     protected Trans() {
     }
@@ -819,8 +819,11 @@ public abstract class Trans {
         if (rta == -1) {
             return Tcode.T_socket_err;
         }
-
-        transUI.handling(timeout + 10000, Tcode.Status.terminal_reversal);
+        if(!isCodDinners) {
+            transUI.handling(timeout + 10000, Tcode.Status.terminal_reversal);
+        }else{
+            transUI.handling(timeout, Tcode.Status.send_over_2_recv);
+        }
 
         if (send() == -1) {
             return Tcode.T_send_err;
