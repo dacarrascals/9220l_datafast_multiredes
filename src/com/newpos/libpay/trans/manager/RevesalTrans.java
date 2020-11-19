@@ -115,6 +115,9 @@ public class RevesalTrans extends Trans {
         if (retVal == 0) {
             RspCode = iso8583.getfield(39);
             System.out.println(" Rsp " + RspCode);
+            if (pp_request.getTypeTrans().equals("04")){ //cuando es reverso de caja si se obtiene respuesta se toma como aprobado --- #5395 Bitacora de defectos, novedad 80
+                return retVal;
+            }
             if (RspCode.equals("00") || RspCode.equals("12") || RspCode.equals("25")) {
                 return retVal;
             } else {
