@@ -185,8 +185,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         if (retVal == 0) {
                             //Solo se usa en la venta (Gasolinera)
                             msgAprob(Tcode.Status.sale_succ,true);
-                            clearPan();
                             CommonFunctionalities.obtenerBin(Pan);
+                            clearPan();
                             return true;
                         } else {
                             if (retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
