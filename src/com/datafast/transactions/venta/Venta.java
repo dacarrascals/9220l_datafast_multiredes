@@ -129,7 +129,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
             if (callbackRsp != null) {
                 callbackRsp.getWaitRspReverse(retVal);
             }
-        } else {
+        } else if (!aCmd.equals(LT) && !aCmd.equals(CT)){
             transUI.showfinish();
         }
         if (Control.failEchoTest) {
