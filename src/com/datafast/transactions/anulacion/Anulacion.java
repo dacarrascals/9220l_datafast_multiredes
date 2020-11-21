@@ -39,6 +39,8 @@ import com.pos.device.emv.IEMVHandler;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import cn.desert.newpos.payui.UIUtils;
+
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -65,7 +67,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         super(ctx, transEname);
         para = p;
         transUI = para.getTransUI();
-        isReversal = true;
+        isReversal = false;
         isSaveLog = false;
         isProcPreTrans = true;
         isDebit = true;
@@ -89,17 +91,26 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             return;
         }
 
-        if (!haveTrans())
+        if (!haveTrans()) {
+            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
             return;
+        }
 
         if (!requestTracer()) {
             retVal = Tcode.T_user_cancel_input;
             transUI.showError(timeout, retVal, processPPFail);
+            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
             return;
         }
 
 
         voidGeneral();
+
+        if (retVal == 0) {
+            UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
+        } else {
+            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+        }
 
         StartAppDATAFAST.getCard = null;
         Logger.debug("VoidTrans>>finish");
@@ -905,6 +916,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         clearPan();
 
         if (retVal == 0) {
+            TransLog.clearReveral(true);
             data.setVoided(true);
             data.setLocalDate(PAYUtils.getYear() + LocalDate);
             data.setLocalTime(LocalTime);
