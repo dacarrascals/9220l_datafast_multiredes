@@ -3133,7 +3133,11 @@ public class FinanceTrans extends Trans {
             ltResponse.setCardExpDate(ISOUtil.spacepadRight(ExpDate,4));
         }
         rulesPinPad.processCardNumber(Track2, Pan);
-        ltResponse.setCardNumEncryp(ISOUtil.padright(rulesPinPad.getCardNumber() + "", 64,' '));
+        if (tconf.getSIMBOLO_EURO().equals("0")){
+            ltResponse.setCardNumEncryp(ISOUtil.padright(encryption.hashSha1(rulesPinPad.getCardNumber()), 40,' '));
+        }else {
+            ltResponse.setCardNumEncryp(ISOUtil.padright(encryption.hashSha256(rulesPinPad.getCardNumber()), 64,' '));
+        }
         //ltResponse.setMsgRsp("LECTURA OK          ");
         if (retVal == 0){
             ltResponse.setMsgRsp(ISOUtil.padright("LECTURA OK" + "", 20, ' '));
@@ -3156,7 +3160,12 @@ public class FinanceTrans extends Trans {
         ctResponse.setRspCodeMsg(PAYUtils.selectRspCode(retVal,RspCode));
         //ctResponse.setCardNumber(encryption.hashSha256(Pan));
         rulesPinPad.processCardNumber(Track2, Pan);
-        ctResponse.setCardNumber(ISOUtil.padright(rulesPinPad.getCardNumber() + "", 64,' '));
+
+        if (tconf.getSIMBOLO_EURO().equals("0")){
+            ctResponse.setCardNumber(ISOUtil.padright(encryption.hashSha1(rulesPinPad.getCardNumber()), 40,' '));
+        }else {
+            ctResponse.setCardNumber(ISOUtil.padright(encryption.hashSha256(rulesPinPad.getCardNumber()), 64,' '));
+        }
         ctResponse.setBinCard(Pan.substring(0,6));
         if (inputMode == ENTRY_MODE_NFC) {
             ctResponse.setCardExpDate(ISOUtil.spacepadRight(emvl2.getExpdate(),4));

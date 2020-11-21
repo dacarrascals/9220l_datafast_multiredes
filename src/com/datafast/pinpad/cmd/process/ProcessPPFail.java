@@ -86,7 +86,11 @@ public class ProcessPPFail extends FinanceTrans {
         ltResponse.setIdCodNetDef(" ");
         ltResponse.setCardNumber(ISOUtil.spacepadRight("", 25));
         ltResponse.setCardExpDate(ISOUtil.spacepadRight("", 4));
-        ltResponse.setCardNumEncryp(ISOUtil.spacepadRight("", 64));
+        if (tconf.getSIMBOLO_EURO().equals("0")){
+            ltResponse.setCardNumEncryp(ISOUtil.spacepadRight("", 40));
+        }else {
+            ltResponse.setCardNumEncryp(ISOUtil.spacepadRight("", 64));
+        }
         ltResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         ltResponse.setFiller(ISOUtil.spacepad("", 27));
         ltResponse.setHash(keySecurity);
@@ -97,7 +101,11 @@ public class ProcessPPFail extends FinanceTrans {
     public void responseCTInvalid(String keySecurity) {
         ctResponse.setTypeMsg(CT);
         ctResponse.setRspCodeMsg(ERROR_PROCESO);
-        ctResponse.setCardNumber(ISOUtil.spacepad("", 64));
+        if (tconf.getSIMBOLO_EURO().equals("0")){
+            ctResponse.setCardNumber(ISOUtil.spacepad("", 40));
+        }else {
+            ctResponse.setCardNumber(ISOUtil.spacepad("", 64));
+        }
         ctResponse.setBinCard(ISOUtil.spacepad("", 6));
         ctResponse.setCardExpDate(ISOUtil.spacepad("", 4));
         ctResponse.setMsgRsp(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
@@ -137,7 +145,12 @@ public class ProcessPPFail extends FinanceTrans {
         pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
         pp_response.setExpDateCard(ISOUtil.spacepad("", 4));
         pp_response.setNumberCardMask(ISOUtil.spacepad("", 25));
-        pp_response.setNumberCardEncrypt(ISOUtil.spacepad("", 64));
+
+        if (tconf.getSIMBOLO_EURO().equals("0")){
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepad("", 40));
+        }else {
+            pp_response.setNumberCardEncrypt(ISOUtil.spacepad("", 64));
+        }
         pp_response.setFiller(ISOUtil.spacepad("", 27));
         pp_response.setHash(ppRequestData.getHash());
 
@@ -208,7 +221,11 @@ public class ProcessPPFail extends FinanceTrans {
 
                 ctResponse.setTypeMsg(CT);
                 ctResponse.setRspCodeMsg(PAYUtils.selectRspCode(codRet, iso8583.getfield(39)));
-                ctResponse.setCardNumber(ISOUtil.spacepad("", 64));
+                if (tconf.getSIMBOLO_EURO().equals("0")){
+                    ctResponse.setCardNumber(ISOUtil.spacepad("", 40));
+                }else {
+                    ctResponse.setCardNumber(ISOUtil.spacepad("", 64));
+                }
                 ctResponse.setBinCard(ISOUtil.spacepad("", 6));
                 ctResponse.setCardExpDate(ISOUtil.spacepad("", 4));
                 ctResponse.setMsgRsp(ISOUtil.padright(PAYUtils.selectRspMsg(codRet) + "", 20, ' '));
@@ -232,7 +249,11 @@ public class ProcessPPFail extends FinanceTrans {
                 ltResponse.setIdCodNetDef("0");
                 ltResponse.setCardNumber(ISOUtil.spacepad("", 25));
                 ltResponse.setCardExpDate(ISOUtil.spacepad("", 4));
-                ltResponse.setCardNumEncryp(ISOUtil.spacepad("", 64));
+                if (tconf.getSIMBOLO_EURO().equals("0")){
+                    ltResponse.setCardNumEncryp(ISOUtil.spacepad("", 40));
+                }else {
+                    ltResponse.setCardNumEncryp(ISOUtil.spacepad("", 64));
+                }
                 //ltResponse.setMsgRsp("TRANS CANCELADA     ");
                 ltResponse.setMsgRsp(ISOUtil.padright(PAYUtils.selectRspMsg(codRet) + "", 20, ' '));
                 ltResponse.setFiller(ISOUtil.spacepad("", 27));
@@ -391,7 +412,7 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setAIDEMV(ISOUtil.spacepadRight(getAID(), 20));
                     pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
                 } else {
-                    if ((pp_request.getTypeTrans().equals("01") || pp_request.getTypeTrans().equals("02")) && codRet == 3005){
+                    if ((pp_request.getTypeTrans().equals("01") || pp_request.getTypeTrans().equals("02"))){
                         if (cardHolderNameFail.contains("^")){
                             String[] nameCard = cardHolderNameFail.split("\\^");
                             pp_response.setNameCardHolder(ISOUtil.spacepadRight(nameCard[1], 40));
@@ -420,7 +441,11 @@ public class ProcessPPFail extends FinanceTrans {
                 }
 
                 if (pp_request.getTypeTrans().equals("04") && (codRet == Tcode.T_trans_rejected || codRet == 3002 || codRet == Tcode.T_receive_err)){
-                    pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",64));
+                    if (tconf.getSIMBOLO_EURO().equals("0")){
+                        pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",40));
+                    }else {
+                        pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",64));
+                    }
                 }else {
                     if (tconf.getSIMBOLO_EURO().equals("0")){
                         pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
