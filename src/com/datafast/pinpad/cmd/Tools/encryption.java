@@ -73,6 +73,8 @@ public class encryption {
     public static String hashSha1(String hashThis) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
+            if (hashThis==null)
+                return null;
             byte[] hash = md.digest(hashThis.getBytes());
             return bytesToHexString(hash);
         } catch (NoSuchAlgorithmException nsae) {
