@@ -16,6 +16,8 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.net.eth.EthernetManager;
 
+import org.jpos.iso.IF_CHAR;
+
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_EN_TRAMA;
@@ -93,7 +95,13 @@ public class Wifi {
 
         //WifiManager wifiManager = CP_ConfigIP.setWifi(this.ctx, cp_request.getIp(), cp_request.getGateway(), cp_request.getMask());
 
-        if (isWifiConnected()) {
+        if (cp_request.getIp().equals("0.0.0.0")){
+            setConnection(false);
+        }else {
+            setConnection(true);
+        }
+
+        /*if (isWifiConnected()) {
             try {
                 IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
             } catch (Exception e) {
@@ -109,7 +117,7 @@ public class Wifi {
                 Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
-        }
+        }*/
 
         /*if (CP_ConfigIP.isWifiEthernet()){
             wifiManager.disconnect();
@@ -144,5 +152,33 @@ public class Wifi {
         cp_response.setRspMessage(ISOUtil.padright(getStatusInfo(String.valueOf(57)) + "", 20, ' '));
         cp_response.setTypeMsg(CP);
         cp_response.setHash(cp_request.getHash());
+    }
+
+    private void setConnection(boolean staticConnection) {
+        if (isWifiConnected()) {
+            try {
+                if (staticConnection){
+                    IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+                }else {
+                    IpWifiConf.wifiDhcp(ctx);
+                }
+            } catch (Exception e) {
+                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+
+        if (EthernetManager.getInstance().isEtherentEnabled()) {
+            try {
+                if (staticConnection){
+                    IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+                }else {
+                    IpEthernetConf.etherDhcp();
+                }
+            } catch (Exception e) {
+                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
     }
 }
