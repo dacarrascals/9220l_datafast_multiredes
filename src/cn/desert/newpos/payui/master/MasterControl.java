@@ -25,16 +25,15 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +47,6 @@ import com.datafast.inicializacion.init_emv.CAPK_ROW;
 import com.datafast.inicializacion.init_emv.EMVAPP_ROW;
 import com.datafast.inicializacion.prompts.ChequeoPromtsActivos;
 import com.datafast.inicializacion.prompts.Prompt;
-import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.tools.InputManager2;
@@ -364,7 +362,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     }
                 });
 
-                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RelativeTimeout);
+                LinearLayout relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
                 relativeLayout.setVisibility(View.VISIBLE);
                 final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
                 runTimeGeneral(textViewTitle, timeout);
@@ -408,7 +406,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
                 TextView total = (TextView) findViewById(R.id.monto_display_area);
 
-                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RelativeTimeout);
+                LinearLayout relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
                 relativeLayout.setVisibility(View.VISIBLE);
                 final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
                 runTimeGeneral(textViewTitle, timeout);
@@ -473,7 +471,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
                 TextView total = (TextView) findViewById(R.id.monto_display_area);
 
-                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RelativeTimeout);
+                LinearLayout relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
                 relativeLayout.setVisibility(View.VISIBLE);
                 final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
                 runTimeGeneral(textViewTitle, timeout);
@@ -798,7 +796,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 btnTarjetaManual.setVisibility(View.INVISIBLE);
                 progressBar = findViewById(R.id.progress);
 
-                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RelativeTimeout);
+                LinearLayout relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
                 if (status.equals(getStatusInfo(String.valueOf(Tcode.Status.process_trans)))){
                     relativeLayout.setVisibility(View.VISIBLE);
                     final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
@@ -903,7 +901,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     et_title.setText("");
                 }
 
-                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RelativeTimeout);
+                LinearLayout relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
                 relativeLayout.setVisibility(View.VISIBLE);
                 final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
                 runTimeGeneral(textViewTitle, timeout);

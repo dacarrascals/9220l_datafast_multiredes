@@ -14,44 +14,43 @@
         android:layout_alignParentTop="true"
         android:background="@color/colorPrimaryDark">
 
-        <RelativeLayout
-            android:id="@+id/RelativeTimeout"
+        <LinearLayout
+            android:id="@+id/LinearTimeout"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:background="@drawable/fondo_timeout"
             android:layout_margin="10dp"
-            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
             android:paddingStart="3dp"
             android:paddingEnd="3dp"
+            android:orientation="horizontal"
             android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/imgTimer"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/timer"/>
+
+            <TextView
+                android:id="@+id/textView_cont"
+                android:layout_width="22dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/TxtTimeout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TIEMPO\nRESTANTE: "
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="12sp"
+                android:text="seg"
+                android:textColor="@color/white"
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/textView_cont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/TxtTimeout"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"/>
-
-        </RelativeLayout>
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/iv_close"
