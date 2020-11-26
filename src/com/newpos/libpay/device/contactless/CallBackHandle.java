@@ -1,6 +1,9 @@
 package com.newpos.libpay.device.contactless;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
+import android.os.Build;
 
 import com.datafast.file_management.Files_Management;
 import com.newpos.bypay.EmvL2App;
@@ -22,6 +25,8 @@ import com.pos.device.picc.EmvContactlessCard;
 
 import java.util.Arrays;
 import java.util.Calendar;
+
+import cn.desert.newpos.payui.UIUtils;
 
 public class CallBackHandle implements IEmvL2CallBack {
 
@@ -109,7 +114,11 @@ public class CallBackHandle implements IEmvL2CallBack {
             if (!success)
                 Thread.sleep(1000);
 
-            Beeper.getInstance().beep(1000, 500);
+            if (Build.MODEL.equals("NEW5310")) {
+                UIUtils.beep(ToneGenerator.TONE_PROP_ACK);
+            } else {
+                Beeper.getInstance().beep(1000, 500);
+            }
         } catch (SDKException | InterruptedException e) {
             Thread.currentThread().interrupt();
             Logger.error("Exception" + e.toString());
