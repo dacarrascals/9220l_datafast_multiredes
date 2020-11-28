@@ -1,6 +1,8 @@
 package com.datafast.menus;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -74,9 +76,21 @@ public class menus extends AppCompatActivity {
             menu = Objects.requireNonNull(extras.getString(DefinesDATAFAST.DATO_MENU));
             if (menu.equals(DefinesDATAFAST.ITEM_PRINCIPAL)) {
                 relativeLayoutBack.setVisibility(View.INVISIBLE);
-                version.setText(StartAppDATAFAST.CERT + StartAppDATAFAST.VERSION);
+                /*version.setText(StartAppDATAFAST.CERT + StartAppDATAFAST.VERSION);*/
+                version.setText("V" + getVersion().split("_")[0]);
+                version.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private String getVersion() {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo.versionName;
     }
 
     private void mostrarMenu(String tipoMenu) {
