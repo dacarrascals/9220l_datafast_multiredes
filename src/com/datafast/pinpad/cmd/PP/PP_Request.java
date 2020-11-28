@@ -410,8 +410,12 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
             this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (CID.length() != 15){
-                countValid ++;
+            if (!CID.isEmpty()){
+                if (CID.length() != 15){
+                    countValid ++;
+                }
+            }else {
+                CID = TMConfig.getInstance().getCID();
             }
 
             //OTT
