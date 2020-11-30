@@ -3218,6 +3218,14 @@ public class FinanceTrans extends Trans {
 
             case CT:
                 CT_Request ct_request = new CT_Request();
+
+                if (!Server.correctLength){
+                    ct_request.UnPackHash(Server.dat);
+                    processPPFail.responseCTInvalid(ct_request.getHash());
+                    transUI.showError(timeout, Tcode.T_err_trm);
+                    return false;
+                }
+
                 ct_request.UnPackData(Server.dat);
 
                 keySecurity = ct_request.getHash();
@@ -3252,6 +3260,14 @@ public class FinanceTrans extends Trans {
             case LT:
 
                 LT_Request lt_request = new LT_Request();
+
+                if (!Server.correctLength){
+                    lt_request.UnPackHash(Server.dat);
+                    processPPFail.responseLTInvalid(lt_request.getHash());
+                    transUI.showError(timeout, Tcode.T_err_trm);
+                    return false;
+                }
+
                 lt_request.UnPackData(Server.dat);
 
                 keySecurity = lt_request.getHash();

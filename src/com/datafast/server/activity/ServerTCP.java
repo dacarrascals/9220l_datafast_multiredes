@@ -133,7 +133,7 @@ public class ServerTCP extends AppCompatActivity {
     /**
      * Enciende la pantalla cuando llega una transacción
      * */
-    public static void unlockScreen(Context context){
+    public void unlockScreen(Context context){
         PowerManager.WakeLock powerManager = ((PowerManager)context.getSystemService(POWER_SERVICE)).newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tag:");
         powerManager.acquire();
@@ -164,6 +164,15 @@ public class ServerTCP extends AppCompatActivity {
                             break;
                         case PP:
                             PP_Request pp_request = new PP_Request();
+
+                            if (!Server.correctLength){
+                                pp_request.UnPackHash(aDat);
+                                ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
+                                processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
+                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                                break;
+                            }
+
                             pp_request.UnPackData(aDat);
                             seleccion = Integer.parseInt(pp_request.getTypeTrans());
                             if (pp_request.getCountValid() > 0){

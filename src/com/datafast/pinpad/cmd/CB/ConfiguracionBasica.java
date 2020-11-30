@@ -2,6 +2,7 @@ package com.datafast.pinpad.cmd.CB;
 
 import android.content.Context;
 
+import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.utils.ISOUtil;
 
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
@@ -27,6 +28,12 @@ public class ConfiguracionBasica {
     }
 
     public boolean procesoCb(byte[] aDat) {
+        if (!Server.correctLength){
+            cb_request.UnPackHash(aDat);
+            processInvalid();
+            return false;
+        }
+
         cb_request.UnPackData(aDat);
         
         if (cb_request.getCountValid() > 0){

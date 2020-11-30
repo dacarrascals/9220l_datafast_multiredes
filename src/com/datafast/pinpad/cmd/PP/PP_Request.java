@@ -259,6 +259,15 @@ public class PP_Request {
         this.hash = hash;
     }
 
+    public void UnPackHash(byte[] aData){
+        //idCodNetAcq
+        byte[] tmp = new byte[1];
+        System.arraycopy(aData, 2, tmp, 0, 1);
+        this.idCodNetAcq = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+
+        setCorrectHash(aData);
+    }
+
     public void UnPackData(byte[] aData){
 
         byte[] tmp = null;

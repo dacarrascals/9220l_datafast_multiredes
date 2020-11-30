@@ -87,6 +87,15 @@ public class PA_Request {
         this.countValid = countValid;
     }
 
+    public void UnPackHash(byte[] aData){
+        //typeDownload
+        byte[] tmp = new byte[1];
+        System.arraycopy(aData, 65, tmp, 0, 1);
+        this.typeDownload = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+
+        setCorrectHash(aData);
+    }
+
     public void UnPackData(byte[] aData){
 
         byte[] tmp = null;
@@ -179,7 +188,9 @@ public class PA_Request {
         correctHash = correctHash.substring(correctHash.length() - 32);
         if (hash == null || !correctHash.equals(hash)){
             if (!typeDownload.isEmpty() && typeDownload.equals("F")){
-                correctHash = correctHash.substring(1, correctHash.length());
+                if (correctHash.startsWith("F")){
+                    correctHash = correctHash.substring(1, correctHash.length());
+                }
             }
             hash = correctHash;
             if (hash.length() < 32){

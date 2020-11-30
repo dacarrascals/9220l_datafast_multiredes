@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.datafast.server.callback.waitResponse;
+import com.datafast.server.server_tcp.Server;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
@@ -39,6 +40,15 @@ public class Actualizacion{
     }
     public boolean procesoActualizacion(byte[] data){
         //this.listenerResponse = listener;
+
+        if (!Server.correctLength){
+            pa_request.UnPackHash(data);
+            processFail(ERROR_PROCESO, "ERROR EN TRAMA");
+            tramaValida = -1;
+            echoTest = false;
+            return false;
+        }
+
         pa_request.UnPackData(data);
 
         if (pa_request.getCountValid() > 0){

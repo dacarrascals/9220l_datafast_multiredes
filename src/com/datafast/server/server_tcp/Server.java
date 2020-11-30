@@ -27,6 +27,7 @@ public class Server extends AppCompatActivity {
 
     public static String cmd = "";
     public static byte[] dat;
+    public static boolean correctLength;
 
     public Server(ServerTCP activity) {
         this.activity = activity;
@@ -88,6 +89,7 @@ public class Server extends AppCompatActivity {
 
                 dataReceived.identifyCommand(text);
                 dat = dataReceived.getDataRaw();
+                correctLength = dataReceived.isCorrectLength();
                 cmd = dataReceived.getCmd();
                 activity.runOnUiThread(new Runnable() {
                     @Override
