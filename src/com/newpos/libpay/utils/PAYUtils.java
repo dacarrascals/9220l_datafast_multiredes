@@ -317,7 +317,7 @@ public class PAYUtils {
     public static boolean copyAssetsToData(Context context, String fileName) {
         try {
             AssetManager as = context.getAssets();
-            try (InputStream ins = as.open(fileName); OutputStream outs = context.openFileOutput(fileName, Context.MODE_WORLD_READABLE)) {
+            try (InputStream ins = as.open(fileName); OutputStream outs = context.openFileOutput(fileName, Context.MODE_PRIVATE)) {
                 String dstFilePath = context.getFilesDir().getAbsolutePath() + "/" + fileName;
                 byte[] data = new byte[1 << 20];
                 int length = ins.read(data);
