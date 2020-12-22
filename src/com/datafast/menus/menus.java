@@ -1,11 +1,19 @@
 package com.datafast.menus;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +35,10 @@ import java.util.List;
 import java.util.Objects;
 import cn.desert.newpos.payui.UIUtils;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.Manifest.permission_group.CAMERA;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 
@@ -275,12 +287,75 @@ public class menus extends AppCompatActivity {
             finish();
     }
 
+    String[] permits =  new String[] {
+            WRITE_EXTERNAL_STORAGE,
+            READ_PHONE_STATE,
+            ACCESS_COARSE_LOCATION,
+            CAMERA};
+
+    private void permissionWriteSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if(!Settings.System.canWrite(this)){
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + this.getPackageName()));
+                startActivity(intent);
+            }
+        }
+    }
+
+    public void reqPermissions(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permits, 100);
+        }
+    }
+
+    private boolean validatePermissions(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (String idPermission : permits){
+                if (checkSelfPermission(idPermission) != PackageManager.PERMISSION_GRANTED){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void showDialogPermission(){
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(menus.this);
+        dialog.setTitle("Permisos Desactivados")
+                .setMessage("Debe aceptar los permisos para el correcto funcionamiento de la App.");
+
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                reqPermissions();
+            }
+        }).show();
+    }
+
+    private boolean getMsgPermissions() {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("permissions", Context.MODE_PRIVATE);
+        return preferences.getBoolean("msg", false);
+    }
+
+    private void setMsgPermissions(boolean msgPermission){
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("permissions", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putBoolean("msg", msgPermission);
+        edit.apply();
+    }
+
      @Override
      protected void onResume() {
          super.onResume();
          contFallback = 0;
          isInit = PolarisUtil.isInitPolaris(menus.this);
-         if (!isInit) {
+         if (!isInit && validatePermissions()) {
              new Handler().postDelayed(new Runnable() {
                  @Override
                  public void run() {
@@ -297,6 +372,19 @@ public class menus extends AppCompatActivity {
                  }
              }, 500);
 
+         }
+
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+             if(Settings.System.canWrite(this)){
+                 if (!getMsgPermissions()){
+                     reqPermissions();
+                     setMsgPermissions(true);
+                 }else if (getMsgPermissions() && !validatePermissions()){
+                     showDialogPermission();
+                 }
+             }else {
+                 permissionWriteSettings();
+             }
          }
      }
 

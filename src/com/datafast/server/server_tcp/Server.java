@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.CountDownLatch;
 
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.newpos.libpay.trans.finace.FinanceTrans.ppResponse;
@@ -24,9 +25,11 @@ public class Server extends AppCompatActivity {
     ServerSocket serverSocket;
     public static int socketServerPORT;
     public static dataReceived dataReceived;
+    CountDownLatch countDown;
 
     public static String cmd = "";
     public static byte[] dat;
+    public static byte[] info;
 
     public Server(ServerTCP activity) {
         this.activity = activity;
@@ -89,35 +92,32 @@ public class Server extends AppCompatActivity {
                 dataReceived.identifyCommand(text);
                 dat = dataReceived.getDataRaw();
                 cmd = dataReceived.getCmd();
+                countDown = new CountDownLatch(1);
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         activity.startTrans(cmd,dat,new waitResponse() {
                             @Override
                             public void waitRspHost(byte[] Info) {
-
-                                try {
-                                    lastCmd = cmd;
-                                    output.write(Info);
-                                    socket.close();
-
-                                    input.close();
-                                    output.close();
-                                    //outputStream.write(Info);
-                                    //outputStream.flush();
-                                    //output.close();
-
-                                    ppResponse = null;
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                info = Info;
+                                countDown.countDown();
                             }
                         });
                     }
                 });
 
-            } catch (IOException e) {
+                countDown.await();
+                lastCmd = cmd;
+                output.write(info);
+                socket.close();
+                input.close();
+                output.close();
+                //outputStream.write(Info);
+                //outputStream.flush();
+                //output.close();
+                ppResponse = null;
+
+            } catch (IOException | InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
