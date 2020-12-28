@@ -114,6 +114,7 @@ public class menus extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerViewAdaptadorMenu = new RecyclerViewAdaptadorMenu(obtenerItems(tipoMenu), this, DefinesDATAFAST.TIPO_LAYOUT_GRID);
         recyclerView.setAdapter(recyclerViewAdaptadorMenu);
+        permissionWriteSettings();
 
     }
 
