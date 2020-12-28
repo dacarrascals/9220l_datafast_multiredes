@@ -326,15 +326,22 @@ public class menus extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void showDialogPermission(){
+    private void showDialogPermission(String msg, final boolean selectMsg){
         final AlertDialog.Builder dialog = new AlertDialog.Builder(menus.this);
         dialog.setTitle("Permisos Desactivados")
-                .setMessage("Debe aceptar los permisos para el correcto funcionamiento de la App.");
+                .setMessage(msg)
+                .setCancelable(false);
 
         dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                reqPermissions();
+                if (selectMsg){
+                    reqPermissions();
+                }else {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                }
             }
         }).show();
     }
@@ -381,7 +388,18 @@ public class menus extends AppCompatActivity {
                      reqPermissions();
                      setMsgPermissions(true);
                  }else if (getMsgPermissions() && !validatePermissions()){
-                     showDialogPermission();
+                     boolean nvpPermission = false;
+                     for (String id : permits){
+                         nvpPermission = shouldShowRequestPermissionRationale(id);
+                         if (!nvpPermission){
+                             showDialogPermission("Has deshabilitado los mensajes de permisos. Entra en permisos y activalos manualmente.", false);
+                             break;
+                         }
+                     }
+
+                     if (nvpPermission){
+                         showDialogPermission("Debe aceptar los permisos para el correcto funcionamiento de la App.", true);
+                     }
                  }
              }else {
                  permissionWriteSettings();
