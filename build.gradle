@@ -105,7 +105,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "1.1.0_20201119"
+        versionName "1.1.1_20210401"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId 'com.wposs.datafastpinpadL'
         //multiDexEnabled true
