@@ -2,6 +2,7 @@ package com.datafast.pinpad.cmd.PC;
 
 import android.content.Context;
 
+import com.datafast.server.server_tcp.Server;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.newpos.libpay.global.TMConfig;
@@ -38,6 +39,14 @@ public class Control {
 
     public int actualizacionControl(byte[] data){
         int ret = 2;
+
+        if (!Server.correctLength){
+            pc_request.UnPackHash(data);
+            processInvalid();
+            echoTest = false;
+            return 0;
+        }
+
         pc_request.UnPackData(data);
 
         if (pc_request.getCountValid() > 0){

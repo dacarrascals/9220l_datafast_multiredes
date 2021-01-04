@@ -32,6 +32,10 @@ public class LT_Request {
         this.hash = hash;
     }
 
+    public void UnPackHash(byte[] aData){
+        setCorrectHash(aData);
+    }
+
     public void UnPackData(byte[] aData){
 
         byte[] tmp = null;

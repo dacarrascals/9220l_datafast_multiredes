@@ -158,6 +158,10 @@ public class CB_Request {
         this.filler = filler;
     }
 
+    public void UnPackHash(byte[] aData) {
+        setCorrectHash(aData);
+    }
+
     public void UnPackData(byte[] aData) {
 
         byte[] tmp = null;

@@ -1,6 +1,7 @@
 package com.datafast.server.unpack;
 
 import android.util.Log;
+import android.widget.TableRow;
 
 import com.newpos.libpay.utils.ISOUtil;
 
@@ -17,6 +18,7 @@ public class dataReceived {
 
     private String cmd;
     private byte[] dataRaw;
+    private boolean correctLength;
 
     public String getCmd() {
         return cmd;
@@ -34,6 +36,14 @@ public class dataReceived {
         this.dataRaw = dataRaw;
     }
 
+    public boolean isCorrectLength() {
+        return correctLength;
+    }
+
+    public void setCorrectLength(boolean correctLength) {
+        this.correctLength = correctLength;
+    }
+
     public void identifyCommand(byte[] aMsg)
     {
         byte[] packLen;
@@ -47,10 +57,13 @@ public class dataReceived {
             System.arraycopy(aMsg, offset, packLen, 0, 2);
             offset += 2;
             len = Integer.parseInt(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(packLen)),16);
-            correctLen = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aMsg)).trim().length() - 4;
+            correctLen = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aMsg)).trim().length() - 2;
 
             if (len != correctLen){
                 len = correctLen;
+                correctLength = false;
+            }else {
+                correctLength = true;
             }
 
             //cmd

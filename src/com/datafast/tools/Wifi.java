@@ -12,6 +12,7 @@ import com.datafast.pinpad.cmd.CP.CP_Response;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
 import com.datafast.server.callback.waitResponse;
+import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.net.eth.EthernetManager;
@@ -48,6 +49,13 @@ public class Wifi {
     public boolean comunicacion(byte[] aDat, waitResponse listener) {
         String[] data = new String[2];
         boolean ret = false;
+
+        if (!Server.correctLength){
+            cp_request.UnPackHash(aDat);
+            processInvalid();
+            listener.waitRspHost(getCp_response().packData());
+            return false;
+        }
 
         cp_request.UnPackData(aDat);
 

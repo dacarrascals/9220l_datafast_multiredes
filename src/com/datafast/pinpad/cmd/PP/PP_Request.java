@@ -259,6 +259,15 @@ public class PP_Request {
         this.hash = hash;
     }
 
+    public void UnPackHash(byte[] aData){
+        //idCodNetAcq
+        byte[] tmp = new byte[1];
+        System.arraycopy(aData, 2, tmp, 0, 1);
+        this.idCodNetAcq = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+
+        setCorrectHash(aData);
+    }
+
     public void UnPackData(byte[] aData){
 
         byte[] tmp = null;
@@ -410,8 +419,12 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
             this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (CID.length() != 15){
-                countValid ++;
+            if (!CID.isEmpty()){
+                if (CID.length() != 15){
+                    countValid ++;
+                }
+            }else {
+                CID = TMConfig.getInstance().getCID();
             }
 
             //OTT
