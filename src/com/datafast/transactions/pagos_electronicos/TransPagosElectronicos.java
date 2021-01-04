@@ -421,7 +421,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
     private void PBOCTrans() {
 
         int code = 0;
-        transUI.handling(timeout, Tcode.Status.process_trans);
+        transUI.handling(timeout * 2, Tcode.Status.process_trans);
 
         emvl2 = new EmvL2Process(this.context, para);
         emvl2.setTraceNo(TraceNo);//JM
