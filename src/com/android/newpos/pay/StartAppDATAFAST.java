@@ -31,6 +31,7 @@ import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
 import com.newpos.libpay.PaySdk;
 import com.newpos.libpay.global.TMConfig;
+import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.ped.KeyType;
 
 import java.util.ArrayList;
@@ -69,6 +70,11 @@ public class StartAppDATAFAST extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {//check system version ,if it is Android 5, load the so file
+            PAYUtils.copyAssetsToData(getApplicationContext(),"libPlatform.so");  // copy the so file from folder assets to data folder
+            System.load(getFilesDir().getPath()+"/libPlatform.so");		//load the so file
+        }
 
         if (idioma()){
             initSDK();

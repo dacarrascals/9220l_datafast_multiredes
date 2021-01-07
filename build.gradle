@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     //compileOnly files('extlib/new9210.jar')
     compileOnly files('extlib/sdk.jar')
-    implementation(name: 'emvl2', ext: 'aar')
+    implementation(name: 'bypay-20201229_androidV7', ext: 'aar')
     compileOnly files('libs/libpboc.jar')
     implementation 'com.github.gcacace:signature-pad:1.2.1'
     implementation 'com.google.guava:guava:14.0.1'
