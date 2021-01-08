@@ -3415,6 +3415,7 @@ public class FinanceTrans extends Trans {
                     lastInputMode = 0x00;
                     lastCmd = "";
                     lastTrack = null;
+                    return false;
                 }
             }
             if (inputMode == ENTRY_MODE_NFC) {

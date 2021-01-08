@@ -132,8 +132,8 @@ public class StartAppDATAFAST extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (idioma()){
-            InjectMasterKey.injectMk("D573F8765B4975CB");//Master MediaNet
-//            InjectMasterKey.deleteKeys(KeyType.KEY_TYPE_MASTK, MASTERKEYIDX);
+            /*InjectMasterKey.injectMk("D573F8765B4975CB");//Master MediaNet
+            InjectMasterKey.deleteKeys(KeyType.KEY_TYPE_MASTK, MASTERKEYIDX);*/
             if (threreIsKey(MASTERKEYIDX, "Debe cargar Master Key", StartAppDATAFAST.this)){
                 initApp();
             }else{
