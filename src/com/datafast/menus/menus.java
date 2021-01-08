@@ -303,10 +303,7 @@ public class menus extends AppCompatActivity {
     }
 
     String[] permits =  new String[] {
-            WRITE_EXTERNAL_STORAGE,
-            READ_PHONE_STATE,
-            ACCESS_COARSE_LOCATION,
-            CAMERA};
+            WRITE_EXTERNAL_STORAGE};
 
     private void permissionWriteSettings() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
