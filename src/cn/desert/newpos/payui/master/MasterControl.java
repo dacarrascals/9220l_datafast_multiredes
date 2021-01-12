@@ -784,6 +784,8 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
         });
     }
 
+    public static Activity activity;
+    public static LinearLayout relativeLayout;
     @Override
     public void showMsgInfo(final int timeout, final String status, final boolean transaccion) {
         runOnUiThread(new Runnable() {
@@ -796,14 +798,12 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 btnTarjetaManual.setVisibility(View.INVISIBLE);
                 progressBar = findViewById(R.id.progress);
 
-                LinearLayout relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
-                if (status.equals(getStatusInfo(String.valueOf(Tcode.Status.process_trans)))){
-                    relativeLayout.setVisibility(View.VISIBLE);
-                    final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
-                    runTimeGeneral(textViewTitle, timeout);
-                }else {
-                    relativeLayout.setVisibility(View.GONE);
-                }
+                activity = MasterControl.this;
+
+                relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
+                final TextView textViewTitle = (TextView) findViewById(R.id.textView_cont);
+                relativeLayout.setVisibility(View.GONE);
+                runTimeGeneral(textViewTitle, timeout);
 
                 if (transaccion){
                     progressBar.setVisibility(View.INVISIBLE);

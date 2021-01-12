@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
+import android.os.Handler;
+import android.view.View;
 
 import com.datafast.file_management.Files_Management;
 import com.newpos.bypay.EmvL2App;
@@ -27,6 +29,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 import cn.desert.newpos.payui.UIUtils;
+
+import static cn.desert.newpos.payui.master.MasterControl.activity;
+import static cn.desert.newpos.payui.master.MasterControl.relativeLayout;
 
 public class CallBackHandle implements IEmvL2CallBack {
 
@@ -134,19 +139,44 @@ public class CallBackHandle implements IEmvL2CallBack {
  //    *           0:off
 //     *           1:on
 //     * num
+    public static boolean show;
     @Override
     public void FnLedSwitch(EmvL2App handle, int num, int ledStatus, int ledColor) {
        // return;
 
         Logger.debug("java led witch: num: "+num+" ledStatus: "+ledStatus+" ledColor "+ledColor);
+        show = true;
         switch (num){
             case 0:
                 LedManager.getInstance().Red(ledStatus);
                 break;
             case 1:
                 LedManager.getInstance().Blue(ledStatus);
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (show)
+                                        relativeLayout.setVisibility(View.VISIBLE);
+                                }
+                            }, 400);
+                        }
+                    });
+                }
                 break;
             case 2:
+                if (activity != null && ledStatus == 1) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            relativeLayout.setVisibility(View.GONE);
+                            show = false;
+                        }
+                    });
+                }
                 LedManager.getInstance().Green(ledStatus);
                 break;
             case 3:
