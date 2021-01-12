@@ -21,6 +21,7 @@ import com.android.desert.keyboard.InputManager;
 import com.android.newpos.pay.R;
 import com.datafast.inicializacion.prompts.Prompt;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
+import com.datafast.tools.CounterTimer;
 import com.newpos.libpay.device.card.CardInfo;
 import com.newpos.libpay.device.pinpad.OfflineRSA;
 import com.newpos.libpay.device.pinpad.PinInfo;
@@ -53,6 +54,7 @@ public class HistoryTrans extends Activity implements
     LinearLayout z;
     LinearLayout root;
     ImageView close;
+    CounterTimer counterTimer;
 
     private HistorylogAdapter adapter;
     private boolean isSearch = false;
@@ -106,6 +108,9 @@ public class HistoryTrans extends Activity implements
                     break;
             }
         }
+
+        counterTimer = new CounterTimer(this);
+        counterTimer.counterDownTimer();
     }
 
     @Override

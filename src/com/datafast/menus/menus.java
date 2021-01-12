@@ -30,6 +30,7 @@ import com.android.newpos.pay.R;
 import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.tools.PolarisUtil;
+import com.datafast.tools.CounterTimer;
 import com.newpos.libpay.utils.ISOUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class menus extends AppCompatActivity {
     boolean isOne;
     boolean isDisplay;
 
-    CountDownTimer countDownTimerMenus, countDownTimerDisplay;
+    CounterTimer counterTimer;
 
     public static final int FALLBACK = 3;
     public static final int NO_FALLBACK = 0;
@@ -145,7 +146,6 @@ public class menus extends AppCompatActivity {
 
             case DefinesDATAFAST.ITEM_PRINCIPAL:
                 counterDownTimerMenus();
-                deleteTimerMenus();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_POLARIS, R.drawable.cloud));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_COMERCIO, R.drawable.ic_comercio));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONEXION, R.drawable.comunication));
@@ -156,7 +156,6 @@ public class menus extends AppCompatActivity {
 
             case DefinesDATAFAST.ITEM_TRANSACCIONES:
                 counterDownTimerMenus();
-                deleteTimerDisplay();
                 if (isInit) {
                     if (ISOUtil.stringToBoolean(tconf.getTRANSACCION_VENTA()))
                         itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_VENTA, R.drawable.ic_venta));
@@ -184,7 +183,6 @@ public class menus extends AppCompatActivity {
 
             case DefinesDATAFAST.ITEM_PRE_AUTORIZACION:
                 counterDownTimerMenus();
-                deleteTimerDisplay();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANS_PRE_AUT, R.drawable.ic_preauto));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_AMPLIACION, R.drawable.ic_ampliacionpre));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIRMACION, R.drawable.ic_confirmacion));
@@ -194,7 +192,6 @@ public class menus extends AppCompatActivity {
 
             case DefinesDATAFAST.ITEM_IMPRESION:
                 counterDownTimerMenus();
-                deleteTimerDisplay();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_RE_IMPRESION, R.drawable.ic_reimpresionpreauto));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_REPORTE_DETALLADO, R.drawable.ic_reportedetallado));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TEST, R.drawable.ic_test));
@@ -202,15 +199,12 @@ public class menus extends AppCompatActivity {
 
             case DefinesDATAFAST.ITEM_RE_IMPRESION:
                 counterDownTimerMenus();
-                deleteTimerDisplay();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANS_EN_PANTALLA, R.drawable.ic_menuimpresion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_PREAUTO_PANTALLA, R.drawable.ic_menuimpresion));
                 break;
 
             case DefinesDATAFAST.ITEM_COMERCIO:
                 counterDownTimerMenus();
-                deleteTimerDisplay();
-                deleteTimerMenus();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_ECHO_TEST, R.drawable.ic_echo));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_BORRAR_REVERSO, R.drawable.ic_borrarreverso));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANS_EN_PANTALLA, R.drawable.ic_menuimpresion));
@@ -219,6 +213,7 @@ public class menus extends AppCompatActivity {
                 break;
 
             case DefinesDATAFAST.ITEM_COMUNICACION:
+                counterDownTimerMenus();
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_INICIALIZACION, R.drawable.ic_inicializacion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_INICIAL, R.drawable.ic_configuracion));
                 if (!isInit){
@@ -230,69 +225,20 @@ public class menus extends AppCompatActivity {
         return itemMenu;
     }
 
-    private void counterDownTimerDisplay() {
-        if (countDownTimerDisplay != null) {
-            countDownTimerDisplay.cancel();
-            countDownTimerDisplay = null;
-        }
-        layoutSaver.setClickable(false);
-        countDownTimerDisplay = new CountDownTimer(60000 * 3, 30000) {
-            public void onTick(long millisUntilFinished) {
-            }
-
-            public void onFinish() {
-                Log.e("onTick", "finish onTick countDownTimer Display");
-                deleteTimerDisplay();
-                counterDownTimerDisplay();
-            }
-        }.start();
-    }
-
-    private void deleteTimerDisplay() {
-        if (countDownTimerDisplay != null) {
-            countDownTimerDisplay.cancel();
-            countDownTimerDisplay = null;
-        }
-    }
-
     private void counterDownTimerMenus() {
-        if (countDownTimerMenus != null) {
-            countDownTimerMenus.cancel();
-            countDownTimerMenus = null;
-        }
+        counterTimer = new CounterTimer(this);
         layoutSaver.setClickable(false);
-        countDownTimerMenus = new CountDownTimer(30000, 5000) {
-            public void onTick(long millisUntilFinished) {
-                Log.i("onTick", "init onTick countDownTimer HomeDataFast");
-            }
-
-            public void onFinish() {
-                Log.i("onTick", "finish onTick countDownTimer HomeDataFast");
-                deleteTimerMenus();
-                deleteTimerDisplay();
-                finish();
-            }
-        }.start();
-    }
-
-    private void deleteTimerMenus() {
-        if (countDownTimerMenus != null) {
-            countDownTimerMenus.cancel();
-            countDownTimerMenus = null;
-        }
+        counterTimer.counterDownTimer();
     }
 
     public void onClickCloseDisplay(View view) {
-        deleteTimerDisplay();
         isDisplay = false;
-        counterDownTimerDisplay();
         layoutSaver.setVisibility(View.GONE);
         setBrightness(140);
     }
 
     public void setBrightness(int brightness1) {
-        int brightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0
-        );
+        int brightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0);
         Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness1);
     }
 

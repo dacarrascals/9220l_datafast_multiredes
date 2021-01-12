@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.tools.CounterTimer;
 
 import cn.desert.newpos.payui.UIUtils;
 
@@ -23,6 +24,7 @@ public class PwMasterKey extends AppCompatActivity {
 
     private Button btn_ok, btn_cnl;
     private EditText et_pw;
+    private CounterTimer counterTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,9 @@ public class PwMasterKey extends AppCompatActivity {
                 }
             }
         });
+
+        counterTimer = new CounterTimer(this);
+        counterTimer.counterDownTimer();
     }
 
     public void onResume() {

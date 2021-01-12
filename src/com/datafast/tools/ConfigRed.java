@@ -46,6 +46,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     InputMethodManager inputMethodManager;
 
     Switch switchConnectionType;
+    private CounterTimer counterTimer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -156,6 +157,9 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
+
+        counterTimer = new CounterTimer(this);
+        counterTimer.counterDownTimer();
 
     }
 
@@ -474,7 +478,6 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                 break;
         }
     }
-
 
     boolean borrado = false;
     int lenTxt = 0;
