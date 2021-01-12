@@ -348,7 +348,7 @@ public class FinanceTrans extends Trans {
         Track1 = new String(temp, 0, len);
         // 卡序号
         len = PAYUtils.get_tlv_data_kernal(0x5F34, temp);
-        PanSeqNo = ISOUtil.padleft(ISOUtil.byte2int(temp, 0, len) + "", 3, '0');
+        PanSeqNo = ISOUtil.padleft(ISOUtil.byte2hex(temp, 0, len) + "", 3, '0');
 
         ARQC = getARQC();
         if (ARQC != null){
