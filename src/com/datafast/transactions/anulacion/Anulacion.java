@@ -512,6 +512,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 if (data.getPanNormal().equals(Pan)) {
                     prepareOnline();
                 } else {
+                    retVal = T_void_card_not_same;
                     transUI.showError(timeout, T_void_card_not_same, processPPFail);
                 }
 
@@ -657,6 +658,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         if (data.getPanNormal().equals(Pan))
             prepareOnline();
         else {
+            retVal = T_void_card_not_same;
             transUI.showError(timeout, T_void_card_not_same, processPPFail);
         }
     }
@@ -704,7 +706,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         property.setOtherAmounts(0);
         property.setIcCard(false);
 
-        transUI.handling(timeout, Tcode.Status.process_trans);
+        transUI.handling(timeout * 2, Tcode.Status.process_trans);
 
         emvl2 = new EmvL2Process(this.context, para);
         emvl2.setTraceNo(TraceNo);//JM
@@ -750,8 +752,8 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         if (data.getPanNormal().equals(Pan)) {
             handlePBOCode(PBOCode.PBOC_REQUEST_ONLINE);
         } else {
+            retVal = T_void_card_not_same;
             transUI.showError(timeout, T_void_card_not_same, processPPFail);
-            return;
         }
     }
 
