@@ -1766,7 +1766,9 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             public void onFinish() {
                 contFallback = 0;
                 countDownTimerGeneral.cancel();
-                listener.cancel();
+                if (listener != null) {
+                    listener.cancel();
+                }
                 /*inputContent = "false";
                 listener.confirm(InputManager.Style.COMMONINPUT);*/
             }

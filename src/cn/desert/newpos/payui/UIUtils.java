@@ -703,7 +703,7 @@ public class UIUtils {
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialogI, int which) {
                 dialog.dismiss();
             }
         });
