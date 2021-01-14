@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.newpos.pay.R;
+import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
 import com.newpos.libpay.utils.PAYUtils;
@@ -158,8 +159,10 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        counterTimer = new CounterTimer(this);
-        counterTimer.counterDownTimer();
+        if (StartAppDATAFAST.isInit){
+            counterTimer = new CounterTimer(this);
+            counterTimer.counterDownTimer();
+        }
 
     }
 

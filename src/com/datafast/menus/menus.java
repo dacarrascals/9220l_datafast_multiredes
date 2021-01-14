@@ -213,7 +213,9 @@ public class menus extends AppCompatActivity {
                 break;
 
             case DefinesDATAFAST.ITEM_COMUNICACION:
-                counterDownTimerMenus();
+                if (isInit){
+                    counterDownTimerMenus();
+                }
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_INICIALIZACION, R.drawable.ic_inicializacion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_INICIAL, R.drawable.ic_configuracion));
                 if (!isInit){
