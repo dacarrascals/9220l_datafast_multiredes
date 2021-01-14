@@ -243,30 +243,42 @@ public class WifiSettings extends AppCompatActivity {
     private void ingresarContraseña(final String titulo) {
         final int typeNet = typeNetwork(titulo);
         if (typeNet > 0) {
-            final Dialog dialog = UIUtils.centerDialog(context, R.layout.setting_home_pass, R.id.setting_pass_layout);
-            final EditText newEdit = dialog.findViewById(R.id.setting_pass_new);
-            final TextView title_pass = dialog.findViewById(R.id.title_pass);
-            Button confirm = dialog.findViewById(R.id.setting_pass_confirm);
-            newEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
-            newEdit.requestFocus();
-            title_pass.setText(titulo);
 
-            dialog.findViewById(R.id.setting_pass_close).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
+            String preSharedKey = getExistingNetworkKey("\"" + titulo + "\"");
 
-            confirm.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    validarRed( titulo, newEdit.getText().toString(), typeNet);
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
+            if (preSharedKey != null && !preSharedKey.equals("")) {
+
+                validarRed(titulo, preSharedKey, typeNet);
+
+            } else {
+
+                final Dialog dialog = UIUtils.centerDialog(context, R.layout.setting_home_pass, R.id.setting_pass_layout);
+                final EditText newEdit = dialog.findViewById(R.id.setting_pass_new);
+                final TextView title_pass = dialog.findViewById(R.id.title_pass);
+                Button confirm = dialog.findViewById(R.id.setting_pass_confirm);
+                newEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
+                newEdit.requestFocus();
+                title_pass.setText(titulo);
+
+                dialog.findViewById(R.id.setting_pass_close).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+                confirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        validarRed( titulo, newEdit.getText().toString(), typeNet);
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+
+            }
+
         } else {
             validarRed( titulo, "", typeNet);
         }
@@ -363,6 +375,9 @@ public class WifiSettings extends AppCompatActivity {
         wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
         // connect to and enable the connection
         int netId = wifiManager.addNetwork(wc);
+        if (netId == -1) {
+            netId = getExistingNetworkId(wc.SSID);
+        }
         conexionExitosa = wifiManager.enableNetwork(netId, false);
 
         if(conexionExitosa) {
@@ -370,6 +385,30 @@ public class WifiSettings extends AppCompatActivity {
         } else {
             UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Longitud inválida", Toast.LENGTH_SHORT);
         }
+    }
+
+    private int getExistingNetworkId(String SSID) {
+        List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
+        if (configuredNetworks != null) {
+            for (WifiConfiguration existingConfig : configuredNetworks) {
+                if (SSID.equalsIgnoreCase(existingConfig.SSID)) {
+                    return existingConfig.networkId;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private String getExistingNetworkKey(String SSID) {
+        List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
+        if (configuredNetworks != null) {
+            for (WifiConfiguration existingConfig : configuredNetworks) {
+                if (SSID.equalsIgnoreCase(existingConfig.SSID)) {
+                    return existingConfig.preSharedKey;
+                }
+            }
+        }
+        return null;
     }
 
     CountDownTimer timer2;
@@ -427,6 +466,9 @@ public class WifiSettings extends AppCompatActivity {
         wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
         // connect to and enable the connection
         int netId = wifiManager.addNetwork(wc);
+        if (netId == -1) {
+            netId = wifiManager.getConnectionInfo().getNetworkId();
+        }
         desconexionExitosa = wifiManager.disableNetwork(netId);        // desconectar
 
         if (desconexionExitosa){

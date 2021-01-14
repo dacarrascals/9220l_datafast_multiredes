@@ -249,7 +249,7 @@ public class menus extends AppCompatActivity {
     }
 
     String[] permits =  new String[] {
-            WRITE_EXTERNAL_STORAGE};
+            WRITE_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION};
 
     private void permissionWriteSettings() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
