@@ -31,16 +31,12 @@ import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.tools.PolarisUtil;
 import com.datafast.tools.CounterTimer;
+import com.datafast.tools.PermissionStatus;
 import com.newpos.libpay.utils.ISOUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import cn.desert.newpos.payui.UIUtils;
-
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.CAMERA;
-import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -71,6 +67,7 @@ public class menus extends AppCompatActivity {
     RelativeLayout layoutSaver;
     ImageView imageSaver;
     TextView version;
+    PermissionStatus permissionStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +77,7 @@ public class menus extends AppCompatActivity {
         layoutSaver = (RelativeLayout) findViewById(R.id.layoutSaver);
         imageSaver = (ImageView) findViewById(R.id.imageSaver);
         version = (TextView) findViewById(R.id.textView_vrs);
+        permissionStatus = new PermissionStatus(menus.this, this);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -128,7 +126,7 @@ public class menus extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerViewAdaptadorMenu = new RecyclerViewAdaptadorMenu(obtenerItems(tipoMenu), this, DefinesDATAFAST.TIPO_LAYOUT_GRID);
         recyclerView.setAdapter(recyclerViewAdaptadorMenu);
-        permissionWriteSettings();
+        permissionStatus.permissionWriteSettings();
 
     }
 
@@ -250,71 +248,9 @@ public class menus extends AppCompatActivity {
             finish();
     }
 
-    String[] permits =  new String[] {
-            WRITE_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION};
-
-    private void permissionWriteSettings() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if(!Settings.System.canWrite(this)){
-                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                intent.setData(Uri.parse("package:" + this.getPackageName()));
-                startActivity(intent);
-            }
-        }
-    }
-
-    public void reqPermissions(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permits, 100);
-        }
-    }
-
-    private boolean validatePermissions(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            for (String idPermission : permits){
-                if (checkSelfPermission(idPermission) != PackageManager.PERMISSION_GRANTED){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private void showDialogPermission(String msg, final boolean selectMsg){
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(menus.this);
-        dialog.setTitle("Permisos Desactivados")
-                .setMessage(msg)
-                .setCancelable(false);
-
-        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (selectMsg){
-                    reqPermissions();
-                }else {
-                    Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    intent.setData(Uri.parse("package:" + getPackageName()));
-                    startActivity(intent);
-                }
-            }
-        }).show();
-    }
-
-    private boolean getMsgPermissions() {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("permissions", Context.MODE_PRIVATE);
-        return preferences.getBoolean("msg", false);
-    }
-
-    private void setMsgPermissions(boolean msgPermission){
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("permissions", Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.putBoolean("msg", msgPermission);
-        edit.apply();
     }
 
      @Override
@@ -322,7 +258,7 @@ public class menus extends AppCompatActivity {
          super.onResume();
          contFallback = 0;
          isInit = PolarisUtil.isInitPolaris(menus.this);
-         if (!isInit && validatePermissions()) {
+         if (!isInit && permissionStatus.validatePermissions()) {
              new Handler().postDelayed(new Runnable() {
                  @Override
                  public void run() {
@@ -340,30 +276,7 @@ public class menus extends AppCompatActivity {
              }, 500);
 
          }
-
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-             if(Settings.System.canWrite(this)){
-                 if (!getMsgPermissions()){
-                     reqPermissions();
-                     setMsgPermissions(true);
-                 }else if (getMsgPermissions() && !validatePermissions()){
-                     boolean nvpPermission = false;
-                     for (String id : permits){
-                         nvpPermission = shouldShowRequestPermissionRationale(id);
-                         if (!nvpPermission){
-                             showDialogPermission("Has deshabilitado los mensajes de permisos. Entra en permisos y activalos manualmente.", false);
-                             break;
-                         }
-                     }
-
-                     if (nvpPermission){
-                         showDialogPermission("Debe aceptar los permisos para el correcto funcionamiento de la App.", true);
-                     }
-                 }
-             }else {
-                 permissionWriteSettings();
-             }
-         }
+         permissionStatus.confirmPermissionMsg();
      }
 
     @Override
