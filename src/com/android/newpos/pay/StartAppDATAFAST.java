@@ -71,12 +71,13 @@ public class StartAppDATAFAST extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {//check system version ,if it is Android 5, load the so file
-            PAYUtils.copyAssetsToData(getApplicationContext(),"libPlatform.so");  // copy the so file from folder assets to data folder
-            System.load(getFilesDir().getPath()+"/libPlatform.so");		//load the so file
-        }
-
         if (idioma()){
+
+            if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {//check system version ,if it is Android 5, load the so file
+                PAYUtils.copyAssetsToData(getApplicationContext(),"libPlatform.so");  // copy the so file from folder assets to data folder
+                System.load(getFilesDir().getPath()+"/libPlatform.so");		//load the so file
+            }
+
             initSDK();
 
             isInit = PolarisUtil.isInitPolaris(StartAppDATAFAST.this);

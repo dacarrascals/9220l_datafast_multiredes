@@ -40,6 +40,7 @@ import cn.desert.newpos.payui.UIUtils;
 
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
+import static com.datafast.tools.PermissionStatus.firstTry;
 
 
 /**
@@ -276,7 +277,11 @@ public class menus extends AppCompatActivity {
              }, 500);
 
          }
-         permissionStatus.confirmPermissionMsg();
+         if (firstTry) {
+             permissionStatus.confirmPermissionMsg();
+         } else {
+             permissionStatus.reqPermissions();
+         }
      }
 
     @Override

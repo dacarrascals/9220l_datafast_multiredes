@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -41,8 +40,10 @@ public class PermissionStatus {
         }
     }
 
+    public static boolean firstTry = false;
     public void reqPermissions(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            firstTry = true;
             activity.requestPermissions(permits, 100);
         }
     }
@@ -58,16 +59,19 @@ public class PermissionStatus {
         return true;
     }
 
-    public boolean getMsgPermissions() {
-        SharedPreferences preferences = context.getSharedPreferences("permissions", Context.MODE_PRIVATE);
-        return preferences.getBoolean("msg", false);
-    }
-
-    public void setMsgPermissions(boolean msgPermission){
-        SharedPreferences preferences = context.getSharedPreferences("permissions", Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.putBoolean("msg", msgPermission);
-        edit.apply();
+    /**
+     * Valida si el mensaje de permisos se marco como No volver a preguntar
+     * return true si no se marca, false si se marca
+     * */
+    public boolean validatePermissionsMsg(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (String idPermission : permits){
+                if (!activity.shouldShowRequestPermissionRationale(idPermission)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void showDialogPermission(String msg, final boolean selectMsg){
@@ -93,21 +97,10 @@ public class PermissionStatus {
     public void confirmPermissionMsg(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(Settings.System.canWrite(context)){
-                if (!getMsgPermissions()){
-                    reqPermissions();
-                    setMsgPermissions(true);
-                }else if (getMsgPermissions() && !validatePermissions()){
-                    boolean nvpPermission = false;
-                    for (String id : permits){
-                        nvpPermission = activity.shouldShowRequestPermissionRationale(id);
-                        if (!nvpPermission){
-                            showDialogPermission("Has deshabilitado los mensajes de permisos. Entra en permisos y activalos manualmente.", false);
-                            break;
-                        }
-                    }
-                    if (nvpPermission){
-                        showDialogPermission("Debe aceptar los permisos para el correcto funcionamiento de la App.", true);
-                    }
+                if (!validatePermissionsMsg() && !validatePermissions()){
+                    showDialogPermission("Has deshabilitado los mensajes de permisos. Entra en permisos y activalos manualmente.", false);
+                }else if (validatePermissionsMsg() && !validatePermissions()){
+                    showDialogPermission("Debe aceptar los permisos para el correcto funcionamiento de la App.", true);
                 }
             }else {
                 permissionWriteSettings();
