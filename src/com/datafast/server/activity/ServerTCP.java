@@ -174,13 +174,13 @@ public class ServerTCP extends AppCompatActivity {
                             }
 
                             pp_request.UnPackData(aDat);
-                            seleccion = Integer.parseInt(pp_request.getTypeTrans());
                             if (pp_request.getCountValid() > 0){
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                                 break;
                             }
+                            seleccion = Integer.parseInt(pp_request.getTypeTrans());
                             if (Control.echoTest && Control.failEchoTest){
                                 Control.failEchoTest = false;
                             }

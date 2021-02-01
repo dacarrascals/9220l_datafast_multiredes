@@ -483,6 +483,7 @@ public class PP_Request {
         }
         catch(Exception e)
         {
+            countValid++;
             e.getMessage();
             setCorrectHash(aData);
         }

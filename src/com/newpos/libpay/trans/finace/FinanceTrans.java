@@ -2937,11 +2937,21 @@ public class FinanceTrans extends Trans {
             numberCard = Pan;
             /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));*/
         }
+        
+        String numInicial = numberCard.substring(0,1);
 
         if (tconf.getSIMBOLO_EURO().equals("0")){
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
+            if(numInicial.equals("1") || numInicial.equals("7") || numInicial.equals("8") || numInicial.equals("9")){
+                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(numberCard,40));
+            }else{
+                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
+            }
         }else {
-            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
+            if(numInicial.equals("1") || numInicial.equals("7") || numInicial.equals("8") || numInicial.equals("9")){
+                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(numberCard,64));
+            }else{
+                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
+            }
         }
 
         String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
