@@ -2,6 +2,9 @@ package com.datafast.pinpad.cmd.rules;
 
 
 import com.datafast.pinpad.cmd.Tools.encryption;
+import com.newpos.libpay.utils.ISOUtil;
+
+import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 
 public class RulesPinPad {
 
@@ -31,11 +34,19 @@ public class RulesPinPad {
             case FOUR:
             case FIVE:
             case SIX:
-                this.cardNumber = encryption.hashSha256(pan);
+                if (tconf.getSIMBOLO_EURO().equals("0")){
+                    this.cardNumber = ISOUtil.padright(encryption.hashSha1(pan), 40,' ');
+                }else {
+                    this.cardNumber = ISOUtil.padright(encryption.hashSha256(pan), 64,' ');
+                }
                 break;
 
             default:
-                this.cardNumber = track2;
+                if (tconf.getSIMBOLO_EURO().equals("0")){
+                    this.cardNumber = ISOUtil.padright(track2, 40,' ');
+                }else {
+                    this.cardNumber = ISOUtil.padright(track2, 64,' ');
+                }
                 break;
         }
 

@@ -2937,22 +2937,9 @@ public class FinanceTrans extends Trans {
             numberCard = Pan;
             /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));*/
         }
-        
-        String numInicial = numberCard.substring(0,1);
 
-        if (tconf.getSIMBOLO_EURO().equals("0")){
-            if(numInicial.equals("1") || numInicial.equals("7") || numInicial.equals("8") || numInicial.equals("9")){
-                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(numberCard,40));
-            }else{
-                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
-            }
-        }else {
-            if(numInicial.equals("1") || numInicial.equals("7") || numInicial.equals("8") || numInicial.equals("9")){
-                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(numberCard,64));
-            }else{
-                pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
-            }
-        }
+        rulesPinPad.processCardNumber(Track2, Pan);
+        pp_response.setNumberCardEncrypt(rulesPinPad.getCardNumber());
 
         String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
         if (isSignature.equals("1")) {
@@ -3143,11 +3130,8 @@ public class FinanceTrans extends Trans {
             ltResponse.setCardExpDate(ISOUtil.spacepadRight(ExpDate,4));
         }
         rulesPinPad.processCardNumber(Track2, Pan);
-        if (tconf.getSIMBOLO_EURO().equals("0")){
-            ltResponse.setCardNumEncryp(ISOUtil.padright(encryption.hashSha1(rulesPinPad.getCardNumber()), 40,' '));
-        }else {
-            ltResponse.setCardNumEncryp(ISOUtil.padright(encryption.hashSha256(rulesPinPad.getCardNumber()), 64,' '));
-        }
+        ltResponse.setCardNumEncryp(rulesPinPad.getCardNumber());
+
         //ltResponse.setMsgRsp("LECTURA OK          ");
         if (retVal == 0){
             ltResponse.setMsgRsp(ISOUtil.padright("LECTURA OK" + "", 20, ' '));
@@ -3170,12 +3154,8 @@ public class FinanceTrans extends Trans {
         ctResponse.setRspCodeMsg(PAYUtils.selectRspCode(retVal,RspCode));
         //ctResponse.setCardNumber(encryption.hashSha256(Pan));
         rulesPinPad.processCardNumber(Track2, Pan);
+        ctResponse.setCardNumber(rulesPinPad.getCardNumber());
 
-        if (tconf.getSIMBOLO_EURO().equals("0")){
-            ctResponse.setCardNumber(ISOUtil.padright(encryption.hashSha1(rulesPinPad.getCardNumber()), 40,' '));
-        }else {
-            ctResponse.setCardNumber(ISOUtil.padright(encryption.hashSha256(rulesPinPad.getCardNumber()), 64,' '));
-        }
         ctResponse.setBinCard(Pan.substring(0,6));
         if (inputMode == ENTRY_MODE_NFC) {
             ctResponse.setCardExpDate(ISOUtil.spacepadRight(emvl2.getExpdate(),4));
