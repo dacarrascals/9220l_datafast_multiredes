@@ -55,17 +55,25 @@ public class Control {
             return 0;
         }
 
-        if (!PAYUtils.isNullWithTrim(pc_request.getBatchNumber()) &&
-            !PAYUtils.isNullWithTrim(pc_request.getTracerNumber()) &&
-            !PAYUtils.isNullWithTrim(pc_request.getMID()) &&
-            !PAYUtils.isNullWithTrim(pc_request.getTID()) &&
-            !PAYUtils.isNullWithTrim(pc_request.getCID())){
+        if (!PAYUtils.isNullWithTrim(pc_request.getMID()) &&
+            !PAYUtils.isNullWithTrim(pc_request.getTID())){
 
-            TMConfig.getInstance().setBatchNopc(Integer.parseInt(pc_request.getBatchNumber()))
-                                  .setTraceNo(Integer.parseInt(pc_request.getTracerNumber()))
-                                  .setMerchID(pc_request.getMID())
-                                  .setTermID(pc_request.getTID())
-                                  .setCID(pc_request.getCID()).save();
+            if(!PAYUtils.isNullWithTrim(pc_request.getBatchNumber())){
+                TMConfig.getInstance().setBatchNo(Integer.parseInt(pc_request.getBatchNumber())).save();
+            }else{
+                TMConfig.getInstance().setBatchNo(0).save();
+            }
+            if(!PAYUtils.isNullWithTrim(pc_request.getTracerNumber())){
+                TMConfig.getInstance().setTraceNo(Integer.parseInt(pc_request.getTracerNumber())).save();
+            }else{
+                TMConfig.getInstance().setTraceNo(1).save();
+            }
+            if(!PAYUtils.isNullWithTrim(pc_request.getCID())){
+                TMConfig.getInstance().setCID(pc_request.getCID()).save();
+            }
+
+            TMConfig.getInstance().setMerchID(pc_request.getMID())
+                                  .setTermID(pc_request.getTID()).save();
 
             deleteBatch();
 

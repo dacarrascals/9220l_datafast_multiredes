@@ -123,19 +123,19 @@ public class PC_Request {
             tmp = new byte[6];
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
-            this.batchNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (batchNumber.length() != 6) {
+            if(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 6){
                 countValid ++;
             }
+            this.batchNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //tracerNumber
             tmp = new byte[6];
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
-            this.tracerNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (tracerNumber.length() != 6) {
+            if(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 6){
                 countValid ++;
             }
+            this.tracerNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //filler1
             tmp = new byte[12];
@@ -185,10 +185,10 @@ public class PC_Request {
             tmp = new byte[15];
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
-            this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (CID.length() != 15) {
+            if(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 15){
                 countValid ++;
             }
+            this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //filler3
             tmp = new byte[1];

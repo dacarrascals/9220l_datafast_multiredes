@@ -418,14 +418,10 @@ public class PP_Request {
             tmp = new byte[15];
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
-            this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
-            if (!CID.isEmpty()){
-                if (CID.length() != 15){
-                    countValid ++;
-                }
-            }else {
-                CID = TMConfig.getInstance().getCID();
+            if(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 15){
+                countValid ++;
             }
+            this.CID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //OTT
             tmp = new byte[8];
@@ -457,6 +453,9 @@ public class PP_Request {
             tmp = new byte[15];
             System.arraycopy(aData, offset, tmp, 0, 15);
             offset += 15;
+            if(ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).length() != 15){
+                countValid ++;
+            }
             this.invoiceNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
 
             //pushSalesman
