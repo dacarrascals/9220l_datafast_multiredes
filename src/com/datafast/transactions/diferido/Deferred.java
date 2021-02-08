@@ -90,6 +90,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
                         retVal = status;
                         if (Reverse() != 0){
                             if (retVal != Tcode.T_not_reverse){
+                                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
                                 transUI.showError(timeout,retVal);
                             }else {
                                 transUI.showfinish();
@@ -103,6 +104,11 @@ public class Deferred extends FinanceTrans implements TransPresenter {
         }
 
         if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (callbackRsp != null){
                 callbackRsp.getWaitRspReverse(retVal);
             }
