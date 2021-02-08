@@ -209,6 +209,7 @@ public class menus extends AppCompatActivity {
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANS_EN_PANTALLA, R.drawable.ic_menuimpresion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_MASTER_KEY, R.drawable.ic_test));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_DATOS_COMERCIO, R.drawable.ic_test));
+                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_COMERCIO, R.drawable.comunication));
                 break;
 
             case DefinesDATAFAST.ITEM_COMUNICACION:

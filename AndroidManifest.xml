@@ -55,6 +55,7 @@
         android:theme="@style/AppTheme">
         <activity android:name="com.datafast.tools.WifiSettings"></activity>
         <activity android:name="com.datafast.tools.ConfigRed"></activity>
+        <activity android:name="com.datafast.tools.ConfigTransactional"></activity>
         <activity android:name="com.datafast.server.activity.ServerTCP"
             android:screenOrientation="portrait"></activity>
 
