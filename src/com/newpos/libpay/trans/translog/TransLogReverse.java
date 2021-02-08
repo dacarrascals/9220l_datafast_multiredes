@@ -11,7 +11,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
 import static com.datafast.menus.MenuAction.callBackSeatle;
+import static com.datafast.menus.menus.idAcquirer;
 
 /**
  * 交易日志管理类
@@ -174,6 +176,9 @@ public class TransLogReverse implements Serializable {
 	public boolean deleteTransLog(int logIndex) {
 		if (getSize() > 0) {
 			transLogData.remove(logIndex);
+			if (transLogData.size() == 0) {
+				TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).clearAll(idAcquirer + FILE_NAME_REVERSE);
+			}
 			Logger.debug("Debug point deleteTransLog " + transLogData.toString());
 			return true;
 		}
