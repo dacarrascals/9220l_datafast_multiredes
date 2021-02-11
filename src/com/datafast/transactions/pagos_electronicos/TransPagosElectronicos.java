@@ -393,6 +393,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
                 para.setInputMode(inputMode);
                 processPPFail.setInputMode(inputMode);
                 if (inputMode == ENTRY_MODE_NFC) {
+                    validateNFC = true;
                     PBOCTrans();
                 }
                 if (inputMode == ENTRY_MODE_HAND) {

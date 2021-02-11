@@ -2793,6 +2793,9 @@ public class FinanceTrans extends Trans {
     /**
      * Procesar Pago
      */
+
+    protected boolean validateNFC = false;
+
     public static byte[] ppResponse;
     private void responsePP() {
 
@@ -2876,7 +2879,7 @@ public class FinanceTrans extends Trans {
         }catch (IndexOutOfBoundsException e){}
 
         pp_response.setNameGroupCard(ISOUtil.spacepadRight(rango.getNOMBRE_RANGO(),25));
-        pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack));
+        pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack, validateNFC));
 
         if (montoFijo > 0){
             pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));

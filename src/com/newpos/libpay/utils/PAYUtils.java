@@ -1263,12 +1263,16 @@ public class PAYUtils {
         return ret;
     }
 
-    public static String entryModePP(int val, boolean isFallback) {
+    public static String entryModePP(int val, boolean isFallback, boolean validarToken) {
         String inputMode = "";
 
         switch (val) {
             case ENTRY_MODE_HAND:
-                inputMode = ISOUtil.spacepadRight(HDL, 2);
+                if(validarToken){
+                    inputMode = ISOUtil.spacepadRight(CTL, 2);
+                }else{
+                    inputMode = ISOUtil.spacepadRight(HDL, 2);
+                }
                 break;
             case ENTRY_MODE_MAG:
                 if (isFallback) {
