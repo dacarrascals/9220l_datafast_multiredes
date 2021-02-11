@@ -24,7 +24,7 @@ public class RulesPinPad {
         this.cardNumber = cardNumber;
     }
 
-    public void processCardNumber(String track2, String pan) {
+    public void processCardNumber(String track2, String pan, String[] tokens) {
 
         String firstDigCard = pan.substring(0,1);
 
@@ -42,6 +42,7 @@ public class RulesPinPad {
                 break;
 
             default:
+                if (track2 == null) track2 = "";
                 if (tconf.getSIMBOLO_EURO().equals("0")){
                     this.cardNumber = ISOUtil.padright(track2, 40,' ');
                 }else {
@@ -50,7 +51,16 @@ public class RulesPinPad {
                 break;
         }
 
+        if (tokens != null && !track2.equals("")) {
+            if (tconf.getSIMBOLO_EURO().equals("0")){
+                this.cardNumber = ISOUtil.padright(encryption.hashSha1(track2), 40,' ');
+            }else {
+                this.cardNumber = ISOUtil.padright(encryption.hashSha256(track2), 64,' ');
+            }
+        }
+
 
 
     }
+
 }

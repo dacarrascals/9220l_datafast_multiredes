@@ -16,13 +16,11 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
-import com.datafast.inicializacion.trans_init.trans.Tools;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
 import com.datafast.pinpad.cmd.LT.LT_Response;
 import com.datafast.pinpad.cmd.PP.PP_Response;
-import com.datafast.pinpad.cmd.Tools.encryption;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.pinpad.cmd.rules.RulesPinPad;
 import com.datafast.server.server_tcp.Server;
@@ -48,8 +46,6 @@ import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.printer.Printer;
-
-import org.jpos.iso.IF_CHAR;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -81,13 +77,14 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
-import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsAmountPrinter;
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
 import static com.datafast.transactions.common.GetAmount.PIDE_CONFIRMACION;
 import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
+import static com.newpos.libpay.trans.Trans.Type.ANULACION;
+import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC_DEFERRED;
 import static com.newpos.libpay.trans.Trans.Type.PAGOS_VARIOS;
 import static com.newpos.libpay.trans.Trans.Type.SETTLE;
 
@@ -2267,8 +2264,9 @@ public class FinanceTrans extends Trans {
 
         LogData.setAlreadyPrinted(false);
 
+        //Se comenta la pantalla de firma para
         //Verificar y firma cedula y numero de telefono
-        String isSignature = tconf.getHABILITAR_FIRMA();
+        /*String isSignature = tconf.getHABILITAR_FIRMA();
 
         if (isSignature.equals("1") && !para.getTransType().equals(Type.ANULACION) && !para.getTransType().equals(SETTLE)) {
             InputInfo inputInfo = transUI.showSignature(timeout, "FIRMA", para.getTransType());
@@ -2281,7 +2279,7 @@ public class FinanceTrans extends Trans {
                 }
             }
 
-        }
+        }*/
 
         return LogData;
     }
@@ -2923,36 +2921,52 @@ public class FinanceTrans extends Trans {
         }
 
         if (transEname.equals(Trans.Type.ANULACION) || transEname.equals("REVERSAL")){
-            pp_response.setExpDateCard(ISOUtil.spacepad("",4));
+            pp_response.setExpDateCard(ISOUtil.spacepad("0000",4));
         }
 
-        String numberCard;
-        if (transEname.equals(Trans.Type.ELECTRONIC)){
+        String[] tokens = null;
+        if (isElectronic() || isAnulacionElectronic()){
+            tokens = new String[2];
+            tokens[0] = CodOTT;
+            tokens[1] = TokenElectronic;
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(Pan,25));
-            pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
-            numberCard = iso8583.getfield(2);
+            pp_response.setFiller(ISOUtil.spacepadRight(iso8583.getfield(2), 27));
+            Track2 = iso8583.getfield(2);
             /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));*/
         }else {
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(Pan),25));
-            numberCard = Pan;
             /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));*/
         }
 
-        rulesPinPad.processCardNumber(Track2, Pan);
+        rulesPinPad.processCardNumber(Track2, Pan, tokens);
         pp_response.setNumberCardEncrypt(rulesPinPad.getCardNumber());
 
-        String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
-        if (isSignature.equals("1")) {
+        //Se deshabilita el envío de la firma a la caja
+        /*String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
+        if (isSignature.equals("1") && !isAnulacionElectronic() && !isElectronic()) {
             pp_response.setFiller(ISOUtil.spacepadRight(decode64(), 27));
         }else {
-            if (!transEname.equals(Trans.Type.ELECTRONIC)){
+            if (!isElectronic() && !isAnulacionElectronic()){
                 pp_response.setFiller(ISOUtil.spacepadRight("", 27));
             }
+        }*/
+
+        if (!isElectronic() && !isAnulacionElectronic()){
+            pp_response.setFiller(ISOUtil.spacepadRight("", 27));
         }
+
         pp_response.setHash(keySecurity);
 
         ppResponse = pp_response.packData();
 
+    }
+
+    protected boolean isAnulacionElectronic() {
+        return transEname.equals(ANULACION) && (CodOTT != null || TokenElectronic != null);
+    }
+
+    protected boolean isElectronic() {
+        return transEname.equals(Trans.Type.ELECTRONIC) || transEname.equals(ELECTRONIC_DEFERRED);
     }
 
     private String verifyHolderName(String nameCard){
@@ -3129,7 +3143,7 @@ public class FinanceTrans extends Trans {
         }else {
             ltResponse.setCardExpDate(ISOUtil.spacepadRight(ExpDate,4));
         }
-        rulesPinPad.processCardNumber(Track2, Pan);
+        rulesPinPad.processCardNumber(Track2, Pan, null);
         ltResponse.setCardNumEncryp(rulesPinPad.getCardNumber());
 
         //ltResponse.setMsgRsp("LECTURA OK          ");
@@ -3153,7 +3167,7 @@ public class FinanceTrans extends Trans {
         ctResponse.setTypeMsg(CT);
         ctResponse.setRspCodeMsg(PAYUtils.selectRspCode(retVal,RspCode));
         //ctResponse.setCardNumber(encryption.hashSha256(Pan));
-        rulesPinPad.processCardNumber(Track2, Pan);
+        rulesPinPad.processCardNumber(Track2, Pan, null);
         ctResponse.setCardNumber(rulesPinPad.getCardNumber());
 
         ctResponse.setBinCard(Pan.substring(0,6));

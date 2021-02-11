@@ -32,6 +32,9 @@ import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tablaIp;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
+import static com.newpos.libpay.trans.Trans.Type.ANULACION;
+import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC;
+import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC_DEFERRED;
 
 
 /**
@@ -854,7 +857,13 @@ public abstract class Trans {
         Pan = null;
         Track2 = null;
         Track3 = null;
-        rango.clearRango();
+        if (!TransEName.equals(ELECTRONIC) && !TransEName.equals(ELECTRONIC_DEFERRED)) {
+            if ((TransEName.equals(ANULACION) && (CodOTT == null && TokenElectronic == null))) {
+                rango.clearRango();
+            } else if (!TransEName.equals(ANULACION)) {
+                rango.clearRango();
+            }
+        }
         System.gc();//显示调用清除内存
     }
 
