@@ -29,6 +29,7 @@ import java.util.Iterator;
 import cn.desert.newpos.payui.UIUtils;
 
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
+import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_OTT;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_TOKEN_PE;
@@ -61,6 +62,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         ExpDate = "0000";
         inputMode = ENTRY_MODE_HAND;
         processPPFail = new ProcessPPFail(ctx, iso8583);
+        processPPFail.setTransName(TransEName);
         this.aCmd = Server.cmd;
     }
 
@@ -389,6 +391,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
                         return retVal;
                 }
                 para.setInputMode(inputMode);
+                processPPFail.setInputMode(inputMode);
                 if (inputMode == ENTRY_MODE_NFC) {
                     Amount = 1;
                     PBOCTrans();

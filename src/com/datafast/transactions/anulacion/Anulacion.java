@@ -75,6 +75,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         mtransEnableVoid = false;
         index = 0;
         processPPFail = new ProcessPPFail(ctx, iso8583);
+        processPPFail.setTransName(TransEName);
     }
 
     @Override
@@ -799,6 +800,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
     private void isHandle() {
 
         inputMode = ENTRY_MODE_HAND;
+        processPPFail.setInputMode(inputMode);
 
         switch (data.getTransEName()) {
             case Type.ELECTRONIC:
@@ -877,8 +879,15 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             Pan = listPagoElectronico.get(index).getNUM_TARJETA();
             Pan += codOTT;
 
+            if (!incardTable(Pan, TransEName)) {
+                retVal = Tcode.T_unsupport_card;
+                transUI.showError(timeout, Tcode.T_unsupport_card, processPPFail);
+                return;
+            }
+
             if (dataInfo.equals(codOTT)) {
-                inputMode = Integer.parseInt(data.getEntryMode());
+                //inputMode = Integer.parseInt(data.getEntryMode());
+                inputMode = ENTRY_MODE_HAND;
                 TypeTransElectronic = data.getTypeTransElectronic();
                 prepareOnline();
             } else {

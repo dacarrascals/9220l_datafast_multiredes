@@ -48,6 +48,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
         typeCoin = CommonFunctionalities.tipoMoneda()[1];
         host_id = idAcquirer;
         processPPFail = new ProcessPPFail(ctx, iso8583);
+        processPPFail.setTransName(TransEName);
         this.aCmd = Server.cmd;
     }
 

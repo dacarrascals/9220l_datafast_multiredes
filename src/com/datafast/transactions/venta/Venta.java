@@ -48,6 +48,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
         super(ctx, transEname);
         init(transEname, p);
         processPPFail = new ProcessPPFail(ctx, iso8583);
+        processPPFail.setTransName(TransEName);
     }
 
     private void init(String transEname, TransInputPara p) {

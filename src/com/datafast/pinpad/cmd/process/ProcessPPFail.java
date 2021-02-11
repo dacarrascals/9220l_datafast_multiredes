@@ -13,6 +13,7 @@ import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.device.contactless.EmvL2Process;
 import com.newpos.libpay.helper.iso8583.ISO8583;
 import com.newpos.libpay.trans.Tcode;
+import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
@@ -27,6 +28,8 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.newpos.libpay.presenter.TransUIImpl.getErrInfo;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
+import static com.newpos.libpay.trans.Trans.Type.ANULACION;
+import static com.newpos.libpay.trans.Trans.Type.ELECTRONIC_DEFERRED;
 
 public class ProcessPPFail extends FinanceTrans {
 
@@ -42,6 +45,7 @@ public class ProcessPPFail extends FinanceTrans {
     private String cardHolderNameFail = "";
     private String ARQCFail = "";
     private boolean isFallBack;
+    private String transName;
 
     public void setFallBack(boolean fallBack) {
         isFallBack = fallBack;
@@ -77,6 +81,12 @@ public class ProcessPPFail extends FinanceTrans {
     }
     public void setARQCFail(String ARQC){
         this.ARQCFail = ARQC;
+    }
+    public String getTransName() {
+        return transName;
+    }
+    public void setTransName(String transName) {
+        this.transName = transName;
     }
 
     public void responseLTInvalid(String keySecurity) {
@@ -447,11 +457,21 @@ public class ProcessPPFail extends FinanceTrans {
                         pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",64));
                     }
                 }else {
-                    if (tconf.getSIMBOLO_EURO().equals("0")){
-                        pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
-                    }else {
-                        pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
+
+                    if (isElectronic() || isAnulacionElectronic()) {
+                        if (tconf.getSIMBOLO_EURO().equals("0")){
+                            pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",40));
+                        }else {
+                            pp_response.setNumberCardEncrypt(ISOUtil.spacepad("",64));
+                        }
+                    } else {
+                        if (tconf.getSIMBOLO_EURO().equals("0")){
+                            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha1(numberCard),40));
+                        }else {
+                            pp_response.setNumberCardEncrypt(ISOUtil.spacepadRight(encryption.hashSha256(numberCard),64));
+                        }
                     }
+
                 }
 
 
@@ -463,6 +483,14 @@ public class ProcessPPFail extends FinanceTrans {
                 //listenerServer.waitRspHost(pp_response.packData());
                 break;
         }
+    }
+
+    protected boolean isAnulacionElectronic() {
+        return transName.equals(ANULACION) && (CodOTT != null || TokenElectronic != null);
+    }
+
+    protected boolean isElectronic() {
+        return transName.equals(Trans.Type.ELECTRONIC) || transName.equals(ELECTRONIC_DEFERRED);
     }
 
     private String verifyHolderName(String nameCard){
