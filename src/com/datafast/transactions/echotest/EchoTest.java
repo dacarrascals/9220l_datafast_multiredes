@@ -189,6 +189,11 @@ public class EchoTest extends FinanceTrans implements TransPresenter {
 
         netWork.close();
 
+        if (isTraceNoInc) {
+            cfg.incTraceNo().save();
+            TraceNo = cfg.getTraceNo();
+        }
+
         if (respData == null || respData.length <= 0) {
             return Tcode.T_receive_err;
         }
@@ -204,12 +209,6 @@ public class EchoTest extends FinanceTrans implements TransPresenter {
             return ret;
         }
 
-        if (ret == 0) {
-            if (isTraceNoInc) {
-                cfg.incTraceNo().save();
-                TraceNo = cfg.getTraceNo();
-            }
-        }
         return ret;
     }
 }
