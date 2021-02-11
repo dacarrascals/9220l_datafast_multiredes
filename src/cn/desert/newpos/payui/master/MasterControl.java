@@ -826,7 +826,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 ImageView imgLogoFail = findViewById(R.id.result_img);
                 TextView txtMsgFail = findViewById(R.id.result_details);
                 ImageView imgLogo = findViewById(R.id.imageView2);
-                if (status.equals("TARJETA RETIRADA")) {
+                if (status.equals("RECHAZADA CHIP")) {
                     TextView tv_title = findViewById(R.id.textView_titleToolbar);
                     tv_title.setText(R.string.trans_result);
                     imgLogoFail.setVisibility(View.VISIBLE);

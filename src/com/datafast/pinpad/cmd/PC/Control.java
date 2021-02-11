@@ -12,7 +12,6 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
-import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 import static com.datafast.transactions.common.CommonFunctionalities.saveDateSettle;
@@ -59,9 +58,9 @@ public class Control {
             !PAYUtils.isNullWithTrim(pc_request.getTID())){
 
             if(!PAYUtils.isNullWithTrim(pc_request.getBatchNumber())){
-                TMConfig.getInstance().setBatchNo(Integer.parseInt(pc_request.getBatchNumber())).save();
+                TMConfig.getInstance().setBatchNo(Integer.parseInt(pc_request.getBatchNumber()) - 1).save();
             }else{
-                TMConfig.getInstance().setBatchNo(0).save();
+                TMConfig.getInstance().setBatchNo(-1).save();
             }
             if(!PAYUtils.isNullWithTrim(pc_request.getTracerNumber())){
                 TMConfig.getInstance().setTraceNo(Integer.parseInt(pc_request.getTracerNumber())).save();
