@@ -18,6 +18,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.INICIO_DIA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
+import static com.newpos.libpay.trans.Trans.idLote;
 
 public class Actualizacion{
 
@@ -40,6 +41,7 @@ public class Actualizacion{
     }
     public boolean procesoActualizacion(byte[] data){
         //this.listenerResponse = listener;
+        idAcquirer = idLote;
 
         if (!Server.correctLength){
             pa_request.UnPackHash(data);
