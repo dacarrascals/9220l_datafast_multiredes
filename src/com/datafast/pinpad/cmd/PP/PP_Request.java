@@ -366,6 +366,9 @@ public class PP_Request {
             if (sequential.length() != 6 && typeTrans.equals("03")){
                 countValid ++;
             }
+            if(sequential.length() > 0 && !typeTrans.equals("03")){
+                countValid++;
+            }
 
             //hourTrans
             tmp = new byte[6];
@@ -386,6 +389,9 @@ public class PP_Request {
             this.authNumber = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
             if (authNumber.length() != 6 && typeTrans.equals("03")){
                 countValid ++;
+            }
+            if(authNumber.length() > 0 && !typeTrans.equals("03")){
+                countValid++;
             }
 
             //MID
