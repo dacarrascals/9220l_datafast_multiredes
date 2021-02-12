@@ -21,6 +21,7 @@ import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
 import com.datafast.pinpad.cmd.LT.LT_Response;
 import com.datafast.pinpad.cmd.PP.PP_Response;
+import com.datafast.pinpad.cmd.Tools.encryption;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.pinpad.cmd.rules.RulesPinPad;
 import com.datafast.server.server_tcp.Server;
@@ -2941,8 +2942,17 @@ public class FinanceTrans extends Trans {
             /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(Pan),64));*/
         }
 
-        rulesPinPad.processCardNumber(Track2, Pan, tokens);
-        pp_response.setNumberCardEncrypt(rulesPinPad.getCardNumber());
+        if (!transEname.equals("REVERSAL")) {
+            rulesPinPad.processCardNumber(Track2, Pan, tokens);
+            pp_response.setNumberCardEncrypt(rulesPinPad.getCardNumber());
+        } else {
+            if (tconf.getSIMBOLO_EURO().equals("0")){
+                pp_response.setNumberCardEncrypt(ISOUtil.padright("", 40,' '));
+            }else {
+                pp_response.setNumberCardEncrypt(ISOUtil.padright("", 64,' '));
+            }
+        }
+
 
         //Se deshabilita el envío de la firma a la caja
         /*String isSignature = checkNull(tconf.getHABILITAR_FIRMA());
