@@ -2,6 +2,7 @@ package com.newpos.libpay.trans.manager;
 
 import android.content.Context;
 
+import com.datafast.menus.menus;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.presenter.TransUI;
 import com.newpos.libpay.trans.Tcode;
@@ -114,7 +115,15 @@ public class RevesalTrans extends Trans {
         retVal = OnLineTrans();
         if (retVal == 0) {
             RspCode = iso8583.getfield(39);
-            System.out.println(" Rsp " + RspCode);
+
+            TransLog log = TransLog.getInstance(menus.idAcquirer);
+            TransLogData dataR = log.searchTransLogByTraceNo(data.getTraceNo());
+
+            dataR.setReversed(true);
+            int index = TransLog.getInstance(menus.idAcquirer).getCurrentIndex(data);
+            TransLog.getInstance(menus.idAcquirer).deleteTransLog(index);
+            TransLog.getInstance(menus.idAcquirer).saveLog(dataR, menus.idAcquirer);
+
             if (pp_request.getTypeTrans().equals("04")){ //cuando es reverso de caja si se obtiene respuesta se toma como aprobado --- #5395 Bitacora de defectos, novedad 80
                 return retVal;
             }

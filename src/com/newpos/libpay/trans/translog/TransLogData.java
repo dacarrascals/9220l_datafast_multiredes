@@ -714,6 +714,15 @@ public class TransLogData implements Serializable {
         AdquirerName = adquirerName;
     }
 
+    private boolean isReversed;
+
+    public boolean isReversed() {
+        return isReversed;
+    }
+
+    public void setReversed(boolean reversed) {
+        isReversed = reversed;
+    }
 
     /**
      * DATAFAST

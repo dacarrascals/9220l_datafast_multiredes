@@ -109,11 +109,11 @@ public class PAYUtils {
             0x9F33, // Terminal Capabilities
             // opt
             0x9F34, // CVM Result
-            //0x9F35, // Terminal Type
+            0x9F35, // Terminal Type
             0x9F1E, // IFD Serial Number
             0x84, // Dedicated File Name
             0x9F09, // Application Version #
-            //0x9F41, // Transaction Sequence Counter
+            0x9F41, // Transaction Sequence Counter
             //0x4F,
 
             0x5F34, // PAN Sequence Number
