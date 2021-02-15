@@ -1,6 +1,7 @@
 package com.android.newpos.pay;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +30,7 @@ import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.BatteryStatus;
 import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
+import com.newpos.libpay.Logger;
 import com.newpos.libpay.PaySdk;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.PAYUtils;
@@ -36,6 +38,7 @@ import com.pos.device.ped.KeyType;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.PayApplication;
@@ -70,6 +73,8 @@ public class StartAppDATAFAST extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        validarZonaHoraria();
 
         if (idioma()){
 
@@ -240,5 +245,32 @@ public class StartAppDATAFAST extends AppCompatActivity {
         //intent.putExtra(DefinesDATAFAST.DATO_MENU, DefinesDATAFAST.ITEM_PRINCIPAL);
         intent.setClass(StartAppDATAFAST.this, ServerTCP.class);
         startActivity(intent);
+    }
+
+    private boolean setZonaHoraria(String zonaHoraria){
+        try {
+            AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            if (am != null) {
+                am.setTimeZone(zonaHoraria);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Logger.error(e.getMessage());
+        }
+        return false;
+    }
+
+    private void validarZonaHoraria(){
+        boolean ret = true;
+        String zonaHorariaEcuador = "America/Bogota";
+        String zonaHoraria = TimeZone.getDefault().getID();
+
+        if (!zonaHoraria.equals(zonaHorariaEcuador)){
+            ret = setZonaHoraria(zonaHorariaEcuador);
+            if(!ret){
+                Logger.error("ZONA HORARIA No configurada");
+            }
+        }
     }
 }
