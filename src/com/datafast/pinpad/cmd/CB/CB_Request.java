@@ -1,6 +1,7 @@
 package com.datafast.pinpad.cmd.CB;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
@@ -170,7 +171,10 @@ public class CB_Request {
 
         try {
 
-            this.LPORT = ";";
+            SharedPreferences preferences = context.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
+            int port = Integer.parseInt(preferences.getString("port", "9999"));
+
+            this.LPORT = ";" + port;
             this.boxCOMM =";";
             this.boxBAUD = ";";
             this.sw = ";";
@@ -186,7 +190,8 @@ public class CB_Request {
                     + ";"
                     + dataVersion[0] + ";"
                     + ";"
-                    + dataVersion[1] + ";";
+                    + dataVersion[1] + ";"
+                    + ";";
 
             //hash
             this.filler = "               ";
@@ -248,14 +253,14 @@ public class CB_Request {
 
         if (isWifiConnected()) {
             datos = UtilNetwork.getWifi(context, false);
-            ip = ISOUtil.spacepad(UtilNetwork.getIPAddress(true), 15) + ";";
-            mask = ISOUtil.spacepad(datos[0], 15) + ";";
-            gateway = ISOUtil.spacepad(datos[3], 15) + ";";
+            ip = UtilNetwork.getIPAddress(true) + ";";
+            mask = datos[0] + ";";
+            gateway = datos[3] + ";";
         } else {
             datos = UtilNetwork.getWifi(context, true);
-            ip = ISOUtil.spacepad(datos[0], 15) + ";";
-            mask = ISOUtil.spacepad(datos[1], 15) + ";";
-            gateway = ISOUtil.spacepad(datos[3], 15) + ";";
+            ip = datos[0] + ";";
+            mask = datos[1] + ";";
+            gateway = datos[3] + ";";
         }
     }
 
