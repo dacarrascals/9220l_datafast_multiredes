@@ -216,7 +216,10 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_err_not_allow,
             Tcode.T_select_app_err,
             Tcode.T_err_cod,
-            Tcode.T_ic_not_allow_swipe
+            Tcode.T_ic_not_allow_swipe,
+            Tcode.T_err_batch_full,
+            Tcode.T_socket_err,
+            Tcode.T_receive_err
     };
 
     public void cmdCancel(String cmd, int codRet){
@@ -300,6 +303,11 @@ public class ProcessPPFail extends FinanceTrans {
                 boolean finErr = false;
                 for (int cod : codErr) {
                     if (codRet == cod) {
+                        if(cod == Tcode.T_err_void_not_allow) {
+                            mensaje = "TRANS. NO ENCONTRADA";
+                        }else if (cod == Tcode.T_socket_err || cod == Tcode.T_receive_err || cod == Tcode.T_no_answer) {
+                            mensaje = "NO HUBO RESPUESTA";
+                        }
                         responsePPInvalid(pp_request, mensaje, code, false);
                         finErr = true;
                         break;

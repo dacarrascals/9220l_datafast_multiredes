@@ -87,7 +87,7 @@ public class Tcode {
     public static final int T_err_not_allow = 177;//Ingreso manual NO permitido
     public static final int T_err_prevoucher_already_paid = 178;//Prevoucher ya pagado
     public static final int T_err_amount_cash_over = 179;//El monto debe ser multiplo de 10
-    public static final int T_err_void_not_allow = 180;//Anulacion no permitida
+    public static final int T_err_void_not_allow = 180;//Transaccion no registrada en el lote
     public static final int T_err_cod = 181;//Codigo No Coincide
     public static final int T_err_timeout = 182;//Tiempo de espera agotado
     public static final int T_insert_card = 183;//Inserte Tarjeta
