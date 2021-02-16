@@ -395,6 +395,9 @@ public class Init extends AppCompatActivity {
                                                 else
                                                     TMConfig.getInstance().setBatchNo(numLote).save();
 
+                                                TMConfig.getInstance().setTermID(tconf.getCARD_ACCP_TERM()).save();
+                                                TMConfig.getInstance().setMerchID(tconf.getCARD_ACCP_MERCH()).save();
+
                                                 saveDateSettle(Init.this);
                                                 Beeper.getInstance().beep();
                                                 resumePA = false;
