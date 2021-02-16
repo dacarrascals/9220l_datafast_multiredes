@@ -17,13 +17,8 @@ import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
-import org.jpos.iso.IF_CHAR;
-
-import java.sql.SQLOutput;
-
 import cn.desert.newpos.payui.UIUtils;
 
-import static cn.desert.newpos.payui.master.MasterControl.callbackFallback;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.contFallback;
@@ -190,7 +185,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
 
         Field58 = CommonFunctionalities.getFld58Prompts();*/
 
-        fild58();
+        field58();
 
         /*if ((retVal = CommonFunctionalities.confirmAmount(timeout, TransEName, transUI, montos)) != 0) {
             retVal = Tcode.T_user_cancel_input;
