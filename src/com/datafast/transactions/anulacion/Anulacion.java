@@ -125,7 +125,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         data = log.searchTransLogByTraceNo(info);
 
         if (data != null) {
-            if (!data.getIsVoided() && transEnableVoid()) {
+            if (!data.getIsVoided() && transEnableVoid() && !data.isReversed()) {
                 if (data.getEName().equals(Type.DEFERRED) || data.getEName().equals(Type.ELECTRONIC_DEFERRED)) {
                     Field54 = data.getField54();
                     Field57 = data.getField57();
@@ -252,6 +252,9 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 transUI.showError(timeout, retVal, processPPFail);
             } else if (!mtransEnableVoid) {
                 retVal = Tcode.T_not_allow;
+                transUI.showError(timeout, retVal, processPPFail);
+            } else if (data.isReversed()) {
+                retVal = Tcode.T_trans_reversed;
                 transUI.showError(timeout, retVal, processPPFail);
             } else {
                 retVal = Tcode.T_err_void_not_allow;

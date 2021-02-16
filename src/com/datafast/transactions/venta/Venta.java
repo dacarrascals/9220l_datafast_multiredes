@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.datafast.pinpad.cmd.PC.Control;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
-import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.transactions.callbacks.waitRspReverse;
 import com.datafast.transactions.common.CommonFunctionalities;
@@ -17,16 +16,10 @@ import com.newpos.libpay.presenter.TransPresenter;
 import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.TransInputPara;
 import com.newpos.libpay.trans.finace.FinanceTrans;
-import com.newpos.libpay.trans.translog.TransLog;
-import com.newpos.libpay.trans.translog.TransLogData;
-import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
-
-import java.util.List;
 
 import cn.desert.newpos.payui.UIUtils;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
-import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
@@ -180,7 +173,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         montos[6] = montoFijo;
                         tipoMontoFijo = GetAmount.getTipoMontoFijo();
                     }
-                    fild58();
+                    field58();
                     if (retVal == 0) {
                         transUI.handling(timeout, Tcode.Status.connecting_center);
                         setDatas(inputMode);

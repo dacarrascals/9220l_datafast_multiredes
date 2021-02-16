@@ -3955,7 +3955,7 @@ public class FinanceTrans extends Trans {
         UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
     }
 
-    protected void fild58(){
+    protected void field58(){
         if (!PAYUtils.isNullWithTrim(pp_request.getInvoiceNumber())){
             Field58 = "06" + pp_request.getInvoiceNumber();
             if (!PAYUtils.isNullWithTrim(pp_request.getPushSalesman())){
@@ -3963,11 +3963,12 @@ public class FinanceTrans extends Trans {
             }
         }else {
             if (!PAYUtils.isNullWithTrim(pp_request.getPushSalesman())){
-                Field58 = tagvendedor(pp_request.getPushSalesman().substring(0,2)) + pp_request.getPushSalesman().substring(2);
+                Field58 = tagvendedor(pp_request.getPushSalesman().substring(0,2)) + ISOUtil.spacepadRight(pp_request.getPushSalesman().substring(2), 13);
             }
         }
         if (Field58 != null) {
             Field58 = ISOUtil.convertStringToHex(Field58);
+            Field58 = ISOUtil.padleft(String.valueOf(Field58.length() / 2), 4, '0') + Field58;
         }
     }
 
