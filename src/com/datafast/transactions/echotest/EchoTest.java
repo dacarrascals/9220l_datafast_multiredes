@@ -1,6 +1,8 @@
 package com.datafast.transactions.echotest;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.ToneGenerator;
 
 import com.datafast.pinpad.cmd.PC.Control;
@@ -141,8 +143,18 @@ public class EchoTest extends FinanceTrans implements TransPresenter {
         }
 
 
-        iso8583.setField(60, VERSION);
+        iso8583.setField(60, getVersion().substring(0, getVersion().indexOf('_')));
 
+    }
+
+    private String getVersion() {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo.versionName;
     }
 
     private int sendRcvdInit() {

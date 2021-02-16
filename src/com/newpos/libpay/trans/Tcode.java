@@ -101,6 +101,7 @@ public class Tcode {
     public static final int T_trans_voided = 191 ;
     public static final int T_trans_not_exist = 192 ;
     public static final int T_no_answer = 193 ;
+    public static final int T_trans_reversed = 194 ;
     public static final int T_trans_rejected = 3005;
     public static final int T_unknow_err = 999 ;//未知错误
 

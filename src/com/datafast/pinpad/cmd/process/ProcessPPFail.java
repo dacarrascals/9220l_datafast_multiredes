@@ -182,7 +182,8 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_err_not_allow,
             Tcode.T_select_app_err,
             Tcode.T_err_cod,
-            Tcode.T_ic_not_allow_swipe
+            Tcode.T_ic_not_allow_swipe,
+            Tcode.T_trans_reversed
     };
 
     public boolean validCodErrMsg(int codRet){
@@ -216,7 +217,8 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_err_not_allow,
             Tcode.T_select_app_err,
             Tcode.T_err_cod,
-            Tcode.T_ic_not_allow_swipe
+            Tcode.T_ic_not_allow_swipe,
+            Tcode.T_trans_reversed
     };
 
     public void cmdCancel(String cmd, int codRet){

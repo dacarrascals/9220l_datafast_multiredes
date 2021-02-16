@@ -253,6 +253,9 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             } else if (!mtransEnableVoid) {
                 retVal = Tcode.T_not_allow;
                 transUI.showError(timeout, retVal, processPPFail);
+            } else if (data.isReversed()) {
+                retVal = Tcode.T_trans_reversed;
+                transUI.showError(timeout, retVal, processPPFail);
             } else {
                 retVal = Tcode.T_err_void_not_allow;
                 transUI.showError(timeout, retVal, processPPFail);
