@@ -61,7 +61,11 @@ public class UpdateApk {
 
                     File file = new File(DEFAULT_DOWNLOAD_PATH + "/" + apkEnDisco);
                     if (file.exists()) {
-                        checkUpdate();
+                        if (estaInstaladaAplicacion("com.downloadmanager", c)) {
+                            checkUpdate();
+                        } else {
+                            break;
+                        }
                     }
                 } else {
                     PackageInfo pinfo = null;
@@ -73,9 +77,12 @@ public class UpdateApk {
                         if (!versionNameDisco.equals(versionNameAppInstalada)) {
 
                             File file = new File(DEFAULT_DOWNLOAD_PATH + "/" + apkEnDisco);
-
                             if (file.exists()) {
-                                checkUpdate();
+                                if (estaInstaladaAplicacion("com.downloadmanager", c)) {
+                                    checkUpdate();
+                                } else {
+                                    break;
+                                }
                             }
                         }
                     } catch (PackageManager.NameNotFoundException e) {

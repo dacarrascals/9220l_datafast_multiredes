@@ -118,11 +118,12 @@ public class RevesalTrans extends Trans {
 
             TransLog log = TransLog.getInstance(menus.idAcquirer);
             TransLogData dataR = log.searchTransLogByTraceNo(data.getTraceNo());
-
-            dataR.setReversed(true);
-            int index = TransLog.getInstance(menus.idAcquirer).getCurrentIndex(data);
-            TransLog.getInstance(menus.idAcquirer).deleteTransLog(index);
-            TransLog.getInstance(menus.idAcquirer).saveLog(dataR, menus.idAcquirer);
+            if (dataR != null) {
+                dataR.setReversed(true);
+                int index = TransLog.getInstance(menus.idAcquirer).getCurrentIndex(data);
+                TransLog.getInstance(menus.idAcquirer).deleteTransLog(index);
+                TransLog.getInstance(menus.idAcquirer).saveLog(dataR, menus.idAcquirer);
+            }
 
             if (pp_request.getTypeTrans().equals("04")){ //cuando es reverso de caja si se obtiene respuesta se toma como aprobado --- #5395 Bitacora de defectos, novedad 80
                 return retVal;
