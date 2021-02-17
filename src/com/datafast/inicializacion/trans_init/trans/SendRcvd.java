@@ -42,6 +42,7 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.REVOK;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.TERMINAL;
 import static com.datafast.inicializacion.trans_init.Init.InitParcial;
 import static com.datafast.inicializacion.trans_init.Init.InitTotal;
+import static com.datafast.inicializacion.trans_init.Init.pd;
 
 /**
  * Created by Technology&Solutions on 27/03/2017.
@@ -68,7 +69,6 @@ public class SendRcvd extends AsyncTask<Void, Integer, byte[]> {
     Socket clientRequest = null;
     private Context context;
     private TcpCallback callback;
-    private ProgressDialog pd;
 
     public static String TCONF = "TCONF";
     public static String ACQS = "ACQS";
@@ -179,14 +179,14 @@ public class SendRcvd extends AsyncTask<Void, Integer, byte[]> {
     protected void onPreExecute() {
         super.onPreExecute();
         pd = new ProgressDialog(context, R.style.Mypd);
-        this.pd.setCancelable(false);
-        this.pd.setIcon(R.drawable.ic_polariscloud);
-        this.pd.setTitle(Html.fromHtml("<h4> Polaris Cloud </h4>"));
-        this.pd.setMessage("Descargando Inicializacion por favor espere...");
-        this.pd.setIndeterminate(false);
-        this.pd.setMax(100);
-        this.pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.pd.show();
+        pd.setCancelable(false);
+        pd.setIcon(R.drawable.ic_polariscloud);
+        pd.setTitle(Html.fromHtml("<h4> Polaris Cloud </h4>"));
+        pd.setMessage("Descargando Inicializacion por favor espere...");
+        pd.setIndeterminate(false);
+        pd.setMax(100);
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.show();
     }
 
     @Override
@@ -290,7 +290,15 @@ public class SendRcvd extends AsyncTask<Void, Integer, byte[]> {
 
                             if (rspIso.GetField(ISO.field_03_PROCESSING_CODE).equals("930101")) {
                                 Offset = "" + calcularOffset(FileName, false);
-                                continue;
+                                if (isCancelled()) {
+                                    File temporal = new File(pathDefault + File.separator+ FileName + "T");
+                                    if (temporal.exists()) {
+                                        temporal.delete();
+                                    }
+                                    break;
+                                } else {
+                                    continue;
+                                }
                             } else if (rspIso.GetField(ISO.field_03_PROCESSING_CODE).equals("930100")) {
                                 resultOk = "OK";
                                 break;

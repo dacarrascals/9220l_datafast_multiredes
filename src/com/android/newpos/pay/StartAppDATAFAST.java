@@ -23,9 +23,11 @@ import com.datafast.inicializacion.configuracioncomercio.TCONF;
 import com.datafast.inicializacion.pagosvarios.PagosVarios;
 import com.datafast.inicializacion.prompts.Prompt;
 import com.datafast.inicializacion.tools.PolarisUtil;
+import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.InjectMasterKey;
 import com.datafast.keys.PwMasterKey;
 import com.datafast.pinpad.cmd.CP.CP_ConfigIP;
+import com.datafast.pinpad.cmd.PA.Actualizacion;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.BatteryStatus;
 import com.datafast.tools.PaperStatus;
@@ -240,11 +242,26 @@ public class StartAppDATAFAST extends AppCompatActivity {
 
         leerBaseDatos(StartAppDATAFAST.this);
 
-        Intent intent = new Intent();
-        //intent.setClass(StartAppDATAFAST.this, menus.class);
-        //intent.putExtra(DefinesDATAFAST.DATO_MENU, DefinesDATAFAST.ITEM_PRINCIPAL);
-        intent.setClass(StartAppDATAFAST.this, ServerTCP.class);
-        startActivity(intent);
+        if (ServerTCP.interrupInit) {
+            ServerTCP.interrupInit = false;
+            Intent intent = new Intent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setClass(StartAppDATAFAST.this, Init.class);
+            intent.putExtra("PARCIAL", false);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent();
+            //intent.setClass(StartAppDATAFAST.this, menus.class);
+            //intent.putExtra(DefinesDATAFAST.DATO_MENU, DefinesDATAFAST.ITEM_PRINCIPAL);
+            intent.setClass(StartAppDATAFAST.this, ServerTCP.class);
+            startActivity(intent);
+        }
     }
 
     private boolean setZonaHoraria(String zonaHoraria){

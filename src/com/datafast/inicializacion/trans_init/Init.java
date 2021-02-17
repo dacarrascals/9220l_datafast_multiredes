@@ -1,5 +1,6 @@
 package com.datafast.inicializacion.trans_init;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.AsyncTask;
@@ -19,6 +20,8 @@ import com.datafast.inicializacion.trans_init.trans.Tools;
 import com.datafast.inicializacion.trans_init.trans.UnpackFile;
 import com.datafast.inicializacion.trans_init.trans.dbHelper;
 import com.datafast.keys.InjectMasterKey;
+import com.datafast.pinpad.cmd.PA.Actualizacion;
+import com.datafast.server.activity.ServerTCP;
 import com.datafast.transactions.callbacks.waitInitCallback;
 import com.google.common.base.Strings;
 import com.newpos.libpay.global.TMConfig;
@@ -67,7 +70,7 @@ public class Init extends AppCompatActivity {
     public int tipoInit;
     private TransView transView;
 
-
+    public static ProgressDialog pd;
     public static waitInitCallback callBackInit;
 
     public static String gFileName;
@@ -308,12 +311,12 @@ public class Init extends AppCompatActivity {
         onlineTrans();
     }
 
-
+    SendRcvd sendTrans;
     private int onlineTrans() {
 
         final byte[] dataVacia = new byte[]{};
 
-        SendRcvd sendTrans = new SendRcvd(IP, Integer.parseInt(puerto), espera, Init.this);
+        sendTrans = new SendRcvd(IP, Integer.parseInt(puerto), espera, Init.this);
 
         sendTrans.setFileName(gFileName);
         sendTrans.setNii(nii);
@@ -328,6 +331,9 @@ public class Init extends AppCompatActivity {
             public void RspHost(byte[] rxBuf, String resultOk) {
                 if (rxBuf == null || Arrays.equals(rxBuf, dataVacia)) {
                     resumePA = false;
+                    if (Actualizacion.echoTest) {
+                        Actualizacion.goEchoTest = true;
+                    }
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, "ERROR, INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                     UIUtils.startResult(Init.this,false,"ERROR, INICIALIZACION FALLIDA",true);
                     //finish();
@@ -335,6 +341,9 @@ public class Init extends AppCompatActivity {
                 }
 
                 if (!resultOk.equals("OK")){
+                    if (Actualizacion.echoTest) {
+                        Actualizacion.goEchoTest = true;
+                    }
                     resumePA = false;
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, resultOk, Toast.LENGTH_SHORT);
                     UIUtils.startResult(Init.this,false,resultOk,true);
@@ -358,6 +367,9 @@ public class Init extends AppCompatActivity {
                             @Override
                             public void getRspInitCallback(int status) {
                                 try {
+                                    if (Actualizacion.echoTest) {
+                                        Actualizacion.goEchoTest = true;
+                                    }
                                     //Inyectar WorkingKey
                                     if(!inyectarWorkingKey()){
                                         isInit = false;
@@ -420,6 +432,9 @@ public class Init extends AppCompatActivity {
                             }
                         };
                     }else{
+                        if (Actualizacion.echoTest) {
+                            Actualizacion.goEchoTest = true;
+                        }
                         resumePA = false;
                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                         UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
@@ -433,6 +448,9 @@ public class Init extends AppCompatActivity {
                         callBackInit = new waitInitCallback() {
                             @Override
                             public void getRspInitCallback(int status) {
+                                if (Actualizacion.echoTest) {
+                                    Actualizacion.goEchoTest = true;
+                                }
                                 resumePA = false;
                                 finish();
                             }
@@ -624,5 +642,37 @@ public class Init extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (sendTrans != null) {
+            if (sendTrans.cancel(true)) {
+                sendTrans = null;
+                ServerTCP.interrupInit = true;
+            }
+        }
+        //Barra indicadora de progreso
+        if (pd != null && pd.isShowing())
+            pd.dismiss();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ServerTCP.interrupInit && sendTrans == null) {
+            ServerTCP.interrupInit = false;
+            onlineTrans();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        //Barra indicadora de progreso
+        if (pd != null && !pd.isShowing())
+            pd.show();
     }
 }

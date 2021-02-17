@@ -29,6 +29,7 @@ public class Actualizacion{
     public int tramaValida;
     public String msgfail = "ERROR EN PROCESO ACTUALIZACION";
     public static boolean echoTest;
+    public static boolean goEchoTest;
 
     public Actualizacion(Context context){
         this.ctx = context;

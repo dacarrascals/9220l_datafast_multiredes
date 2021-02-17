@@ -70,6 +70,7 @@ public class ServerTCP extends AppCompatActivity {
 
     boolean isInEcho;
     public static boolean installApp = false;
+    public static boolean interrupInit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +80,10 @@ public class ServerTCP extends AppCompatActivity {
 
         isInEcho = false;
 
-        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.echoTest){
+        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest){
             Control.echoTest = false;
             Actualizacion.echoTest = false;
+            Actualizacion.goEchoTest = false;
             isInEcho = true;
             MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
             menuAction.SelectAction();
@@ -245,7 +247,7 @@ public class ServerTCP extends AppCompatActivity {
         super.onResume();
         slide.setTimeoutSlide(5000);
         if (resumePA) {
-            System.out.println("ENTRA AL TIMER");
+            resumePA = false;
             Intent intent = new Intent();
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
