@@ -2830,9 +2830,6 @@ public class FinanceTrans extends Trans {
             pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getLocalDate2(), 8));
         }
 
-        if (transEname.equals(Type.ANULACION)){
-            AuthCode = "";
-        }
         pp_response.setNumberAuth(ISOUtil.spacepadRight(AuthCode, 6));
 
         if (iso8583.getfield(41) != null){
@@ -2924,8 +2921,10 @@ public class FinanceTrans extends Trans {
             pp_response.setExpDateCard(ISOUtil.spacepadRight(expDate,4));
         }
 
-        if (transEname.equals(Trans.Type.ANULACION) || transEname.equals("REVERSAL")){
+        if (transEname.equals("REVERSAL")){
             pp_response.setExpDateCard(ISOUtil.spacepad("0000",4));
+        }else if(transEname.equals(ANULACION)){
+            pp_response.setExpDateCard(ISOUtil.spacepad("",4));
         }
 
         String[] tokens = null;
