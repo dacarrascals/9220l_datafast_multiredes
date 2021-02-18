@@ -170,6 +170,10 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
         isFallBack = data.isFallback();
 
+        if (data.getPanNormal() != null && data.getEName() != null) {
+            incardTable(data.getPanNormal(), data.getEName());
+        }
+
         setFieldsVoid();
         if (!data.isFallback()) {
             if (data.getEntryMode().equals(MODE_MAG + CapPinPOS())) {
@@ -890,6 +894,9 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
 
             if (dataInfo.equals(codOTT)) {
                 //inputMode = Integer.parseInt(data.getEntryMode());
+                if (data.isValidateNFCElectronic()) {
+                    validateNFC = true;
+                }
                 inputMode = ENTRY_MODE_HAND;
                 TypeTransElectronic = data.getTypeTransElectronic();
                 prepareOnline();

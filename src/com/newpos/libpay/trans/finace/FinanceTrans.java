@@ -2008,6 +2008,11 @@ public class FinanceTrans extends Trans {
         if (EntryMode != null) {
             LogData.setEntryMode(EntryMode);
         }
+
+        if (validateNFC) {
+            LogData.setValidateNFCElectronic(true);
+        }
+
         if (iso8583.getfield(23) != null) {
             LogData.setPanSeqNo(iso8583.getfield(23));
         }
@@ -2830,6 +2835,9 @@ public class FinanceTrans extends Trans {
             pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getLocalDate2(), 8));
         }
 
+        if (transEname.equals(Type.ANULACION)){
+            AuthCode = "";
+        }
         pp_response.setNumberAuth(ISOUtil.spacepadRight(AuthCode, 6));
 
         if (iso8583.getfield(41) != null){
@@ -2933,7 +2941,7 @@ public class FinanceTrans extends Trans {
             tokens[0] = CodOTT;
             tokens[1] = TokenElectronic;
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(Pan,25));
-            pp_response.setFiller(ISOUtil.spacepadRight(iso8583.getfield(2), 27));
+            pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
             Track2 = iso8583.getfield(2);
             /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));*/
         }else {

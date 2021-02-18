@@ -724,6 +724,16 @@ public class TransLogData implements Serializable {
         isReversed = reversed;
     }
 
+    public boolean validateNFCElectronic;
+
+    public boolean isValidateNFCElectronic() {
+        return validateNFCElectronic;
+    }
+
+    public void setValidateNFCElectronic(boolean validateNFCElectronic) {
+        this.validateNFCElectronic = validateNFCElectronic;
+    }
+
     /**
      * DATAFAST
      */
