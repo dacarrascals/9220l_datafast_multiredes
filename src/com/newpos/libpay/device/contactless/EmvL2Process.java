@@ -13,6 +13,7 @@ import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.TransInputPara;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
+import com.pos.device.config.DevConfig;
 
 import java.io.File;
 
@@ -483,8 +484,7 @@ public class EmvL2Process {
                 ICCData = emvL2.EmvL2DataGetByTagList(PaywaveTag55, PaypassTag55.length);
             else
                 ICCData = emvL2.EmvL2DataGetByTagList(PaypassTag55, PaypassTag55.length);*/
-            ICCData = emvL2.EmvL2DataGetByTagList(PayGenericTag55, PayGenericTag55.length);
-            Logger.debug("ICCData="+ISOUtil.hexString(ICCData));
+            fillICCData();
         }
         tTrack2 = emvL2.EmvL2DataGetByTag(0x57);
         if(tTrack2==null) {
@@ -575,6 +575,28 @@ public class EmvL2Process {
         }
         return IEmvL2CallBack.L2_NONE;
     }
+
+    private void fillICCData(){
+        byte[] iccDataTmp = emvL2.EmvL2DataGetByTagList(PayGenericTag55, PayGenericTag55.length);
+        int iccDataLen = 0;
+        ICCData = new byte[iccDataTmp.length+11];
+
+        String SN = DevConfig.getSN();
+        SN = SN.substring(2);
+        byte[] serialNo = SN.getBytes();
+
+        System.arraycopy(iccDataTmp,0, ICCData, iccDataLen, iccDataTmp.length);
+        iccDataLen += iccDataTmp.length;
+
+        ICCData[iccDataLen++] = (byte)0x9F;
+        ICCData[iccDataLen++] = (byte)0x1E;
+        ICCData[iccDataLen++] = (byte)0x08;
+
+        System.arraycopy(serialNo,0,ICCData, iccDataLen, serialNo.length);
+
+        Logger.debug("ICCData="+ISOUtil.hexString(ICCData));
+    }
+
     private void SetDataEmpty(){
         ClMode=false;   //false means EMV mode
         ICCData=null;
@@ -604,7 +626,7 @@ public class EmvL2Process {
                 0x79,
                 (byte) 0x90
         };
-        byte[] trans_data=new byte[32];
+        byte[] trans_data=new byte[37];
         int trans_data_len=0;
         trans_data[trans_data_len++] = (byte) 0x9C;//transaction type
         trans_data[trans_data_len++] = 0x01;
@@ -644,6 +666,19 @@ public class EmvL2Process {
         }
         System.arraycopy(tranCode,0,trans_data,trans_data_len,2);
         trans_data_len += 2;
+
+        trans_data[trans_data_len++] = (byte) 0x9F;//transaction currency code
+        trans_data[trans_data_len++] = 0x1E;
+        trans_data[trans_data_len++] = 0x08;
+
+        String SN = DevConfig.getSN();
+        SN = SN.substring(2);
+        byte[] serialNo = SN.getBytes();
+
+        System.arraycopy(serialNo,0,trans_data,trans_data_len,serialNo.length);
+        trans_data_len += 8;
+
+        System.out.println("TERMINAL TAGS CTL " + ISOUtil.byte2hex(trans_data));
 
         emvL2.EmvL2TransDataSet(trans_data,trans_data_len);
 

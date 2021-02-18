@@ -2,6 +2,9 @@ package com.datafast.pinpad.cmd.process;
 
 import com.newpos.libpay.utils.ISOUtil;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
 public class ProccessData {
 
     private StringBuilder data;
@@ -23,7 +26,7 @@ public class ProccessData {
         byte[] packet = null;
         int dataLen = -1;
 
-        temp2 = data.toString().getBytes();
+        temp2 = data.toString().getBytes(StandardCharsets.ISO_8859_1);
         dataLen = temp2.length;
 
         System.arraycopy(temp2, 0, temp1, 0, dataLen);
