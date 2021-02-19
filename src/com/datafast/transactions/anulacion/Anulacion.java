@@ -897,6 +897,7 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
                 if (data.isValidateNFCElectronic()) {
                     validateNFC = true;
                 }
+                panAnulacion = data.getPanNormal();
                 inputMode = ENTRY_MODE_HAND;
                 TypeTransElectronic = data.getTypeTransElectronic();
                 prepareOnline();

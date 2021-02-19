@@ -2801,6 +2801,7 @@ public class FinanceTrans extends Trans {
      */
 
     protected boolean validateNFC = false;
+    protected String panAnulacion;
 
     public static byte[] ppResponse;
     private void responsePP() {
@@ -2941,8 +2942,13 @@ public class FinanceTrans extends Trans {
             tokens[0] = CodOTT;
             tokens[1] = TokenElectronic;
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(Pan,25));
-            pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
-            Track2 = iso8583.getfield(2);
+            if(transEname.equals(ANULACION)){
+                pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(panAnulacion), 27));
+                Track2 = panAnulacion;
+            }else{
+                pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
+                Track2 = iso8583.getfield(2);
+            }
             /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));*/
         }else {
             pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(Pan),25));

@@ -12,6 +12,7 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 //import static com.datafast.menus.menus.acquirerRow;
@@ -566,6 +567,9 @@ public class ISO8583 {
 				}
 			} else {
 				temp = new String(data, offset, dataLen);
+				if (FieldNo == 38) {
+					temp = new String(data, offset, dataLen, StandardCharsets.ISO_8859_1);
+				}
 			}
 			rspOffset = dataLen;
 		} else if (attr.getDataType() == FieldTypesDefine.FIELDATTR_TYPE_BIN) {
