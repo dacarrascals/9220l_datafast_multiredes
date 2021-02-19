@@ -414,15 +414,14 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(PANFail,25));
                     numberCard = iso8583.getfield(2);
                     /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(iso8583.getfield(2)),64));*/
-                    pp_response.setFiller(ISOUtil.spacepadRight(packageMaskedCard(iso8583.getfield(2)), 27));
                 }else {
                     pp_response.setNumberCardMask(ISOUtil.spacepadRight(packageMaskedCard(PANFail),25));
                     numberCard = PANFail;
                     /*pp_response.setNumberCardEncrypt(ISOUtil.spacepad(encryption.hashSha256(PANFail),64));*/
-                    pp_response.setFiller(ISOUtil.spacepadRight("", 27));
                 }
+                pp_response.setFiller(ISOUtil.spacepadRight("", 27));
 
-                if (codRet == Tcode.T_gen_2_ac_fail) {
+                if (codRet == Tcode.T_gen_2_ac_fail || isElectronic()) {
                     pp_response.setNumberCardMask(ISOUtil.spacepad("", 25));
                     pp_response.setNameCardHolder(ISOUtil.spacepadRight("", 40));
                     pp_response.setARQC(ISOUtil.spacepadRight("", 16));
