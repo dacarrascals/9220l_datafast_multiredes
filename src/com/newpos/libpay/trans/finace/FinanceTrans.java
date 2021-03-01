@@ -310,9 +310,9 @@ public class FinanceTrans extends Trans {
         appendField60("048");
     }
 
-    public static String CapPinPOS() {
+    protected String CapPinPOS() {
         String capPINPos = "1";
-        if (rango.getNOMBRE_EMISOR().equals("UNION PAY")) {
+        if (rango.getNOMBRE_EMISOR().equals("UNION PAY") && PIN == null) {
             capPINPos = "2";
         }
         return capPINPos;

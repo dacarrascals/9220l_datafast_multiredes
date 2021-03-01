@@ -88,7 +88,6 @@ import static com.newpos.libpay.trans.Trans.SERVICEAMOUNT;
 import static com.newpos.libpay.trans.Trans.TIPAMOUNT;
 import static com.newpos.libpay.trans.Trans.deferredType;
 import static com.newpos.libpay.trans.Trans.idLote;
-import static com.newpos.libpay.trans.finace.FinanceTrans.CapPinPOS;
 import static com.newpos.libpay.trans.finace.FinanceTrans.DOLAR;
 import static com.newpos.libpay.trans.finace.FinanceTrans.LOCAL;
 import static org.jpos.stis.Util.hex2byte;
@@ -4229,5 +4228,15 @@ public class PrintManager {
         if (footer) {
             setTextPrint("******************************************", paint, BOLD_OFF, canvas, S_SMALL);
         }
+    }
+
+    private String CapPinPOS() {
+        String capPINPos = "1";
+        if (rango.getNOMBRE_EMISOR()!=null) {
+            if (rango.getNOMBRE_EMISOR().equals("UNION PAY") && dataTrans.getPIN() == null) {
+                capPINPos = "2";
+            }
+        }
+        return capPINPos;
     }
 }
