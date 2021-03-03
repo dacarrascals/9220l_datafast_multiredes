@@ -265,9 +265,9 @@ public class FinanceTrans extends Trans {
         } else if (inputMode == ENTRY_MODE_NFC) {
             EntryMode = MODE_CTL + CapPinPOS();
         } else if (inputMode == ENTRY_MODE_HAND) {
-            if (transEname.equals(Type.ELECTRONIC) && TypeTransElectronic.equals(Trans.Type.PAYCLUB)) {
+            if ((transEname.equals(Type.ELECTRONIC) || transEname.equals(Type.ANULACION)) && TypeTransElectronic.equals(Trans.Type.PAYCLUB)) {
                 EntryMode = "10" + CapPinPOS();
-            } else if (transEname.equals(Type.ELECTRONIC) && TypeTransElectronic.equals(Type.PAYBLUE)) {
+            } else if ((transEname.equals(Type.ELECTRONIC) || transEname.equals(Type.ANULACION)) && TypeTransElectronic.equals(Type.PAYBLUE)) {
                 EntryMode = "102";
             } else {
                 EntryMode = MODE_HANDLE + CapPinPOS();
