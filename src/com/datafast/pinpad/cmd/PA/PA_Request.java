@@ -187,9 +187,11 @@ public class PA_Request {
         String correctHash = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(aData)).trim();
         correctHash = correctHash.substring(correctHash.length() - 32);
         if (hash == null || !correctHash.equals(hash)){
-            if (!typeDownload.isEmpty() && typeDownload.equals("F")){
-                if (correctHash.startsWith("F")){
-                    correctHash = correctHash.substring(1, correctHash.length());
+            if(typeDownload != null){
+                if (!typeDownload.isEmpty() && typeDownload.equals("F")){
+                    if (correctHash.startsWith("F")){
+                        correctHash = correctHash.substring(1, correctHash.length());
+                    }
                 }
             }
             hash = correctHash;
