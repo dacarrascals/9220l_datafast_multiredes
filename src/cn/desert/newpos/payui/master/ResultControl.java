@@ -25,6 +25,7 @@ import java.util.TimerTask;
 
 import cn.desert.newpos.payui.base.BaseActivity;
 
+import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.datafast.menus.MenuAction.callBackSeatle;
 import static com.datafast.menus.menus.contFallback;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
@@ -156,7 +157,7 @@ public class ResultControl extends BaseActivity {
                         public void run() {
                             iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
 
-                            if (iccReader0.isCardPresent() && (!Server.cmd.equals(LT))) {
+                            if (iccReader0.isCardPresent() && (!lastCmd.equals(LT))) {
                                 setContentView(R.layout.activity_remove_card);
                                 removeCard = (ImageView) findViewById(R.id.iv_remove__card);
                                 removeCard.setImageResource(R.drawable.remove_card);
@@ -165,10 +166,13 @@ public class ResultControl extends BaseActivity {
                     });
 
                     if (checkCard()) {
-                        startActivity(new Intent(ResultControl.this, ServerTCP.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
+                        if(info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")){
+                            startActivity(new Intent(ResultControl.this, ServerTCP.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        }else{
+                            finish();
+                        }
                         if (callBackSeatle != null)
                             callBackSeatle.getRspSeatleReport(0);
                         finish();
@@ -181,7 +185,7 @@ public class ResultControl extends BaseActivity {
 
     private boolean checkCard() {
         boolean ret = false;
-        if (Server.cmd.equals(LT)) {
+        if ((Server.cmd.equals(LT)) || (lastCmd == LT)) {
             return true;
         }
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);

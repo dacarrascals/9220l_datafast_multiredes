@@ -77,51 +77,61 @@ public class Server extends AppCompatActivity {
                 serverSocket = new ServerSocket();
                 serverSocket.setReuseAddress(true);
                 serverSocket.bind(new InetSocketAddress(socketServerPORT));
+                Socket socket = serverSocket.accept();
+                socket.setReuseAddress(true);
 
-                // block the call until connection is created and return Socket object
+                while(!Thread.currentThread().isInterrupted()) {
 
-                final Socket socket = serverSocket.accept();
-                final InputStream input = socket.getInputStream();
-                DataInputStream dataInputStream = new DataInputStream(input);
+                    // block the call until connection is created and return Socket object
 
-                final DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                    if(!socket.isClosed()) {
 
-                //final OutputStream outputStream = socket.getOutputStream();
+                        final InputStream input = socket.getInputStream();
+                        DataInputStream dataInputStream = new DataInputStream(input);
+                        final DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
-                text = readSocket(dataInputStream);
+                        //final OutputStream outputStream = socket.getOutputStream();
 
-                dataReceived.identifyCommand(text);
-                dat = dataReceived.getDataRaw();
-                correctLength = dataReceived.isCorrectLength();
-                cmd = dataReceived.getCmd();
-                countDown = new CountDownLatch(1);
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.startTrans(cmd,dat,new waitResponse() {
+                        text = readSocket(dataInputStream);
+
+                        dataReceived.identifyCommand(text);
+                        dat = dataReceived.getDataRaw();
+                        correctLength = dataReceived.isCorrectLength();
+                        cmd = dataReceived.getCmd();
+                        countDown = new CountDownLatch(1);
+                        activity.runOnUiThread(new Runnable() {
                             @Override
-                            public void waitRspHost(byte[] Info) {
-                                info = Info;
-                                countDown.countDown();
+                            public void run() {
+                                activity.startTrans(cmd, dat, new waitResponse() {
+                                    @Override
+                                    public void waitRspHost(byte[] Info) {
+                                        info = Info;
+                                        lastCmd = cmd;
+                                        countDown.countDown();
+                                    }
+                                });
                             }
                         });
+
+                        countDown.await();
+                        output.write(info);
+
+                        if (dataInputStream.available() <= 0) {
+                            socket.close();
+                            input.close();
+                            output.close();
+                            serverSocket.close();
+                        }
+                        //outputStream.write(Info);
+                        //outputStream.flush();
+                        //output.close();
+                        ppResponse = null;
                     }
-                });
-
-                countDown.await();
-                lastCmd = cmd;
-                output.write(info);
-                socket.close();
-                input.close();
-                output.close();
-                //outputStream.write(Info);
-                //outputStream.flush();
-                //output.close();
-                ppResponse = null;
-
+                }
             } catch (IOException | InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
 

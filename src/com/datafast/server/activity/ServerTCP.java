@@ -31,13 +31,13 @@ import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
 import com.datafast.tools.Wifi;
-import com.datafast.transactions.common.CommonFunctionalities;
 import com.datafast.updateapp.UpdateApk;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 import java.io.IOException;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
+
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
@@ -78,6 +78,20 @@ public class ServerTCP extends AppCompatActivity {
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        toolbar();
+
+        validacionesInciales();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopServer();
+    }
+
+    public void validacionesInciales(){
+
         isInEcho = false;
 
         if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest){
@@ -98,7 +112,6 @@ public class ServerTCP extends AppCompatActivity {
         slide = new slide( ServerTCP.this, true);
         slide.galeria(this, R.id.adcolumn);
 
-        toolbar();
         MasterControl.setMcontext(ServerTCP.this);
         if (isInit) {
             if (!isInEcho) {
@@ -111,12 +124,7 @@ public class ServerTCP extends AppCompatActivity {
         } else {
             settings();
         }
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopServer();
     }
 
     private void stopServer(){
@@ -368,4 +376,10 @@ public class ServerTCP extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {}
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        validacionesInciales();
+    }
 }
