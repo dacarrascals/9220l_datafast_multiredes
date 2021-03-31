@@ -11,6 +11,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -24,8 +26,8 @@ public class Server extends AppCompatActivity {
     ServerTCP activity;
     ServerSocket serverSocket;
     public static int socketServerPORT;
-    public static dataReceived dataReceived;
     CountDownLatch countDown;
+    DataInputStream dataInputStream;
 
     public static String cmd = "";
     public static byte[] dat;
@@ -37,7 +39,6 @@ public class Server extends AppCompatActivity {
         socketServerPORT = getListeningPort();
         Thread socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
-        dataReceived = new dataReceived();
     }
 
     public int getPort() {
@@ -77,61 +78,28 @@ public class Server extends AppCompatActivity {
                 serverSocket = new ServerSocket();
                 serverSocket.setReuseAddress(true);
                 serverSocket.bind(new InetSocketAddress(socketServerPORT));
-                Socket socket = serverSocket.accept();
-                socket.setReuseAddress(true);
 
-                while(!Thread.currentThread().isInterrupted()) {
+                while(true) {
+
+                    Socket socket = serverSocket.accept();
+                    socket.setReuseAddress(true);
 
                     // block the call until connection is created and return Socket object
 
-                    if(!socket.isClosed()) {
+                    final InputStream input = socket.getInputStream();
+                    dataInputStream = new DataInputStream(input);
 
-                        final InputStream input = socket.getInputStream();
-                        DataInputStream dataInputStream = new DataInputStream(input);
-                        final DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                    //final OutputStream outputStream = socket.getOutputStream();
 
-                        //final OutputStream outputStream = socket.getOutputStream();
+                    text = readSocket(dataInputStream);
 
-                        text = readSocket(dataInputStream);
+                    SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(socket, text);
+                    socketServerReplyThread.run();
 
-                        dataReceived.identifyCommand(text);
-                        dat = dataReceived.getDataRaw();
-                        correctLength = dataReceived.isCorrectLength();
-                        cmd = dataReceived.getCmd();
-                        countDown = new CountDownLatch(1);
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                activity.startTrans(cmd, dat, new waitResponse() {
-                                    @Override
-                                    public void waitRspHost(byte[] Info) {
-                                        info = Info;
-                                        lastCmd = cmd;
-                                        countDown.countDown();
-                                    }
-                                });
-                            }
-                        });
-
-                        countDown.await();
-                        output.write(info);
-
-                        if (dataInputStream.available() <= 0) {
-                            socket.close();
-                            input.close();
-                            output.close();
-                            serverSocket.close();
-                        }
-                        //outputStream.write(Info);
-                        //outputStream.flush();
-                        //output.close();
-                        ppResponse = null;
-                    }
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException  e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                Thread.currentThread().interrupt();
             }
         }
 
@@ -164,6 +132,58 @@ public class Server extends AppCompatActivity {
             }
             return data;
         }
+    }
+
+    private class SocketServerReplyThread extends Thread {
+
+        private Socket hostThreadSocket;
+        byte[] echoData;
+
+
+        SocketServerReplyThread(Socket socket, byte[] echo) {
+            hostThreadSocket = socket;
+            echoData = echo;
+        }
+
+        @Override
+        public void run() {
+            OutputStream outputStream;
+            dataReceived dataReceived = new dataReceived();
+
+            try {
+                outputStream = hostThreadSocket.getOutputStream();
+                PrintStream printStream = new PrintStream(outputStream);
+
+                dataReceived.identifyCommand(echoData);
+                dat = dataReceived.getDataRaw();
+                correctLength = dataReceived.isCorrectLength();
+                cmd = dataReceived.getCmd();
+                countDown = new CountDownLatch(1);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.startTrans(cmd, dat, new waitResponse() {
+                            @Override
+                            public void waitRspHost(byte[] Info) {
+                                info = Info;
+                                lastCmd = cmd;
+                                countDown.countDown();
+                            }
+                        });
+                    }
+                });
+
+                countDown.await();
+                printStream.write(info);
+                printStream.close();
+                ppResponse = null;
+
+            } catch (IOException | InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /**

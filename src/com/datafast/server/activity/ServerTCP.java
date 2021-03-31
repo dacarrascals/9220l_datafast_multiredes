@@ -78,10 +78,39 @@ public class ServerTCP extends AppCompatActivity {
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        isInEcho = false;
+
+        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest){
+            Control.echoTest = false;
+            Actualizacion.echoTest = false;
+            Actualizacion.goEchoTest = false;
+            isInEcho = true;
+            MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
+            menuAction.SelectAction();
+        }
+
+        if (installApp) {
+            installApp = false;
+            UpdateApk updateApk = new UpdateApk(ServerTCP.this);
+            updateApk.instalarApp(ServerTCP.this);
+        }
+
+        slide = new slide( ServerTCP.this, true);
+        slide.galeria(this, R.id.adcolumn);
+
         toolbar();
-
-        validacionesInciales();
-
+        MasterControl.setMcontext(ServerTCP.this);
+        if (isInit) {
+            if (!isInEcho) {
+                server = new Server(ServerTCP.this);
+                wifi = new Wifi(ServerTCP.this);
+                control = new Control(ServerTCP.this);
+                actualizacion = new Actualizacion(ServerTCP.this);
+                configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
+            }
+        } else {
+            settings();
+        }
     }
 
     @Override
@@ -111,11 +140,9 @@ public class ServerTCP extends AppCompatActivity {
 
         slide = new slide( ServerTCP.this, true);
         slide.galeria(this, R.id.adcolumn);
-
         MasterControl.setMcontext(ServerTCP.this);
         if (isInit) {
             if (!isInEcho) {
-                server = new Server(ServerTCP.this);
                 wifi = new Wifi(ServerTCP.this);
                 control = new Control(ServerTCP.this);
                 actualizacion = new Actualizacion(ServerTCP.this);
@@ -124,7 +151,6 @@ public class ServerTCP extends AppCompatActivity {
         } else {
             settings();
         }
-
     }
 
     private void stopServer(){

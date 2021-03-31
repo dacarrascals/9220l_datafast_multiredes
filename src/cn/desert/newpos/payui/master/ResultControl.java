@@ -166,7 +166,8 @@ public class ResultControl extends BaseActivity {
                     });
 
                     if (checkCard()) {
-                        if(info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")){
+                        if(info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")
+                                || info.equals("ECHO TEST OK") || info.equals("NO HUBO RESPUESTA")){
                             startActivity(new Intent(ResultControl.this, ServerTCP.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
