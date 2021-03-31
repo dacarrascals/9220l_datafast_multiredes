@@ -31,13 +31,14 @@ import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
 import com.datafast.tools.Wifi;
-import com.datafast.transactions.common.CommonFunctionalities;
 import com.datafast.updateapp.UpdateApk;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 import java.io.IOException;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
+
+import static com.android.newpos.pay.StartAppDATAFAST.inyecccionLLaves;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
@@ -100,7 +101,7 @@ public class ServerTCP extends AppCompatActivity {
 
         toolbar();
         MasterControl.setMcontext(ServerTCP.this);
-        if (isInit) {
+        if (isInit && inyecccionLLaves) {
             if (!isInEcho) {
                 server = new Server(ServerTCP.this);
                 wifi = new Wifi(ServerTCP.this);

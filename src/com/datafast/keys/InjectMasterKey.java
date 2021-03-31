@@ -17,7 +17,19 @@ import com.pos.device.ped.KeySystem;
 import com.pos.device.ped.KeyType;
 import com.pos.device.ped.Ped;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Timer;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.ResultControl;
@@ -26,6 +38,8 @@ public class InjectMasterKey extends AppCompatActivity {
 
     public static final int MASTERKEYIDX = 0;
     private static final int WORKINGKEYIDX = 0;
+    private static SecureRandom r = new SecureRandom();
+    private static IvParameterSpec IV;
     static callBackGetMasterKey mk;
     public static String pwMasterKey;
     private Timer timer = new Timer() ;
@@ -121,6 +135,11 @@ public class InjectMasterKey extends AppCompatActivity {
         }
     }
 
+    public static boolean validateMK(int indexKey){
+        int retTmp = Ped.getInstance().checkKey(KeySystem.MS_DES, KeyType.KEY_TYPE_MASTK, indexKey, 0);
+        return retTmp == 0;
+    }
+
     /**
      *
      * @param msg
@@ -173,4 +192,105 @@ public class InjectMasterKey extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    public static boolean decryptKey(String keyStr, boolean isMk) {
+
+        String confiKey = "490B39AAEEB33AEF0242E1D82D467CFF9AB3E1A745AF69CD";
+        SecretKey secretKey = new SecretKeySpec(ISOUtil.str2bcd(confiKey, false), "DESede");
+        IV = generateIV();
+        Cipher decipher;
+        try {
+            if (keyStr.equals("")){
+                return false;
+            }
+            decipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            e.printStackTrace();
+            return false;
+        }
+        try {
+            decipher.init(Cipher.DECRYPT_MODE, secretKey, IV);
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+            return false;
+        }
+        byte[] decipherText;
+        try {
+            if((decipherText = decipher.doFinal(ISOUtil.str2bcd(keyStr, false))) == null)
+                return false;
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+            return false;
+        }
+        String finalKey = getResultProcessKey(decipherText);
+        if (finalKey != null){
+            return injectKey(finalKey, isMk) == 0;
+        }else {
+            return false;
+        }
+
+    }
+
+    private static IvParameterSpec generateIV() {
+
+        byte[] newSeed = r.generateSeed(8);
+        r.setSeed(newSeed);
+
+        byte[] byteIV = new byte[8];
+        r.nextBytes(byteIV);
+        IV = new IvParameterSpec(byteIV);
+        return IV;
+    }
+
+    /**
+     * permite determinar si la llave es de 8 o 16 bytes, si es de 8 byte
+     * omitira el octeto relleno on 0x08 en la encripcion, y tomara solo los
+     * primeros 8 bytes que contienen la llave
+     * @param decipherText
+     * @return
+     */
+    private static String getResultProcessKey(byte[] decipherText){
+        byte[] octeto = new byte[8];
+        int cont = 0;
+        boolean isOctetoFill = false;
+        String key;
+        try {
+            for (int i = 0; i < decipherText.length; i++) {
+                if (decipherText[i] == 0x08) {
+                    octeto[cont] = decipherText[i];
+                    cont++;
+                }
+                if (cont==8) {
+                    cont = 0;
+                    isOctetoFill = true;
+                }
+            }
+            if (isOctetoFill)
+                key = ISOUtil.byte2hex(decipherText).substring(0,16);
+            else
+                key = ISOUtil.byte2hex(decipherText);
+
+            return key;
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    /**
+     * Método para inyección de llave Master y Woking
+     * @param key Llave a inyectar
+     * @param isMk indica si la llave a inyectar, true para Masterkey - false para Workingkey
+     * @return 0 si el proceso fue exitoso
+     */
+    public static int injectKey(String key, boolean isMk) {
+        byte[] keyData = ISOUtil.str2bcd(key, false);
+        int ret;
+        if (isMk) {//the app must be System User can inject success.
+            ret = Ped.getInstance().injectKey(KeySystem.MS_DES, KeyType.KEY_TYPE_MASTK, MASTERKEYIDX, keyData);
+        } else {
+            ret = Ped.getInstance().writeKey(KeySystem.MS_DES, KeyType.KEY_TYPE_PINK, MASTERKEYIDX, WORKINGKEYIDX, Ped.KEY_VERIFY_NONE, keyData);
+        }
+        return ret;
+    }
+
 }

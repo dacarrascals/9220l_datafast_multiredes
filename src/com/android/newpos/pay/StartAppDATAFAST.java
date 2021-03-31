@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -24,19 +25,14 @@ import com.datafast.inicializacion.pagosvarios.PagosVarios;
 import com.datafast.inicializacion.prompts.Prompt;
 import com.datafast.inicializacion.tools.PolarisUtil;
 import com.datafast.inicializacion.trans_init.Init;
-import com.datafast.keys.InjectMasterKey;
 import com.datafast.keys.PwMasterKey;
-import com.datafast.pinpad.cmd.CP.CP_ConfigIP;
-import com.datafast.pinpad.cmd.PA.Actualizacion;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.BatteryStatus;
 import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.PaySdk;
-import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.PAYUtils;
-import com.pos.device.ped.KeyType;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -45,8 +41,6 @@ import java.util.TimeZone;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.PayApplication;
 
-import static com.datafast.keys.InjectMasterKey.MASTERKEYIDX;
-import static com.datafast.keys.InjectMasterKey.threreIsKey;
 
 
 public class StartAppDATAFAST extends AppCompatActivity {
@@ -66,6 +60,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
     public static ArrayList<Prompt> listPrompts = null;
     public static ArrayList<PagosVarios> listPagosVarios = null;
     public static boolean isInit = false;
+    public static boolean inyecccionLLaves = false;
     public static boolean MODE_KIOSK = false;
     public static String lastCmd = "";
     public static int lastInputMode = 0x00;
@@ -88,8 +83,11 @@ public class StartAppDATAFAST extends AppCompatActivity {
             initSDK();
 
             isInit = PolarisUtil.isInitPolaris(StartAppDATAFAST.this);
+            SharedPreferences preferences = StartAppDATAFAST.this.getSharedPreferences("inyeccion-llaves", Context.MODE_PRIVATE);
+            inyecccionLLaves = preferences.getBoolean("stateKeys", false);
 
             //TMConfig.getInstance().activeDebugMode(true);
+            //TMConfig.getInstance().setDebug(true);
 
             //kioske mode
             kiosk();
@@ -142,11 +140,12 @@ public class StartAppDATAFAST extends AppCompatActivity {
         if (idioma()){
             /*InjectMasterKey.injectMk("D573F8765B4975CB");//Master MediaNet
             InjectMasterKey.deleteKeys(KeyType.KEY_TYPE_MASTK, MASTERKEYIDX);*/
-            if (threreIsKey(MASTERKEYIDX, "Debe cargar Master Key", StartAppDATAFAST.this)){
+            /*if (threreIsKey(MASTERKEYIDX, "Debe cargar Master Key", StartAppDATAFAST.this)){
                 initApp();
             }else{
                 inyectarLlaves();
-            }
+            }*/
+            initApp();
         }
     }
 

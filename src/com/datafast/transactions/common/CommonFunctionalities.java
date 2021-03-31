@@ -984,6 +984,12 @@ public class CommonFunctionalities {
         editor.apply();
     }
 
+    public static void saveInyeccionLlaves(Context context, boolean estado){
+        SharedPreferences.Editor editor = context.getSharedPreferences("inyeccion-llaves", MODE_PRIVATE).edit();
+        editor.putBoolean("stateKeys", estado);
+        editor.apply();
+    }
+
     private static Date sumarRestarDiasFecha(Date fecha, int dias) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(fecha); // Configuramos la fecha que se recibe

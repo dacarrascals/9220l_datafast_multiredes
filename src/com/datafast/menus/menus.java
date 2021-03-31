@@ -1,33 +1,24 @@
 package com.datafast.menus;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.newpos.pay.R;
-import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.tools.PolarisUtil;
 import com.datafast.tools.CounterTimer;
@@ -38,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import cn.desert.newpos.payui.UIUtils;
 
+import static com.android.newpos.pay.StartAppDATAFAST.inyecccionLLaves;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.tools.PermissionStatus.firstTry;
@@ -133,7 +125,7 @@ public class menus extends AppCompatActivity {
 
     public void onClickBack(View view) {
         if (!menu.equals(DefinesDATAFAST.ITEM_PRINCIPAL)) {
-            if (isInit)
+            if (isInit && inyecccionLLaves)
                 finish();
         }
     }
@@ -207,18 +199,18 @@ public class menus extends AppCompatActivity {
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_ECHO_TEST, R.drawable.ic_echo));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_BORRAR_REVERSO, R.drawable.ic_borrarreverso));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_TRANS_EN_PANTALLA, R.drawable.ic_menuimpresion));
-                itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_MASTER_KEY, R.drawable.ic_test));
+                //itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_MASTER_KEY, R.drawable.ic_test));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_DATOS_COMERCIO, R.drawable.ic_test));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_COMERCIO, R.drawable.comunication));
                 break;
 
             case DefinesDATAFAST.ITEM_COMUNICACION:
-                if (isInit){
+                if (isInit && inyecccionLLaves){
                     counterDownTimerMenus();
                 }
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_INICIALIZACION, R.drawable.ic_inicializacion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_INICIAL, R.drawable.ic_configuracion));
-                if (!isInit){
+                if (!isInit || !inyecccionLLaves){
                     itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_RED, R.drawable.ic_configuracion));
                 }
                 break;
@@ -246,7 +238,7 @@ public class menus extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isInit)
+        if (isInit && inyecccionLLaves)
             finish();
     }
 
@@ -260,7 +252,8 @@ public class menus extends AppCompatActivity {
          super.onResume();
          contFallback = 0;
          isInit = PolarisUtil.isInitPolaris(menus.this);
-         if (!isInit && permissionStatus.validatePermissions()) {
+         boolean permisosStatus = permissionStatus.validatePermissions();
+         if ((!isInit && permisosStatus) || (!inyecccionLLaves && permisosStatus)) {
              new Handler().postDelayed(new Runnable() {
                  @Override
                  public void run() {

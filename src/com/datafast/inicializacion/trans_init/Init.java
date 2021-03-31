@@ -19,7 +19,6 @@ import com.datafast.inicializacion.trans_init.trans.SendRcvd;
 import com.datafast.inicializacion.trans_init.trans.Tools;
 import com.datafast.inicializacion.trans_init.trans.UnpackFile;
 import com.datafast.inicializacion.trans_init.trans.dbHelper;
-import com.datafast.keys.InjectMasterKey;
 import com.datafast.pinpad.cmd.PA.Actualizacion;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.transactions.callbacks.waitInitCallback;
@@ -27,7 +26,6 @@ import com.google.common.base.Strings;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.presenter.TransView;
 import com.newpos.libpay.utils.ISOUtil;
-import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.SDKException;
 import com.pos.device.beeper.Beeper;
 import java.io.ByteArrayOutputStream;
@@ -41,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import cn.desert.newpos.payui.UIUtils;
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
+import static com.android.newpos.pay.StartAppDATAFAST.inyecccionLLaves;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.listIPs;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -50,9 +49,13 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.NAME_FOLDER_CTL_FILES
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.PROCESSING;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.REVOK;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.TERMINAL;
+import static com.datafast.keys.InjectMasterKey.MASTERKEYIDX;
+import static com.datafast.keys.InjectMasterKey.decryptKey;
+import static com.datafast.keys.InjectMasterKey.validateMK;
 import static com.datafast.menus.MenuAction.callBackSeatle;
 import static com.datafast.transactions.common.CommonFunctionalities.saveDateSettle;
 import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
+import static com.datafast.transactions.common.CommonFunctionalities.saveInyeccionLlaves;
 
 public class Init extends AppCompatActivity {
 
@@ -370,16 +373,19 @@ public class Init extends AppCompatActivity {
                                     if (Actualizacion.echoTest) {
                                         Actualizacion.goEchoTest = true;
                                     }
-                                    //Inyectar WorkingKey
-                                    if(!inyectarWorkingKey()){
+                                    //Inyectar WorkingKey y MasterKey
+                                    if(!inyectarLlaves()){
                                         isInit = false;
                                         resumePA = false;
+                                        inyecccionLLaves = false;
+                                        saveInyeccionLlaves(Init.this, false);
                                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                                         UIUtils.startResult(Init.this,false,"INYECCION DE LLAVE FALLIDA",true);
                                         //finish();
                                     }else {
 
                                         isInit = PolarisUtil.isInitPolaris(Init.this);
+                                        inyecccionLLaves = true;
                                         //isInit = true;
                                         if (isInit) {
                                             tconf.selectTconf(Init.this);
@@ -411,6 +417,7 @@ public class Init extends AppCompatActivity {
                                                 TMConfig.getInstance().setMerchID(tconf.getCARD_ACCP_MERCH()).save();
 
                                                 saveDateSettle(Init.this);
+                                                saveInyeccionLlaves(Init.this, true);
                                                 Beeper.getInstance().beep();
                                                 resumePA = false;
                                                 //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION EXITOSA", Toast.LENGTH_SHORT);
@@ -624,20 +631,24 @@ public class Init extends AppCompatActivity {
         unpackFile.execute();
     }
 
-    private boolean inyectarWorkingKey(){
-        String workingKey = "";
+    private boolean inyectarLlaves(){
+        String workingKey, masterKey;
         tconf.selectTconf(Init.this);
         host_confi.selectHostConfi(Init.this);
         if (host_confi != null) {
 
-            if (PAYUtils.stringToBoolean(host_confi.getLLAVE_DOBLE())) {
-                workingKey = host_confi.getLLAVE_1() + host_confi.getLLAVE_2();
-            } else {
-                workingKey = host_confi.getLLAVE_1();
+            workingKey = host_confi.getFORMATO_MENSAJE();
+            masterKey = host_confi.getLLAVE_2();
+
+            if(!validateMK(MASTERKEYIDX)){
+                if(!decryptKey(masterKey, true)){
+                    UIUtils.toast(Init.this, R.drawable.ic_launcher, "INYECCION DE LLAVE FALLIDA - MASTER", Toast.LENGTH_SHORT);
+                    return false;
+                }
             }
-            if (InjectMasterKey.injectWorkingKey(workingKey)!=0) {
-                //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INYECCION DE LLAVE FALLIDA", Toast.LENGTH_SHORT);
-                //UIUtils.startResult(Init.this,false,"INYECCION DE LLAVE FALLIDA",true);
+
+            if(!decryptKey(workingKey, false)){
+                UIUtils.toast(Init.this, R.drawable.ic_launcher, "INYECCION DE LLAVE FALLIDA - WORKING", Toast.LENGTH_SHORT);
                 return false;
             }
         }
