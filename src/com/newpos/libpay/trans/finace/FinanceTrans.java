@@ -3602,9 +3602,17 @@ public class FinanceTrans extends Trans {
         String data2 = null;
         String data3 = null;
         int msgLen = 0;
-        if (tracks[0].length() > 0 && tracks[0].length() <= 80) {
-            data1 = tracks[0];
-        }
+        boolean pintulac = false;
+        int splitIndex = -1;
+        String pan = null;
+
+        tracks[1] = "";
+        tracks[0] = "00000000100000_";
+
+        Logger.debug("Track 1 " + tracks[0]);
+        Logger.debug("Track 2 " + tracks[1]);
+        Logger.debug("Track 3 " + tracks[2]);
+
         if (tracks[1].length() >= 13 && tracks[1].length() <= 37) {
             data2 = tracks[1];
             if (!data2.contains("=")) {
@@ -3615,15 +3623,38 @@ public class FinanceTrans extends Trans {
                 if (judge.length() < 13 || judge.length() > 19) {
                     retVal = Tcode.T_search_card_err;
                 } else {
+                    pan = data2.substring(0, data2.indexOf('='));
                     if (data2.indexOf('=') != -1) {
                         msgLen++;
                     }
                 }
             }
         }
+        else if (tracks[0].length() > 0 && tracks[0].length() <= 80) {
+            data1 = "00000000100000_";
+            if(tracks[0].contains("%")){
+                data1 = tracks[0].substring(1, tracks[0].length()-1);
+            }else{
+                data1 = tracks[0].substring(0, tracks[0].length()-1);
+            }
+            //00000000100000_
+            if(data1.substring(0,3).equals("000")){
+                if(Server.cmd.equals(LT)){
+                    retVal = Tcode.T_unsupport_card;
+                }else{
+                    ExpDate = "0000";
+                    pintulac = true;
+                    msgLen++;
+                    data2 = data1.substring(3,9);
+                    data2 += "=" + ExpDate;
+                    pan = "0000" + data2;
+                }
+            }
+        }
         if (tracks[2].length() >= 15 && tracks[2].length() <= 107) {
             data3 = tracks[2];
         }
+        Logger.debug("Retval " + retVal);
         if (retVal != 0) {
             transUI.showError(timeout, retVal,processPPFail);
             return false;
@@ -3635,7 +3666,7 @@ public class FinanceTrans extends Trans {
             } else {
 
                 try {
-                    if (!incardTable(data2.substring(0, data2.indexOf('=')), TransEName)) {
+                    if (!incardTable(pan, TransEName)) {
                         //retVal = Tcode.T_unsupport_card;
                         transUI.showError(timeout, Tcode.T_unsupport_card,processPPFail);
                         return false;
@@ -3646,12 +3677,14 @@ public class FinanceTrans extends Trans {
                     return false;
                 }
 
-                int splitIndex = data2.indexOf("=");
+                if(!pintulac){
+                    splitIndex = data2.indexOf("=");
 
-                if (ISOUtil.stringToBoolean(rango.getPIN_SERVICE_CODE())) {
-                    char isDebitChar = data2.charAt(splitIndex + 7);
-                    if (isDebitChar == '0' || isDebitChar == '5' || isDebitChar == '6' || isDebitChar == '7') {
-                        isDebit = true;
+                    if (ISOUtil.stringToBoolean(rango.getPIN_SERVICE_CODE())) {
+                        char isDebitChar = data2.charAt(splitIndex + 7);
+                        if (isDebitChar == '0' || isDebitChar == '5' || isDebitChar == '6' || isDebitChar == '7') {
+                            isDebit = true;
+                        }
                     }
                 }
 
@@ -3659,30 +3692,37 @@ public class FinanceTrans extends Trans {
                     return afterMAGJudge1(data1, data2, data3);
                 }
 
-                if (!ISOUtil.stringToBoolean(rango.getOMITIR_EMV())) {
-                    if (data2.length() - splitIndex >= 5) {
-                        try{
-                            char iccChar = data2.charAt(splitIndex + 5);
+                if(!pintulac){
+                    if (!ISOUtil.stringToBoolean(rango.getOMITIR_EMV())) {
+                        if (data2.length() - splitIndex >= 5) {
+                            try{
+                                char iccChar = data2.charAt(splitIndex + 5);
 
-                            if ((iccChar == '2' || iccChar == '6') && (!isFallBack)) {
-                                //retVal = Tcode.T_ic_not_allow_swipe;
-                                transUI.showError(timeout, Tcode.T_ic_not_allow_swipe,processPPFail);
-                                return false;
-                            } else {
+                                if ((iccChar == '2' || iccChar == '6') && (!isFallBack)) {
+                                    //retVal = Tcode.T_ic_not_allow_swipe;
+                                    transUI.showError(timeout, Tcode.T_ic_not_allow_swipe,processPPFail);
+                                    return false;
+                                } else {
+                                    if (afterMAGJudge1(data1, data2, data3))
+                                        return true;
+                                }
+                            }catch (Exception e){
                                 if (afterMAGJudge1(data1, data2, data3))
                                     return true;
                             }
-                        }catch (Exception e){
-                            if (afterMAGJudge1(data1, data2, data3))
-                                return true;
+                        } else {
+                            transUI.showError(timeout, Tcode.T_search_card_err,processPPFail);
+                            return false;
                         }
                     } else {
-                        transUI.showError(timeout, Tcode.T_search_card_err,processPPFail);
-                        return false;
+                        if (afterMAGJudge1(data1, data2, data3))
+                            return true;
                     }
-                } else {
-                    if (afterMAGJudge1(data1, data2, data3))
+                }else{
+                    if (afterMAGJudge1(data1, data2, data3)){
+                        Track2 = data2.substring(0, data2.indexOf('='));
                         return true;
+                    }
                 }
             }
         }
