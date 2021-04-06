@@ -8,6 +8,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 
 public class RulesPinPad {
 
+    private final String ZERO = "0";
     private final String TWO = "2";
     private final String TRHEE = "3";
     private final String FOUR = "4";
@@ -29,6 +30,7 @@ public class RulesPinPad {
         String firstDigCard = pan.substring(0,1);
 
         switch(firstDigCard) {
+            case ZERO:
             case TWO:
             case TRHEE:
             case FOUR:
