@@ -3606,13 +3606,6 @@ public class FinanceTrans extends Trans {
         int splitIndex = -1;
         String pan = null;
 
-        tracks[1] = "";
-        tracks[0] = "00000000100000_";
-
-        Logger.debug("Track 1 " + tracks[0]);
-        Logger.debug("Track 2 " + tracks[1]);
-        Logger.debug("Track 3 " + tracks[2]);
-
         if (tracks[1].length() >= 13 && tracks[1].length() <= 37) {
             data2 = tracks[1];
             if (!data2.contains("=")) {
@@ -3631,7 +3624,6 @@ public class FinanceTrans extends Trans {
             }
         }
         else if (tracks[0].length() > 0 && tracks[0].length() <= 80) {
-            data1 = "00000000100000_";
             if(tracks[0].contains("%")){
                 data1 = tracks[0].substring(1, tracks[0].length()-1);
             }else{
@@ -3654,7 +3646,6 @@ public class FinanceTrans extends Trans {
         if (tracks[2].length() >= 15 && tracks[2].length() <= 107) {
             data3 = tracks[2];
         }
-        Logger.debug("Retval " + retVal);
         if (retVal != 0) {
             transUI.showError(timeout, retVal,processPPFail);
             return false;
