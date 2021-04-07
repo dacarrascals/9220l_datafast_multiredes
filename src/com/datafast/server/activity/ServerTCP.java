@@ -141,7 +141,7 @@ public class ServerTCP extends AppCompatActivity {
         slide = new slide( ServerTCP.this, true);
         slide.galeria(this, R.id.adcolumn);
         MasterControl.setMcontext(ServerTCP.this);
-        if (isInit) {
+        if (isInit && inyecccionLLaves) {
             if (!isInEcho) {
                 wifi = new Wifi(ServerTCP.this);
                 control = new Control(ServerTCP.this);

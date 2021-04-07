@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
@@ -405,6 +406,14 @@ public class MenuAction {
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
                 break;
+            case DefinesDATAFAST.ITEM_AGENTE_POLARIS:
+                if (estaInstaladaAplicacion("com.downloadmanager", context)) {
+                    Intent intentPolaris = context.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
+                    context.startActivity(intentPolaris);
+                } else {
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ERROR_AGENTE, Toast.LENGTH_SHORT);
+                }
+                break;
             case DefinesDATAFAST.ITEM_CONFIG_RED:
                 if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
                     if (!isWifiConnected() && EthernetManager.getInstance().isEtherentEnabled()) {
@@ -451,6 +460,16 @@ public class MenuAction {
     private boolean isWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
+    }
+    private boolean estaInstaladaAplicacion(String nombrePaquete, Context context) {
+
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(nombrePaquete, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {
