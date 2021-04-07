@@ -11,6 +11,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -24,8 +26,8 @@ public class Server extends AppCompatActivity {
     ServerTCP activity;
     ServerSocket serverSocket;
     public static int socketServerPORT;
-    public static dataReceived dataReceived;
     CountDownLatch countDown;
+    DataInputStream dataInputStream;
 
     public static String cmd = "";
     public static byte[] dat;
@@ -37,7 +39,6 @@ public class Server extends AppCompatActivity {
         socketServerPORT = getListeningPort();
         Thread socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
-        dataReceived = new dataReceived();
     }
 
     public int getPort() {
@@ -78,48 +79,25 @@ public class Server extends AppCompatActivity {
                 serverSocket.setReuseAddress(true);
                 serverSocket.bind(new InetSocketAddress(socketServerPORT));
 
-                // block the call until connection is created and return Socket object
+                while(true) {
 
-                final Socket socket = serverSocket.accept();
-                final InputStream input = socket.getInputStream();
-                DataInputStream dataInputStream = new DataInputStream(input);
+                    Socket socket = serverSocket.accept();
+                    socket.setReuseAddress(true);
 
-                final DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                    // block the call until connection is created and return Socket object
 
-                //final OutputStream outputStream = socket.getOutputStream();
+                    final InputStream input = socket.getInputStream();
+                    dataInputStream = new DataInputStream(input);
 
-                text = readSocket(dataInputStream);
+                    //final OutputStream outputStream = socket.getOutputStream();
 
-                dataReceived.identifyCommand(text);
-                dat = dataReceived.getDataRaw();
-                correctLength = dataReceived.isCorrectLength();
-                cmd = dataReceived.getCmd();
-                countDown = new CountDownLatch(1);
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.startTrans(cmd,dat,new waitResponse() {
-                            @Override
-                            public void waitRspHost(byte[] Info) {
-                                info = Info;
-                                countDown.countDown();
-                            }
-                        });
-                    }
-                });
+                    text = readSocket(dataInputStream);
 
-                countDown.await();
-                lastCmd = cmd;
-                output.write(info);
-                socket.close();
-                input.close();
-                output.close();
-                //outputStream.write(Info);
-                //outputStream.flush();
-                //output.close();
-                ppResponse = null;
+                    SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(socket, text);
+                    socketServerReplyThread.run();
 
-            } catch (IOException | InterruptedException e) {
+                }
+            } catch (IOException  e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -154,6 +132,58 @@ public class Server extends AppCompatActivity {
             }
             return data;
         }
+    }
+
+    private class SocketServerReplyThread extends Thread {
+
+        private Socket hostThreadSocket;
+        byte[] echoData;
+
+
+        SocketServerReplyThread(Socket socket, byte[] echo) {
+            hostThreadSocket = socket;
+            echoData = echo;
+        }
+
+        @Override
+        public void run() {
+            OutputStream outputStream;
+            dataReceived dataReceived = new dataReceived();
+
+            try {
+                outputStream = hostThreadSocket.getOutputStream();
+                PrintStream printStream = new PrintStream(outputStream);
+
+                dataReceived.identifyCommand(echoData);
+                dat = dataReceived.getDataRaw();
+                correctLength = dataReceived.isCorrectLength();
+                cmd = dataReceived.getCmd();
+                countDown = new CountDownLatch(1);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.startTrans(cmd, dat, new waitResponse() {
+                            @Override
+                            public void waitRspHost(byte[] Info) {
+                                info = Info;
+                                lastCmd = cmd;
+                                countDown.countDown();
+                            }
+                        });
+                    }
+                });
+
+                countDown.await();
+                printStream.write(info);
+                printStream.close();
+                ppResponse = null;
+
+            } catch (IOException | InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /**

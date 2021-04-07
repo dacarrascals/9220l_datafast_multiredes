@@ -37,7 +37,6 @@ import com.pos.device.icc.SlotType;
 import java.io.IOException;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
-
 import static com.android.newpos.pay.StartAppDATAFAST.inyecccionLLaves;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
@@ -118,6 +117,40 @@ public class ServerTCP extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopServer();
+    }
+
+    public void validacionesInciales(){
+
+        isInEcho = false;
+
+        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest){
+            Control.echoTest = false;
+            Actualizacion.echoTest = false;
+            Actualizacion.goEchoTest = false;
+            isInEcho = true;
+            MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
+            menuAction.SelectAction();
+        }
+
+        if (installApp) {
+            installApp = false;
+            UpdateApk updateApk = new UpdateApk(ServerTCP.this);
+            updateApk.instalarApp(ServerTCP.this);
+        }
+
+        slide = new slide( ServerTCP.this, true);
+        slide.galeria(this, R.id.adcolumn);
+        MasterControl.setMcontext(ServerTCP.this);
+        if (isInit) {
+            if (!isInEcho) {
+                wifi = new Wifi(ServerTCP.this);
+                control = new Control(ServerTCP.this);
+                actualizacion = new Actualizacion(ServerTCP.this);
+                configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
+            }
+        } else {
+            settings();
+        }
     }
 
     private void stopServer(){
@@ -369,4 +402,10 @@ public class ServerTCP extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {}
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        validacionesInciales();
+    }
 }

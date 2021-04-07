@@ -1377,10 +1377,10 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             }
         } while (iccReader0.isCardPresent());
 
-        //finish();
-        startActivity( new Intent(MasterControl.this, ServerTCP.class)
+        finish();
+        /*startActivity( new Intent(MasterControl.this, ServerTCP.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));*/
     }
 
     private void initList(String transType, final ArrayList<String> listMenu) {
