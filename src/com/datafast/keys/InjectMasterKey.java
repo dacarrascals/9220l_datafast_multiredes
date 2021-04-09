@@ -20,7 +20,6 @@ import com.pos.device.ped.Ped;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Timer;
 
 import javax.crypto.BadPaddingException;
@@ -38,8 +37,6 @@ public class InjectMasterKey extends AppCompatActivity {
 
     public static final int MASTERKEYIDX = 0;
     private static final int WORKINGKEYIDX = 0;
-    private static SecureRandom r = new SecureRandom();
-    private static IvParameterSpec IV;
     static callBackGetMasterKey mk;
     public static String pwMasterKey;
     private Timer timer = new Timer() ;
@@ -197,7 +194,6 @@ public class InjectMasterKey extends AppCompatActivity {
 
         String confiKey = "490B39AAEEB33AEF0242E1D82D467CFF9AB3E1A745AF69CD";
         SecretKey secretKey = new SecretKeySpec(ISOUtil.str2bcd(confiKey, false), "DESede");
-        IV = generateIV();
         Cipher decipher;
         try {
             if (keyStr.equals("")){
@@ -209,7 +205,9 @@ public class InjectMasterKey extends AppCompatActivity {
             return false;
         }
         try {
-            decipher.init(Cipher.DECRYPT_MODE, secretKey, IV);
+            byte[] iv = ISOUtil.hex2byte("0000000000000000");
+            IvParameterSpec ips = new IvParameterSpec(iv);
+            decipher.init(Cipher.DECRYPT_MODE, secretKey, ips);
         } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
             return false;
@@ -229,17 +227,6 @@ public class InjectMasterKey extends AppCompatActivity {
             return false;
         }
 
-    }
-
-    private static IvParameterSpec generateIV() {
-
-        byte[] newSeed = r.generateSeed(8);
-        r.setSeed(newSeed);
-
-        byte[] byteIV = new byte[8];
-        r.nextBytes(byteIV);
-        IV = new IvParameterSpec(byteIV);
-        return IV;
     }
 
     /**
