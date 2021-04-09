@@ -134,6 +134,7 @@ public class InjectMasterKey extends AppCompatActivity {
 
     public static boolean validateMK(int indexKey){
         int retTmp = Ped.getInstance().checkKey(KeySystem.MS_DES, KeyType.KEY_TYPE_MASTK, indexKey, 0);
+        Logger.debug("Init.java -> Se valida existencia de MasterKey -> " + retTmp);
         return retTmp == 0;
     }
 
@@ -192,6 +193,8 @@ public class InjectMasterKey extends AppCompatActivity {
 
     public static boolean decryptKey(String keyStr, boolean isMk) {
 
+        Logger.debug("Init.java -> Se ingresa a hacer la desencripción de la llave -> " + isMk);
+
         String confiKey = "490B39AAEEB33AEF0242E1D82D467CFF9AB3E1A745AF69CD";
         SecretKey secretKey = new SecretKeySpec(ISOUtil.str2bcd(confiKey, false), "DESede");
         Cipher decipher;
@@ -201,6 +204,7 @@ public class InjectMasterKey extends AppCompatActivity {
             }
             decipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            Logger.debug("Init.java -> Error Cath 1 en decryptKey");
             e.printStackTrace();
             return false;
         }
@@ -209,6 +213,7 @@ public class InjectMasterKey extends AppCompatActivity {
             IvParameterSpec ips = new IvParameterSpec(iv);
             decipher.init(Cipher.DECRYPT_MODE, secretKey, ips);
         } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+            Logger.debug("Init.java -> Error Cath 2 en decryptKey");
             e.printStackTrace();
             return false;
         }
@@ -217,6 +222,7 @@ public class InjectMasterKey extends AppCompatActivity {
             if((decipherText = decipher.doFinal(ISOUtil.str2bcd(keyStr, false))) == null)
                 return false;
         } catch (IllegalBlockSizeException | BadPaddingException e) {
+            Logger.debug("Init.java -> Error Cath 3 en decryptKey");
             e.printStackTrace();
             return false;
         }
@@ -270,6 +276,7 @@ public class InjectMasterKey extends AppCompatActivity {
      * @return 0 si el proceso fue exitoso
      */
     public static int injectKey(String key, boolean isMk) {
+        Logger.debug("Init.java -> Se ingresa a hacer la inyección de la llave injectKey() -> " + isMk);
         byte[] keyData = ISOUtil.str2bcd(key, false);
         int ret;
         if (isMk) {//the app must be System User can inject success.

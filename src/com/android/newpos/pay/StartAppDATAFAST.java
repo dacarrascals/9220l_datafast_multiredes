@@ -32,6 +32,7 @@ import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.PaySdk;
+import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.PAYUtils;
 
 import java.util.ArrayList;
@@ -87,7 +88,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
             inyecccionLLaves = preferences.getBoolean("stateKeys", false);
 
             //TMConfig.getInstance().activeDebugMode(true);
-            //TMConfig.getInstance().setDebug(true);
+            TMConfig.getInstance().setDebug(true);
 
             //kioske mode
             kiosk();

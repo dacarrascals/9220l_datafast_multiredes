@@ -26,11 +26,22 @@ public class Logger {
         return TAG+"_"+callerClazzName ;
     }
 
+    public static Wrlg wrlg = null;
     public static void debug(String msg){
+        if (wrlg == null) {
+            wrlg = new Wrlg();
+        }
+        if(TMConfig.getInstance().isDebug()){
+            Log.i(TAG, msg);
+            wrlg.wrDataTxt(TAG + ": " + msg);
+        }
+    }
+
+    /*public static void debug(String msg){
         if(TMConfig.getInstance().isDebug()){
             Log.i(TAG, msg);
         }
-    }
+    }*/
 
     public static void error(String msg){
         Log.e(TAG , msg);
