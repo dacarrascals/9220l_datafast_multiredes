@@ -384,6 +384,7 @@ public class Init extends AppCompatActivity {
                                         //finish();
                                     }else {
 
+                                        eliminarCampoMasterkey();
                                         isInit = PolarisUtil.isInitPolaris(Init.this);
                                         inyecccionLLaves = true;
                                         //isInit = true;
@@ -653,6 +654,18 @@ public class Init extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    public void eliminarCampoMasterkey(){
+        dbHelper db = new dbHelper(getApplicationContext(), "init", null, 1);
+        db.openDb("init");
+        String sql="UPDATE HOST_CONFI SET LLAVE_2 ='' WHERE LLAVE_2 <>''";
+        try {
+            db.execSql(sql);
+        } catch (Exception e) {
+            Toast.makeText(getApplication(), "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
 

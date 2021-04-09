@@ -156,7 +156,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             return true;
                         }else {
                             transUI.trannSuccess(timeout, Tcode.Status.read_card_ok);
-                            UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
+                           /* UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);*/
                             return true;
                         }
                     }else{

@@ -411,7 +411,7 @@ public class MenuAction {
                     Intent intentPolaris = context.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
                     context.startActivity(intentPolaris);
                 } else {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ERROR_AGENTE, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.ERROR_AGENTE, Toast.LENGTH_SHORT);
                 }
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_RED:
