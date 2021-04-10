@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.unpack.dataReceived;
+import com.newpos.libpay.Logger;
+import com.newpos.libpay.utils.ISOUtil;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,6 +18,7 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
@@ -80,6 +83,8 @@ public class Server extends AppCompatActivity {
                 serverSocket.bind(new InetSocketAddress(socketServerPORT));
 
                 while(true) {
+
+                    Logger.debug("Server.java -> Llega una nueva petición");
 
                     Socket socket = serverSocket.accept();
                     socket.setReuseAddress(true);
@@ -151,6 +156,9 @@ public class Server extends AppCompatActivity {
             dataReceived dataReceived = new dataReceived();
 
             try {
+
+                Logger.debug("Server.java -> Inicia proceso de respuesta");
+
                 outputStream = hostThreadSocket.getOutputStream();
                 PrintStream printStream = new PrintStream(outputStream);
 
@@ -158,6 +166,11 @@ public class Server extends AppCompatActivity {
                 dat = dataReceived.getDataRaw();
                 correctLength = dataReceived.isCorrectLength();
                 cmd = dataReceived.getCmd();
+
+                Logger.debug("Server.java -> Contenido de la trama que llega: " + ISOUtil.byte2hex(dat));
+
+                Logger.debug("Server.java -> Se identifica el CMD: " + cmd);
+
                 countDown = new CountDownLatch(1);
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -175,6 +188,9 @@ public class Server extends AppCompatActivity {
 
                 countDown.await();
                 printStream.write(info);
+
+                Logger.debug("Server.java -> Se responde a la caja -> " + ISOUtil.byte2hex(info));
+
                 printStream.close();
                 ppResponse = null;
 

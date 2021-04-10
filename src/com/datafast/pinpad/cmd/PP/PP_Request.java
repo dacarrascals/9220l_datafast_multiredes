@@ -1,5 +1,6 @@
 package com.datafast.pinpad.cmd.PP;
 
+import com.newpos.libpay.Logger;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
 
@@ -275,6 +276,9 @@ public class PP_Request {
 
         try
         {
+
+            Logger.debug("PP_Request.java -> Se inicia proceso de desempaquetamiento de la trama");
+
             this.countValid = 0;
 
             //typeTrans
