@@ -42,7 +42,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
         init(transEname, p);
         processPPFail = new ProcessPPFail(ctx, iso8583);
         processPPFail.setTransName(TransEName);
-        Logger.debug("Venta.java -> Se crea constructor de Venta");
+        Logger.information("Venta.java -> Se crea constructor de Venta");
     }
 
     private void init(String transEname, TransInputPara p) {
@@ -67,7 +67,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        Logger.debug("Venta.java -> start()");
+        Logger.information("Venta.java -> start()");
 
         final int reverso = validateReverseCash();
         if (reverso != 1995){
@@ -147,7 +147,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
      */
     private boolean prepareOnline() {
 
-        Logger.debug("Venta.java -> Se ingresa al prepareOnline()");
+        Logger.information("Venta.java -> Se ingresa al prepareOnline()");
 
         if (retVal == 0) {
             switch (Server.cmd) {

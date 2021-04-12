@@ -201,13 +201,13 @@ public class ServerTCP extends AppCompatActivity {
                             break;
                         case PP:
 
-                            Logger.debug("ServerTCP.java -> Inicia proceso para un PP");
+                            Logger.information("ServerTCP.java -> Inicia proceso para un PP");
 
                             PP_Request pp_request = new PP_Request();
 
                             if (!Server.correctLength){
                                 pp_request.UnPackHash(aDat);
-                                Logger.debug("ServerTCP.java -> Error longitud de trama no corresponde");
+                                Logger.information("ServerTCP.java -> Error longitud de trama no corresponde");
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
@@ -216,7 +216,7 @@ public class ServerTCP extends AppCompatActivity {
 
                             pp_request.UnPackData(aDat);
                             if (pp_request.getCountValid() > 0){
-                                Logger.debug("ServerTCP.java -> Error, la trama no es correcta");
+                                Logger.information("ServerTCP.java -> Error, la trama no es correcta");
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);

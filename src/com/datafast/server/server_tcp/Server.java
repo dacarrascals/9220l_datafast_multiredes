@@ -18,7 +18,6 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
@@ -84,7 +83,7 @@ public class Server extends AppCompatActivity {
 
                 while(true) {
 
-                    Logger.debug("Server.java -> Llega una nueva petición");
+                    Logger.information("Server.java -> Llega una nueva petición");
 
                     Socket socket = serverSocket.accept();
                     socket.setReuseAddress(true);
@@ -157,7 +156,7 @@ public class Server extends AppCompatActivity {
 
             try {
 
-                Logger.debug("Server.java -> Inicia proceso de respuesta");
+                Logger.information("Server.java -> Inicia proceso de respuesta");
 
                 outputStream = hostThreadSocket.getOutputStream();
                 PrintStream printStream = new PrintStream(outputStream);
@@ -167,9 +166,9 @@ public class Server extends AppCompatActivity {
                 correctLength = dataReceived.isCorrectLength();
                 cmd = dataReceived.getCmd();
 
-                Logger.debug("Server.java -> Contenido de la trama que llega: " + ISOUtil.byte2hex(dat));
+                Logger.information("Server.java -> Contenido de la trama que llega: " + ISOUtil.byte2hex(dat));
 
-                Logger.debug("Server.java -> Se identifica el CMD: " + cmd);
+                Logger.information("Server.java -> Se identifica el CMD: " + cmd);
 
                 countDown = new CountDownLatch(1);
                 activity.runOnUiThread(new Runnable() {
@@ -189,7 +188,7 @@ public class Server extends AppCompatActivity {
                 countDown.await();
                 printStream.write(info);
 
-                Logger.debug("Server.java -> Se responde a la caja -> " + ISOUtil.byte2hex(info));
+                Logger.information("Server.java -> Se responde a la caja -> " + ISOUtil.byte2hex(info));
 
                 printStream.close();
                 ppResponse = null;

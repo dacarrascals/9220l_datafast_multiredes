@@ -37,6 +37,7 @@ import com.datafast.transactions.callbacks.makeInitCallback;
 import com.datafast.transactions.callbacks.waitPrintReport;
 import com.datafast.transactions.callbacks.waitSeatleReport;
 import com.datafast.transactions.common.CommonFunctionalities;
+import com.newpos.libpay.Logger;
 import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.trans.translog.TransLog;
@@ -417,8 +418,12 @@ public class MenuAction {
             case DefinesDATAFAST.ITEM_CONFIG_RED:
                 if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
                     if (!isWifiConnected() && EthernetManager.getInstance().isEtherentEnabled()) {
+                        Logger.information("MenuAction.java -> Ingreso por ethernet");
                         try {
                             datos = UtilNetwork.getWifi(context, true);
+                            for (int i = 0; i < datos.length ; i++) {
+                                Logger.information("Datos "+i+" :"+datos[i]);
+                            }
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.setClass(context, ConfigRed.class);
@@ -430,6 +435,7 @@ public class MenuAction {
                             toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                         }
                     } else if (isWifiConnected()) {
+                        Logger.information("MenuAction.java -> Ingreso por wifi");
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.setClass(context, ConfigRed.class);

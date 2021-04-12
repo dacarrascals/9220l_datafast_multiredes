@@ -338,7 +338,7 @@ public class Init extends AppCompatActivity {
                     if (Actualizacion.echoTest) {
                         Actualizacion.goEchoTest = true;
                     }
-                    Logger.debug("Init.java -> Inicialización Fallida RspHost");
+                    Logger.information("Init.java -> Inicialización Fallida RspHost");
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, "ERROR, INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                     UIUtils.startResult(Init.this,false,"ERROR, INICIALIZACION FALLIDA",true);
                     //finish();
@@ -381,13 +381,13 @@ public class Init extends AppCompatActivity {
                                         resumePA = false;
                                         inyecccionLLaves = false;
                                         saveInyeccionLlaves(Init.this, false);
-                                        Logger.debug("Init.java -> Inyección de llaves Fallida");
+                                        Logger.information("Init.java -> Inyección de llaves Fallida");
                                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                                         UIUtils.startResult(Init.this,false,"INYECCION DE LLAVE FALLIDA",true);
                                         //finish();
                                     }else {
 
-                                        Logger.debug("Init.java -> Inyección de llaves Exitosa");
+                                        Logger.information("Init.java -> Inyección de llaves Exitosa");
                                         eliminarCampoMasterkey();
                                         isInit = PolarisUtil.isInitPolaris(Init.this);
                                         inyecccionLLaves = true;
@@ -397,7 +397,7 @@ public class Init extends AppCompatActivity {
                                             host_confi.selectHostConfi(Init.this);
                                             listIPs = ChequeoIPs.selectIP(Init.this);
                                             if (listIPs == null) {
-                                                Logger.debug("Init.java -> Error al leer la tabla -> listIPs");
+                                                Logger.information("Init.java -> Error al leer la tabla -> listIPs");
                                                 listIPs = new ArrayList<>();
                                                 listIPs.clear();
                                                 isInit = false;
@@ -406,7 +406,7 @@ public class Init extends AppCompatActivity {
                                                 UIUtils.startResult(Init.this,false,"Error al leer tabla, Por favor Inicialice nuevamente",true);
                                                 //finish();
                                             } else if (listIPs.isEmpty()) {
-                                                Logger.debug("Init.java -> Error al leer la tabla -> listIPs isEmpty");
+                                                Logger.information("Init.java -> Error al leer la tabla -> listIPs isEmpty");
                                                 listIPs.clear();
                                                 isInit = false;
                                                 //UIUtils.toast(Init.this, R.drawable.ic_launcher, "Error al leer tabla, Por favor Inicialice nuevamente", Toast.LENGTH_LONG);
@@ -428,7 +428,7 @@ public class Init extends AppCompatActivity {
                                                 Beeper.getInstance().beep();
                                                 resumePA = false;
 
-                                                Logger.debug("Init.java -> Inicialización exitosa");
+                                                Logger.information("Init.java -> Inicialización exitosa");
                                                 //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION EXITOSA", Toast.LENGTH_SHORT);
                                                 UIUtils.startResult(Init.this, true, "INICIALIZACION EXITOSA", true);
                                                 //finish();
@@ -436,7 +436,7 @@ public class Init extends AppCompatActivity {
                                             }
                                         } else {
                                             resumePA = false;
-                                            Logger.debug("Init.java -> Inicialización fallida");
+                                            Logger.information("Init.java -> Inicialización fallida");
                                             //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                                             UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
                                             //finish();
@@ -453,7 +453,7 @@ public class Init extends AppCompatActivity {
                             Actualizacion.goEchoTest = true;
                         }
                         resumePA = false;
-                        Logger.debug("Init.java -> Inicialización fallida processFile -> False");
+                        Logger.information("Init.java -> Inicialización fallida processFile -> False");
                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                         UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
 
@@ -483,7 +483,7 @@ public class Init extends AppCompatActivity {
     }
 
     public boolean processFile(String aFileName) {
-        Logger.debug("Init.java -> Se ingresa al processFile()");
+        Logger.information("Init.java -> Se ingresa al processFile()");
         int READ_BLOCK_SIZE = 65000*2;
         File file = new File(DEFAULT_DOWNLOAD_PATH +File.separator+ gFileName + "T");
         if (!file.exists()) {
@@ -534,7 +534,7 @@ public class Init extends AppCompatActivity {
                     //file.delete();//luego de creada la tabla en la base de datos se eliminan los archivos descargados
 
                 } catch (Exception e) {
-                    Logger.debug("Init.java -> Inicialización fallida, error en ProcessFile");
+                    Logger.information("Init.java -> Inicialización fallida, error en ProcessFile");
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
                     UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
                     //Tools.toast("Inicializacion Fallo");
@@ -645,7 +645,7 @@ public class Init extends AppCompatActivity {
     }
 
     private boolean inyectarLlaves(){
-        Logger.debug("Init.java -> Se ingresa a hacer la inyección de llaves");
+        Logger.information("Init.java -> Se ingresa a hacer la inyección de llaves");
         String workingKey, masterKey;
         tconf.selectTconf(Init.this);
         host_confi.selectHostConfi(Init.this);
@@ -670,14 +670,14 @@ public class Init extends AppCompatActivity {
     }
 
     public void eliminarCampoMasterkey(){
-        Logger.debug("Init.java -> Se ingresa a hacer la eliminación a la DB de la MK");
+        Logger.information("Init.java -> Se ingresa a hacer la eliminación a la DB de la MK");
         dbHelper db = new dbHelper(getApplicationContext(), "init", null, 1);
         db.openDb("init");
         String sql="UPDATE HOST_CONFI SET LLAVE_2 ='' WHERE LLAVE_2 <>''";
         try {
             db.execSql(sql);
         } catch (Exception e) {
-            Logger.debug("Init.java -> Error eliminando de la DB de la MK");
+            Logger.information("Init.java -> Error eliminando de la DB de la MK");
             //Toast.makeText(getApplication(), "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }

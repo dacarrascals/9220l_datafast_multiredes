@@ -277,7 +277,7 @@ public class PP_Request {
         try
         {
 
-            Logger.debug("PP_Request.java -> Se inicia proceso de desempaquetamiento de la trama");
+            Logger.information("PP_Request.java -> Se inicia proceso de desempaquetamiento de la trama");
 
             this.countValid = 0;
 

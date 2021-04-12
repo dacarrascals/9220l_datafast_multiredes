@@ -1338,7 +1338,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
     @Override
     public void showfinishview() {
-        Logger.debug("MasterControl.java -> Finaliza PP");
+        Logger.information("MasterControl.java -> Finaliza PP");
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

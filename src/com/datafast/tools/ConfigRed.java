@@ -21,6 +21,7 @@ import com.android.newpos.pay.R;
 import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
+import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.net.eth.EthernetManager;
 
@@ -267,14 +268,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         String[] datos, mask, gateway, ip;
 
         if (isWifiConnected()) {
+            Logger.information("ConfigRed.java -> Ingreso por wifi");
             datos = UtilNetwork.getWifi(getApplicationContext(), false);
+            for (int i = 0; i < datos.length ; i++) {
+                Logger.information("Datos ConfigRed wifi "+i+" :"+datos[i]);
+            }
             mask = datos[0].split("\\.");
             gateway = datos[3].split("\\.");
             ip = UtilNetwork.getIPAddress(true).split("\\.");
 
         } else {
+            Logger.information("ConfigRed.java -> Ingreso por ethernet");
             datos = UtilNetwork.getWifi(getApplicationContext(), true);
-            ip = datos[0].split("\\.");
+            for (int i = 0; i < datos.length ; i++) {
+                Logger.information("Datos ConfigRed ethernet "+i+" :"+datos[i]);
+            }
+            ip = UtilNetwork.getIPAddress(true).split("\\.");
             mask = datos[1].split("\\.");
             gateway = datos[3].split("\\.");
         }
