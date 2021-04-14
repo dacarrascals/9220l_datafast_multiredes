@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.text.InputFilter;
@@ -416,10 +417,16 @@ public class MenuAction {
                 }
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_RED:
+                ConnectivityManager cm =
+                        (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+                if(isConnected){
                 if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
                     if (!isWifiConnected() && EthernetManager.getInstance().isEtherentEnabled()) {
                         Logger.information("MenuAction.java -> Ingreso por ethernet");
                         try {
+                            Logger.information("MenuAction.java -> Ingreso por ethernet al try");
                             datos = UtilNetwork.getWifi(context, true);
                             for (int i = 0; i < datos.length ; i++) {
                                 Logger.information("Datos "+i+" :"+datos[i]);
@@ -429,6 +436,7 @@ public class MenuAction {
                             intent.setClass(context, ConfigRed.class);
                             context.startActivity(intent);
                         } catch (Exception e) {
+                            Logger.information("MenuAction.java -> Ingreso por ethernet al catch");
                             e.printStackTrace();
                             UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
@@ -442,6 +450,11 @@ public class MenuAction {
                         context.startActivity(intent);
                     }
                 } else {
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                }
+                }else{
                     UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
