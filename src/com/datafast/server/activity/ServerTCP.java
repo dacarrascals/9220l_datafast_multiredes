@@ -238,10 +238,10 @@ public class ServerTCP extends AppCompatActivity {
                         case CP:
                             ret = wifi.comunicacion(aDat, listenerServer);
                             if (ret){
-                                stopServer();
+                                //stopServer();
                                 UIUtils.startResult(ServerTCP.this,true,"DATOS DE RED ACTUALIZADOS",false);
                             }else {
-                                stopServer();
+                                //stopServer();
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                             }
                             break;

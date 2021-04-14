@@ -84,7 +84,7 @@ public class ResultControl extends BaseActivity {
                         //over();
                         removeCard();
                     }
-                }, 5 * second);
+                }, 3 * second);
             }
             over();
         } else {
