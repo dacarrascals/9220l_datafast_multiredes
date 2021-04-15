@@ -170,7 +170,7 @@ public class Wifi {
             try {
                 if (staticConnection){
                     if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
-                        IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+                        IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway(), "8.8.8.8");
                     }else {
                         PosWifiManager wifiManager = PosWifiManager.getInstance();
                         WifiSsidInfo wifiSsidInfo = new WifiSsidInfo();
@@ -192,7 +192,7 @@ public class Wifi {
         if (EthernetManager.getInstance().isEtherentEnabled()) {
             try {
                 if (staticConnection){
-                    IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+                    IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), "8.8.8.8", cp_request.getMask(), cp_request.getGateway());
                 }else {
                     IpEthernetConf.etherDhcp();
                 }

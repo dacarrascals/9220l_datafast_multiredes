@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 
 public class IpEthernetConf {
 
-    public static void setConnectionStaticIP(String ip, String mask, String gateway) throws Exception {
+    public static void setConnectionStaticIP(String ip, String dns, String mask, String gateway) throws Exception {
 
         EthernetInfo info = new EthernetInfo();
 
@@ -22,7 +22,7 @@ public class IpEthernetConf {
 
         info.setConnectionType(EthernetInfo.NetType.STATIC_IP);
         // Instancio la IP
-        EthernetInfo.StaticIP infoIP = new EthernetInfo.StaticIP(ip, gateway, gateway, prefix);
+        EthernetInfo.StaticIP infoIP = new EthernetInfo.StaticIP(ip, dns, gateway, prefix);
         //La seteo en INFO
         info.setStaticIpConfigs(infoIP);
         //La seteo en manager

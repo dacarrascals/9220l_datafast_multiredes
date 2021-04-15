@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.pos.device.net.eth.EthernetInfo;
 import com.pos.device.net.eth.EthernetManager;
+import com.pos.device.net.wifi.PosWifiManager;
+import com.pos.device.net.wifi.WifiSsidInfo;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -164,6 +166,31 @@ public class UtilNetwork {
 
         }
         //}
+        return datos;
+
+    }
+
+    public static String[] getNetInformation(Context context, boolean isEth){
+
+        String[] datos = new String[5];
+
+        if(isEth){
+            EthernetManager ether = EthernetManager.getInstance();
+            EthernetInfo etherinfo = ether.getEtherentConfigs();
+            EthernetInfo.StaticIP staticIP = etherinfo.getStaticIpConfigs();
+            datos[0] = staticIP.ipAddr;
+            datos[1] = staticIP.dnsAddr;
+            datos[2] = staticIP.gatewayAddr;
+            datos[3] = getMask(Integer.parseInt(etherinfo.getStaticIpConfigs().prefixLen));
+        }else{
+            PosWifiManager posWifiManager = PosWifiManager.getInstance();
+            WifiSsidInfo wifiSsidInfo = posWifiManager.getCurrentSsidConfigs();
+            WifiSsidInfo.StaticIP staticIP = wifiSsidInfo.getStaticIpConfigs();
+            datos[0] = staticIP.ipAddr;
+            datos[1] = staticIP.dnsAddr;
+            datos[2] = staticIP.gatewayAddr;
+            datos[3] = getMask(Integer.parseInt(staticIP.prefixLen));
+        }
         return datos;
 
     }
