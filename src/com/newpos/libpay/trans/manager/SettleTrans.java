@@ -68,7 +68,7 @@ public class SettleTrans extends Trans implements TransPresenter{
         retVal = getSettleSUM48();
         if(retVal==0){
             iso8583.setField(48 , Field48);
-            retVal = OnLineTrans() ;
+            retVal = OnLineTrans(transUI) ;
             if(retVal!=0){
                 transUI.showError(timeout , retVal);
             }else {
@@ -101,7 +101,7 @@ public class SettleTrans extends Trans implements TransPresenter{
             Logger.debug("SettleTrans>>shellUpsend>>结算进行脚本上送");
             setTraceNoInc(true);
             ScriptTrans script = new ScriptTrans(context, "SENDSCRIPT");
-            retVal = script.sendScriptResult(data);
+            retVal = script.sendScriptResult(data, transUI);
             if(retVal == 0) {
                 TransLog.clearScriptResult();
             }
@@ -171,7 +171,7 @@ public class SettleTrans extends Trans implements TransPresenter{
                             Field60 = null ;
                             setFixedDatas();
                             setFileds(data);
-                            retVal = OnLineTrans();
+                            retVal = OnLineTrans(transUI);
                             if (retVal == 0) {
                                 sumCount++;
                                 String rsp = iso8583.getfield(39);
@@ -243,7 +243,7 @@ public class SettleTrans extends Trans implements TransPresenter{
         Logger.debug("SettleTrans>>settleOver>>sumCount"+sumCount);
         iso8583.setField(48 , ISOUtil.padleft(String.valueOf(sumCount) , 4 , '0'));
         iso8583.setField(60 , "00"+cfg.getBatchNo()+"207");
-        retVal = OnLineTrans();
+        retVal = OnLineTrans(transUI);
         if(retVal!=0){
             transUI.showError(timeout , retVal);
         }else {

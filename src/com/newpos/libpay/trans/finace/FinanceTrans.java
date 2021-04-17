@@ -1560,7 +1560,7 @@ public class FinanceTrans extends Trans {
             if (retVal == 0) {
                 ProcCode = "960000";
                 setFieldsSettle();
-                retVal = OnLineTrans();
+                retVal = OnLineTrans(transUI);
                 if (retVal == 0)
                     RspCode = iso8583.getfield(39);
             }
@@ -1643,7 +1643,7 @@ public class FinanceTrans extends Trans {
         TransLogData data = TransLog.getScriptResult();
         if (data != null) {
             ScriptTrans script = new ScriptTrans(context, "SENDSCRIPT");
-            int ret = script.sendScriptResult(data);
+            int ret = script.sendScriptResult(data, transUI);
             if (ret == 0) {
                 TransLog.clearScriptResult();
             }
@@ -1731,7 +1731,7 @@ public class FinanceTrans extends Trans {
             if (!data.isVoided() && !data.isTarjetaCierre()) {
                 setFieldsBatchNo(data);
 
-                retVal = OnLineTrans();
+                retVal = OnLineTrans(transUI);
 
                 if (retVal == 0) {
                     RspCode = iso8583.getfield(39);
@@ -2692,7 +2692,7 @@ public class FinanceTrans extends Trans {
 
     private int verificarCodDiners(){
 
-        Logger.information("FinanceTrans.java -> Se verifica codFiners()");
+        Logger.information("FinanceTrans.java -> Se verifica codDiners()");
 
         //Codigo Diners
         if ("88".equals(RspCode)){
@@ -2709,7 +2709,7 @@ public class FinanceTrans extends Trans {
 
                 transUI.handling(timeout, Tcode.Status.send_data_2_server);
                 isCodDinners = true;
-                retVal = OnLineTrans();
+                retVal = OnLineTrans(transUI);
                 transUI.handling(timeout, Tcode.Status.send_over_2_recv);
                 if (retVal == 0) {
 

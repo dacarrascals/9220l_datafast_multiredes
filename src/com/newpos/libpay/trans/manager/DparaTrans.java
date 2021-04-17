@@ -125,7 +125,7 @@ public class DparaTrans extends Trans implements TransPresenter{
 					("1" + ISOUtil.padleft(reciveCount + "", 2, '0'))
 							.getBytes());
 			setFields();
-			retVal = OnLineTrans();
+			retVal = OnLineTrans(transUI);
 			if (retVal != 0) {
 				return retVal;
 			}
@@ -199,7 +199,7 @@ public class DparaTrans extends Trans implements TransPresenter{
 					("1" + ISOUtil.padleft(reciveCount + "",2, '0'))
 							.getBytes());// 313130
 			setFields();
-			retVal = OnLineTrans();
+			retVal = OnLineTrans(transUI);
 			if (retVal != 0) {
 				return retVal;
 			}
@@ -274,7 +274,7 @@ public class DparaTrans extends Trans implements TransPresenter{
 			System.arraycopy(pack_result_index, 0, result, pack_result_rid.length, packLen);
 			Field62 = ISOUtil.byte2hex(result);
 			setFields();
-			retVal = OnLineTrans();
+			retVal = OnLineTrans(transUI);
 			if (retVal != 0) {
 				return retVal;
 			}
@@ -426,7 +426,7 @@ public class DparaTrans extends Trans implements TransPresenter{
 			PAYUtils.pack_tlv_data(pack_result_aid, 0x9F06, item.length, item, 0);
 			Field62 = ISOUtil.byte2hex(pack_result_aid);
 			setFields();
-			retVal = OnLineTrans();
+			retVal = OnLineTrans(transUI);
 			if (retVal != 0) {
 				return retVal;
 			}
@@ -606,7 +606,7 @@ public class DparaTrans extends Trans implements TransPresenter{
 		setFixedDatas();
 		Field62 = null ;
 		setFields();
-		retVal = OnLineTrans();
+		retVal = OnLineTrans(transUI);
 		if (retVal != 0) {
 			return retVal;
 		}
@@ -636,7 +636,7 @@ public class DparaTrans extends Trans implements TransPresenter{
 		setFixedDatas();
 		Field62 = null ;
 		setFields();
-		retVal = OnLineTrans();
+		retVal = OnLineTrans(transUI);
 		if (retVal != 0) {
 			return retVal;
 		}

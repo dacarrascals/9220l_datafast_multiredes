@@ -2,6 +2,7 @@ package com.newpos.libpay.trans.manager;
 
 import android.content.Context;
 
+import com.newpos.libpay.presenter.TransUI;
 import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.translog.TransLogData;
 import com.newpos.libpay.utils.ISOUtil;
@@ -14,7 +15,7 @@ public class ScriptTrans extends Trans {
 
 	public ScriptTrans(Context ctx, String transEname) {
 		super(ctx, transEname);
-		iso8583.setHasMac(true);
+		iso8583.setHasMac(false);
 	}
 
 	protected void setFields(TransLogData data) {
@@ -65,13 +66,13 @@ public class ScriptTrans extends Trans {
 			iso8583.setField(60, Field60);
 		}
 		// 61.1 原交易批次号 61.2 原pos流水号 61.3 原交易日期
-		Field61 = data.getTraceNo() + data.getBatchNo() + data.getLocalDate();
-		iso8583.setField(61, Field61);
+		/*Field61 = data.getTraceNo() + data.getBatchNo() + data.getLocalDate();
+		iso8583.setField(61, Field61);*/
 	}
 
-	public int sendScriptResult(TransLogData data) {
+	public int sendScriptResult(TransLogData data, TransUI transUI) {
 		setFields(data);
-		int ret = OnLineTrans();
+		int ret = OnLineTrans(transUI);
 		return ret;
 	}
 }

@@ -112,7 +112,7 @@ public class RevesalTrans extends Trans {
 
     public int sendRevesal(TransLogData data) {
         setFields(data);
-        retVal = OnLineTrans();
+        retVal = OnLineTrans(transUI);
         if (retVal == 0) {
             RspCode = iso8583.getfield(39);
 

@@ -151,6 +151,7 @@ public class ISO8583 {
 	 * @return 返回打包完成后的结果
 	 */
 	public byte[] packetISO8583() {
+		Logger.information("ISO8583.java -> Se ingresa a hacer el packetISO8583()");
 		byte[] temp = new byte[1024]; // 临时存储数组
 		// bitmap
 		byte[] bitmap = new byte[16];
@@ -363,6 +364,7 @@ public class ISO8583 {
 	 */
 	public int unPacketISO8583(byte[] data) {
 		Logger.debug("==ISO8583->unPacketISO8583");
+		Logger.information("ISO8583.java -> Se ingresa a hacer el UnPacketISO8583()");
 		byte[] MacBlock = null;
 		byte[] bitmap = new byte[16];
 		int offset = 0;
