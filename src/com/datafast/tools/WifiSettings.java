@@ -1,10 +1,14 @@
 package com.datafast.tools;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
@@ -22,6 +26,7 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,7 +35,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.newpos.pay.R;
+import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.github.angads25.toggle.LabeledSwitch;
+import com.pos.device.net.eth.EthernetManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,7 +61,22 @@ public class WifiSettings extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_wifi);
+        if (EthernetManager.getInstance().isEtherentEnabled()) {
+            alertDialog();
+        }else{
+            showWifiSettings();
+        }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        handler.removeCallbacks(r);
+        timer.cancel();
+        finish();
+    }
+
+    private void showWifiSettings(){
         switchWifi = (LabeledSwitch) findViewById(R.id.swt);
         webView = (WebView) findViewById(R.id.webViewProgress);
         listaWifi = (ListView) findViewById(R.id.listWifi);
@@ -82,12 +104,34 @@ public class WifiSettings extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        handler.removeCallbacks(r);
-        timer.cancel();
-        finish();
+    private void alertDialog(){
+
+        final Dialog dialog= new Dialog(this);
+        dialog.setContentView(R.layout.alertdialog_red);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+
+        Button btCancel= dialog.findViewById(R.id.setting_pass_cancel);
+        Button btConfirm= dialog.findViewById(R.id.setting_pass_confirm);
+
+        btCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        btConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showWifiSettings();
+                EthernetManager.getInstance().setEtherentEnabled(false);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     private void inicializarTimer(){
