@@ -152,6 +152,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                                 EthernetManager.getInstance().setEtherentEnabled(false);
                                 switchConnection.setChecked(false);
                                 wifiManager.setWifiEnabled(true);
+                                switchConnection.setText(DESACTIVADO);
                             }
                         }
                     }, 1000);
