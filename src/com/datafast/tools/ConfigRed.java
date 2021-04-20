@@ -161,6 +161,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         operatingEditTextIP();
         operatingEditTextMA();
         operatingEditTextGA();
+        operatingEditTextDNS();
 
         etIp4.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -551,7 +552,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         String ret = "";
         if (etDns1.getText().toString().equals("") || etDns2.getText().toString().equals("") ||
                 etDns3.getText().toString().equals("") || etDns4.getText().toString().equals("")) {
-            return "";
+            return "8.8.8.8";
         } else {
             ret = etDns1.getText().toString() + "." + etDns2.getText().toString() + "." + etDns3.getText().toString() + "." + etDns4.getText().toString();
             return ret;
@@ -724,14 +725,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etIp2.getText().toString().length() == 0){
+                    etIp1.setFocusable(true);
+                    etIp1.requestFocus();
+                    etIp1.setSelection(etIp1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etIp1.getText().toString())
                         && etIp1.length() > 1 && borrado) {
                     borrado = false;
                     etIp1.setFocusable(true);
                     etIp1.requestFocus();
                     etIp1.setSelection(etIp1.getText().length());
-                }
+                }*/
 
             }
 
@@ -783,14 +790,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etIp3.getText().toString().length() == 0){
+                    etIp2.setFocusable(true);
+                    etIp2.requestFocus();
+                    etIp2.setSelection(etIp2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etIp2.getText().toString())
                         && etIp2.length() > 1 && borrado) {
                     borrado = false;
                     etIp2.setFocusable(true);
                     etIp2.requestFocus();
                     etIp2.setSelection(etIp2.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -829,14 +842,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     editor.apply();
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etIp4.getText().toString().length() == 0){
+                    etIp3.setFocusable(true);
+                    etIp3.requestFocus();
+                    etIp3.setSelection(etIp3.getText().length());
+                }
+
+               /* if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etIp3.getText().toString())
                         && etIp3.length() > 1 && borrado) {
                     borrado = false;
                     etIp3.setFocusable(true);
                     etIp3.requestFocus();
                     etIp3.setSelection(etIp3.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -936,14 +955,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etMask2.getText().toString().length() == 0){
+                    etMask1.setFocusable(true);
+                    etMask1.requestFocus();
+                    etMask1.setSelection(etMask1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etMask1.getText().toString())
                         && etMask1.length() > 1 && borradoM) {
                     borradoM = false;
                     etMask1.setFocusable(true);
                     etMask1.requestFocus();
                     etMask1.setSelection(etMask1.getText().length());
-                }
+                }*/
 
             }
 
@@ -995,14 +1020,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etMask3.getText().toString().length() == 0){
+                    etMask2.setFocusable(true);
+                    etMask2.requestFocus();
+                    etMask2.setSelection(etMask2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etMask2.getText().toString())
                         && etMask2.length() > 1 && borradoM) {
                     borradoM = false;
                     etMask2.setFocusable(true);
                     etMask2.requestFocus();
                     etMask2.setSelection(etMask2.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -1041,14 +1072,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     editor.apply();
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etMask4.getText().toString().length() == 0){
+                    etMask3.setFocusable(true);
+                    etMask3.requestFocus();
+                    etMask3.setSelection(etMask3.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etMask3.getText().toString())
                         && etMask3.length() > 1 && borradoM) {
                     borradoM = false;
                     etMask3.setFocusable(true);
                     etMask3.requestFocus();
                     etMask3.setSelection(etMask3.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -1148,14 +1185,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etGateway2.getText().toString().length() == 0){
+                    etGateway1.setFocusable(true);
+                    etGateway1.requestFocus();
+                    etGateway1.setSelection(etGateway1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etGateway1.getText().toString())
                         && etGateway1.length() > 1 && borradoG) {
                     borradoG = false;
                     etGateway1.setFocusable(true);
                     etGateway1.requestFocus();
                     etGateway1.setSelection(etGateway1.getText().length());
-                }
+                }*/
 
             }
 
@@ -1207,14 +1250,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etGateway3.getText().toString().length() == 0){
+                    etGateway2.setFocusable(true);
+                    etGateway2.requestFocus();
+                    etGateway2.setSelection(etGateway2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etGateway2.getText().toString())
                         && etGateway2.length() > 1 && borradoG) {
                     borradoG = false;
                     etGateway2.setFocusable(true);
                     etGateway2.requestFocus();
                     etGateway2.setSelection(etGateway2.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -1253,14 +1302,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     editor.apply();
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etGateway4.getText().toString().length() == 0){
+                    etGateway3.setFocusable(true);
+                    etGateway3.requestFocus();
+                    etGateway3.setSelection(etGateway3.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etGateway3.getText().toString())
                         && etGateway3.length() > 1 && borradoG) {
                     borradoG = false;
                     etGateway3.setFocusable(true);
                     etGateway3.requestFocus();
                     etGateway3.setSelection(etGateway3.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -1359,14 +1414,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etDns2.getText().toString().length() == 0){
+                    etDns1.setFocusable(true);
+                    etDns1.requestFocus();
+                    etDns1.setSelection(etDns1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etDns1.getText().toString())
                         && etDns1.length() > 1 && borradoD) {
                     borradoD = false;
                     etDns1.setFocusable(true);
                     etDns1.requestFocus();
                     etDns1.setSelection(etDns1.getText().length());
-                }
+                }*/
 
             }
 
@@ -1418,14 +1479,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etDns3.getText().toString().length() == 0){
+                    etDns2.setFocusable(true);
+                    etDns2.requestFocus();
+                    etDns2.setSelection(etDns2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etDns2.getText().toString())
                         && etDns2.length() > 1 && borradoD) {
                     borradoD = false;
                     etDns2.setFocusable(true);
                     etDns2.requestFocus();
                     etDns2.setSelection(etDns2.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -1464,14 +1531,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     editor.apply();
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etDns4.getText().toString().length() == 0){
+                    etDns3.setFocusable(true);
+                    etDns3.requestFocus();
+                    etDns3.setSelection(etDns3.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etDns3.getText().toString())
                         && etDns3.length() > 1 && borradoD) {
                     borradoD = false;
                     etDns3.setFocusable(true);
                     etDns3.requestFocus();
                     etDns3.setSelection(etDns3.getText().length());
-                }
+                }*/
             }
 
             @Override

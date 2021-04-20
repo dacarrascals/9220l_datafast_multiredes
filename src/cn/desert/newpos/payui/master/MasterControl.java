@@ -744,7 +744,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 2000);
+                    }, 1000);
 
                     alreadySend = true;
 
@@ -1344,7 +1344,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             public void run() {
                 checkCardPresent();
             }
-        }, 2000);
+        }, 1000);
     }
 
     private void checkCardPresent() {

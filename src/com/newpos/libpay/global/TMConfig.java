@@ -937,7 +937,7 @@ public class TMConfig implements Serializable {
                             case 17:
                                 String SN = DevConfig.getSN();
                                 SN = SN.substring(4, SN.length());
-                                setTermID("NG" + SN);
+                                setTermID("NP" + SN);
                                 //setTermID(prop);
                                 break;
                             case 18:
