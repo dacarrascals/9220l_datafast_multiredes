@@ -503,7 +503,7 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:inputType="number"
                 android:maxLength="3"
                 android:textColor="@color/black"
