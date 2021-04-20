@@ -3,9 +3,14 @@ package com.datafast.tools;
 import android.content.Context;
 import android.content.SearchRecentSuggestionsProvider;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,6 +27,7 @@ import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.android.newpos.pay.StartAppDATAFAST;
+import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
 import com.newpos.libpay.Logger;
@@ -41,6 +48,9 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     private final static String DHCP = "DHCP";
     private final static String STATIC = "ESTATICO";
 
+    private final static String ACTIVADO = "ACTIVADO";
+    private final static String DESACTIVADO = "DESACTIVADO";
+    private WifiManager wifiManager;
     EditText etPort;
 
     TextView tvMask1, tvMask2, tvMask3, tvMask4, tvMask;
@@ -56,7 +66,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
     InputMethodManager inputMethodManager;
 
-    Switch switchConnectionType;
+    Switch switchConnectionType,switchConnection;
     private CounterTimer counterTimer;
 
     @Override
@@ -67,8 +77,9 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
         tvMask = findViewById(R.id.tv_Mask);
         inputMethodManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        switchConnection=findViewById(R.id.sw_conf_red);
         switchConnectionType = findViewById(R.id.sw_conf_ip);
-
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         mapObjects();
 
         tvIp1.setOnClickListener(ConfigRed.this);
@@ -110,6 +121,47 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         etDns2.setSelection(etDns2.getText().length());
         etDns3.setSelection(etDns3.getText().length());
         etDns4.setSelection(etDns4.getText().length());
+
+        if (EthernetManager.getInstance().isEtherentEnabled()){
+            switchConnection.setText(ACTIVADO);
+            switchConnection.setChecked(true);
+        }
+
+
+        switchConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (switchConnection.isChecked()) {
+                    if ( wifiManager.isWifiEnabled() ){
+                        wifiManager.setWifiEnabled(false);
+                    }
+                    EthernetManager.getInstance().setEtherentEnabled(true);
+                    switchConnection.setText(ACTIVADO);
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!isConected()){
+                                UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET_LAN, Toast.LENGTH_SHORT);
+                                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                                toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                                EthernetManager.getInstance().setEtherentEnabled(false);
+                                switchConnection.setChecked(false);
+                                wifiManager.setWifiEnabled(true);
+                            }
+                        }
+                    }, 1000);
+
+                } else {
+                    if ( !wifiManager.isWifiEnabled() ){
+                        wifiManager.setWifiEnabled(true);
+                    }
+                    EthernetManager.getInstance().setEtherentEnabled(false);
+                    switchConnection.setText(DESACTIVADO);
+                    containerDns.setVisibility(View.GONE);
+                }
+            }
+        });
 
         String stateIp = null;
         if (isWifiConnected()) {
@@ -191,6 +243,15 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         }
 
     }
+    public boolean isConected(){
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
 
     @Override
     protected void back() {
