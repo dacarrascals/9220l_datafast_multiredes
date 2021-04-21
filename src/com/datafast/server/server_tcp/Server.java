@@ -171,7 +171,7 @@ public class Server extends AppCompatActivity {
                 Logger.information("Server.java -> Se identifica el CMD: " + cmd);
 
                 if(lastCmd.equals("CP") && cmd.equals("PC")){
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 }
 
                 countDown = new CountDownLatch(1);

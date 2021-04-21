@@ -231,12 +231,12 @@ public class UIUtils {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(keyCode == KeyEvent.KEYCODE_ENTER){
                     dialog.dismiss();
-                    if (titulo.contains("CONEXION")) {
+                    /*if (titulo.contains("CONEXION")) {
                         Intent intent = new Intent(context, ServerTCP.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
-                    }
+                    }*/
                 }
                 return false;
             }
@@ -246,12 +246,12 @@ public class UIUtils {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (titulo.contains("CONEXION")) {
+                /*if (titulo.contains("CONEXION")) {
                     Intent intent = new Intent(context, ServerTCP.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
-                }
+                }*/
             }
         });
         dialog.show();

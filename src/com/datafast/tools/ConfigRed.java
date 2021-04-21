@@ -1,7 +1,6 @@
 package com.datafast.tools;
 
 import android.content.Context;
-import android.content.SearchRecentSuggestionsProvider;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -20,7 +19,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -32,7 +30,7 @@ import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
 import com.newpos.libpay.Logger;
-import com.newpos.libpay.utils.PAYUtils;
+import com.newpos.libpay.utils.KeyBoardUtil;
 import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.net.wifi.PosWifiManager;
 import com.pos.device.net.wifi.WifiSsidInfo;
@@ -75,6 +73,8 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config_red);
         setNaviTitle("CONFIG RED POS");
+
+        KeyBoardUtil.assistActivity(this);
 
         tvMask = findViewById(R.id.tv_Mask);
         inputMethodManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
