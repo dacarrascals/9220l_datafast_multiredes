@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -186,10 +187,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                 counterTimer();
                 if (switchConnectionType.isChecked()) {
                     switchConnectionType.setText(STATIC);
+                    etPort.clearFocus();
+                    etPort.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+                    inputMethodManager.hideSoftInputFromWindow(etPort.getWindowToken(), 0);
+                    etPort.requestFocus();
+                    inputMethodManager.showSoftInput(etPort,0);
                     containerDns.setVisibility(View.VISIBLE);
                     disableComponents(true, R.color.transparent);
                 } else {
                     switchConnectionType.setText(DHCP);
+                    etPort.clearFocus();
+                    etPort.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                    inputMethodManager.hideSoftInputFromWindow(etPort.getWindowToken(),0);
+                    etPort.requestFocus();
+                    inputMethodManager.showSoftInput(etPort,0);
                     containerDns.setVisibility(View.GONE);
                     disableComponents(false, R.color.des_color);
                 }
@@ -788,6 +799,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        etPort.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp1);
+                    action = true;
+                }
+                return action;
+            }
+        });
     }
 
     boolean borrado = false;
@@ -837,6 +860,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     etIp2.setFocusable(true);
                     etIp2.requestFocus();
                 }
+            }
+        });
+
+        etIp1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp2);
+                    action = true;
+                }
+                return action;
             }
         });
 
@@ -900,6 +935,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                         etIp2.setText("");
                     }
                 }
+            }
+        });
+
+        etIp2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp3);
+                    action = true;
+                }
+                return action;
             }
         });
 
@@ -967,6 +1014,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etIp3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp4);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etIp4.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -1024,7 +1083,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean action=false;
                 if(actionId == EditorInfo.IME_ACTION_NEXT){
-                    onClick(tvMask4);
+                    onClick(tvMask1);
                     action = true;
                 }
                 return action;
@@ -1080,6 +1139,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     etMask2.setFocusable(true);
                     etMask2.requestFocus();
                 }
+            }
+        });
+
+        etMask1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvMask2);
+                    action = true;
+                }
+                return action;
             }
         });
 
@@ -1143,6 +1214,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                         etMask2.setText("");
                     }
                 }
+            }
+        });
+
+        etMask2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvMask3);
+                    action = true;
+                }
+                return action;
             }
         });
 
@@ -1210,6 +1293,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etMask3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvMask4);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etMask4.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -1267,7 +1362,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean action=false;
                 if(actionId == EditorInfo.IME_ACTION_NEXT){
-                    onClick(tvGateway4);
+                    onClick(tvGateway1);
                     action = true;
                 }
                 return action;
@@ -1323,6 +1418,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     etGateway2.setFocusable(true);
                     etGateway2.requestFocus();
                 }
+            }
+        });
+
+        etGateway1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvGateway2);
+                    action = true;
+                }
+                return action;
             }
         });
 
@@ -1386,6 +1493,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                         etGateway2.setText("");
                     }
                 }
+            }
+        });
+
+        etGateway2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvGateway3);
+                    action = true;
+                }
+                return action;
             }
         });
 
@@ -1453,6 +1572,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etGateway3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvGateway4);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etGateway4.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -1510,7 +1641,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean action=false;
                 if(actionId == EditorInfo.IME_ACTION_NEXT){
-                    onClick(tvDns4);
+                    onClick(tvDns1);
                     action = true;
                 }
                 return action;
@@ -1565,6 +1696,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     etDns2.setFocusable(true);
                     etDns2.requestFocus();
                 }
+            }
+        });
+
+        etDns1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvDns2);
+                    action = true;
+                }
+                return action;
             }
         });
 
@@ -1631,6 +1774,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etDns2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvDns3);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etDns3.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -1692,6 +1847,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                         etDns3.setText("");
                     }
                 }
+            }
+        });
+
+        etDns3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvDns4);
+                    action = true;
+                }
+                return action;
             }
         });
 
