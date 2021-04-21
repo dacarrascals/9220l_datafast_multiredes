@@ -62,7 +62,11 @@ public class WifiSettings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_wifi);
         if (EthernetManager.getInstance().isEtherentEnabled()) {
-            alertDialog();
+            if (isConected()){
+                alertDialog();
+            }else {
+                showWifiSettings();
+            }
         }else{
             showWifiSettings();
         }
@@ -74,6 +78,14 @@ public class WifiSettings extends AppCompatActivity {
         handler.removeCallbacks(r);
         timer.cancel();
         finish();
+    }
+    public boolean isConected(){
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
     }
 
     private void showWifiSettings(){

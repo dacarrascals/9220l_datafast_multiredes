@@ -1,5 +1,6 @@
 package com.datafast.tools;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -141,22 +142,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                     EthernetManager.getInstance().setEtherentEnabled(true);
                     switchConnection.setText(ACTIVADO);
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!isConected()){
-                                UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET_LAN, Toast.LENGTH_SHORT);
-                                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-                                toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
-                                EthernetManager.getInstance().setEtherentEnabled(false);
-                                switchConnection.setChecked(false);
-                                wifiManager.setWifiEnabled(true);
-                                switchConnection.setText(DESACTIVADO);
-                            }
-                        }
-                    }, 1000);
-
+                    checkConnection();
                 } else {
                     if ( !wifiManager.isWifiEnabled() ){
                         wifiManager.setWifiEnabled(true);
@@ -164,6 +150,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     EthernetManager.getInstance().setEtherentEnabled(false);
                     switchConnection.setText(DESACTIVADO);
                     containerDns.setVisibility(View.GONE);
+                    checkConnection();
                 }
             }
         });
@@ -245,6 +232,46 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         });
 
         counterTimer();
+    }
+    public void checkConnection(){
+        final ProgressDialog progressDialog = new ProgressDialog(ConfigRed.this);
+            if(switchConnection.getText().equals("ACTIVADO")){
+                progressDialog.setTitle("Verificando conexion"); // Setting Title
+                progressDialog.setMessage("Conectando a  red LAN.."); // Setting Message
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isConected()){
+                            EthernetManager.getInstance().setEtherentEnabled(false);
+                            switchConnection.setChecked(false);
+                            wifiManager.setWifiEnabled(true);
+                            switchConnection.setText(DESACTIVADO);
+                        }
+                    }
+                }, 5000);
+            }else {
+                progressDialog.setTitle("Verificando conexion"); // Setting Title
+                progressDialog.setMessage("Conectando a una red WIFI.."); // Setting Message
+            }
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
+            progressDialog.show(); // Display Progress Dialog
+            progressDialog.setCancelable(false);
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(5000);
+                        if(!isConected()){
+                            finish();
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    progressDialog.dismiss();
+                }
+            }).start();
+
     }
 
     public void counterTimer(){
