@@ -62,7 +62,7 @@ public class WifiSettings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_wifi);
         if (EthernetManager.getInstance().isEtherentEnabled()) {
-            if (isConected()){
+            if (isConected() && isTypeConected().equalsIgnoreCase("ETHERNET")){
                 alertDialog();
             }else {
                 showWifiSettings();
@@ -79,6 +79,7 @@ public class WifiSettings extends AppCompatActivity {
         timer.cancel();
         finish();
     }
+
     public boolean isConected(){
         ConnectivityManager cm =
                 (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -88,7 +89,16 @@ public class WifiSettings extends AppCompatActivity {
         return isConnected;
     }
 
+    public String isTypeConected(){
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        String isTypeConected=activeNetwork.getTypeName();
+        return isTypeConected;
+    }
+
     private void showWifiSettings(){
+        EthernetManager.getInstance().setEtherentEnabled(false);
         switchWifi = (LabeledSwitch) findViewById(R.id.swt);
         webView = (WebView) findViewById(R.id.webViewProgress);
         listaWifi = (ListView) findViewById(R.id.listWifi);
