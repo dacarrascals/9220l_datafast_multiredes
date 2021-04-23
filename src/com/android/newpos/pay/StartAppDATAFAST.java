@@ -88,7 +88,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
             inyecccionLLaves = preferences.getBoolean("stateKeys", false);
 
             //TMConfig.getInstance().activeDebugMode(true);
-            /*TMConfig.getInstance().setDebug(true);*/
+            TMConfig.getInstance().setDebug(true);
 
             //kioske mode
             kiosk();

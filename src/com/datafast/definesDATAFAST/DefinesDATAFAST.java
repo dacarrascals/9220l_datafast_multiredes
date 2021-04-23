@@ -78,8 +78,8 @@ public final class DefinesDATAFAST {
     public static final String ITEM_APPMANAGER = "APPMANAGER";
     public static final String ITEM_CONFIG_RED = "CONFIGURACION DE RED";
     public static final String ITEM_CONFIG_COMERCIO = "DATOS TRANSACCIONALES";
-    public static final String ITEM_NETWORK_DISCONNET = "EL POS NO ESTÁ CONECTADO A NINGUNA RED";
-    public static final String ITEM_NETWORK_DISCONNET_LAN = "EL POS NO ESTÁ CONECTADO A LA RED LAN";
+    public static final String ITEM_NETWORK_DISCONNET = "EL PINPAD NO ESTÁ CONECTADO A NINGUNA RED";
+    public static final String ITEM_NETWORK_DISCONNET_LAN = "EL PINPAD NO ESTÁ CONECTADO A LA RED LAN";
     public static final String ITEM_AGENTE_POLARIS = "AGENTE POLARIS";
 
 

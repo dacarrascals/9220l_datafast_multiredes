@@ -2,6 +2,7 @@ package com.datafast.server.server_tcp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.callback.waitResponse;
@@ -10,7 +11,6 @@ import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.ISOUtil;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,7 +29,9 @@ public class Server extends AppCompatActivity {
     ServerSocket serverSocket;
     public static int socketServerPORT;
     CountDownLatch countDown;
+    CountDownTimer cTimer = null;
     DataInputStream dataInputStream;
+    boolean validacion = false;
 
     public static String cmd = "";
     public static byte[] dat;
@@ -63,6 +65,22 @@ public class Server extends AppCompatActivity {
         }
     }
 
+    void startTimer() {
+        cTimer = new CountDownTimer(3000, 1000) {
+            public void onTick(long millisUntilFinished) {
+            }
+            public void onFinish() {
+                validacion = true;
+            }
+        };
+        cTimer.start();
+    }
+
+    void cancelTimer() {
+        if(cTimer!=null)
+            cTimer.cancel();
+    }
+
     private int getListeningPort(){
         SharedPreferences preferences = activity.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         return Integer.parseInt(preferences.getString("port", "9999"));
@@ -83,10 +101,11 @@ public class Server extends AppCompatActivity {
 
                 while(true) {
 
-                    Logger.information("Server.java -> Llega una nueva petición");
+                    Logger.information("Server.java -> Se ingrea a escuchar peticiones");
 
                     Socket socket = serverSocket.accept();
                     socket.setReuseAddress(true);
+                    validacion = false;
 
                     // block the call until connection is created and return Socket object
 
@@ -97,9 +116,18 @@ public class Server extends AppCompatActivity {
 
                     text = readSocket(dataInputStream);
 
-                    SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(socket, text);
-                    socketServerReplyThread.run();
-
+                    if(text != null) {
+                        String total = ISOUtil.byte2hex(text);
+                        String newText = total.substring(2);
+                        String verificar = newText.replace("0", "");
+                        if (verificar.length() > 10) {
+                            Logger.information("Server.java -> LLega nueva petición");
+                            SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(socket, text);
+                            socketServerReplyThread.run();
+                        }
+                    }else{
+                        socket.close();
+                    }
                 }
             } catch (IOException  e) {
                 // TODO Auto-generated catch block
@@ -112,8 +140,18 @@ public class Server extends AppCompatActivity {
             byte[] lenRx = new byte[2];
             byte[] data = null;
 
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    startTimer();
+                }
+            });
+
             do {
                 contentBuf = input.available();
+
+                if (validacion){
+                    break;
+                }
 
                 if (contentBuf <= 0)
                     continue;
@@ -123,6 +161,8 @@ public class Server extends AppCompatActivity {
                 break;
 
             } while (true);
+
+            cancelTimer();
 
             len = bcdToInt(lenRx);
 
@@ -197,8 +237,13 @@ public class Server extends AppCompatActivity {
                 printStream.close();
                 ppResponse = null;
 
-            } catch (IOException | InterruptedException e) {
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
+                try {
+                    hostThreadSocket.close();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 e.printStackTrace();
             }
         }
