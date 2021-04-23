@@ -417,7 +417,11 @@ public class MenuAction {
                 }
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_RED:
-                ConnectivityManager cm =
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setClass(context, ConfigRed.class);
+                context.startActivity(intent);
+               /* ConnectivityManager cm =
                         (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
@@ -458,7 +462,7 @@ public class MenuAction {
                     UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
-                }
+                }*/
                 break;
 
             case DefinesDATAFAST.ITEM_CONFIG_COMERCIO:

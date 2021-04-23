@@ -1,5 +1,6 @@
 package com.datafast.tools;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -145,9 +146,6 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     switchConnection.setText(ACTIVADO);
                     checkConnection();
                 } else {
-                    if ( !wifiManager.isWifiEnabled() ){
-                        wifiManager.setWifiEnabled(true);
-                    }
                     EthernetManager.getInstance().setEtherentEnabled(false);
                     switchConnection.setText(DESACTIVADO);
                     containerDns.setVisibility(View.GONE);
@@ -156,30 +154,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        String stateIp = null;
-        if (isWifiConnected()) {
-            stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
-        }
-
-        if (EthernetManager.getInstance().isEtherentEnabled() && stateIp == null) {
-            stateIp = IpEthernetConf.getConnectionTypeEther();
-        }
-
-        if (stateIp.equals(DHCP)) {
-            initDataDHCP();
-            etPort.setImeOptions(6);
-            switchConnectionType.setChecked(false);
-            switchConnectionType.setText(DHCP);
-            containerDns.setVisibility(View.GONE);
-            disableComponents(false, R.color.des_color);
-        } else {
-            initDataStatic();
-            etPort.setImeOptions(5);
-            switchConnectionType.setChecked(true);
-            switchConnectionType.setText(STATIC);
-            containerDns.setVisibility(View.VISIBLE);
-            disableComponents(true, R.color.transparent);
-        }
+        loadConnection();
 
         switchConnectionType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,26 +219,73 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
         counterTimer();
     }
+
+    private void loadConnection() {
+        if(isConnected()) {
+            String stateIp = null;
+            if (isWifiConnected()) {
+                stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
+            }
+
+            if (EthernetManager.getInstance().isEtherentEnabled() && stateIp == null) {
+                stateIp = IpEthernetConf.getConnectionTypeEther();
+            }
+
+            if (stateIp != null) {
+                switchConnectionType.setEnabled(true);
+                if (stateIp.equals(DHCP)) {
+                    initDataDHCP();
+                    etPort.setImeOptions(6);
+                    switchConnectionType.setChecked(false);
+                    switchConnectionType.setText(DHCP);
+                    containerDns.setVisibility(View.GONE);
+                    disableComponents(false, R.color.des_color);
+                } else {
+                    initDataStatic();
+                    etPort.setImeOptions(5);
+                    switchConnectionType.setChecked(true);
+                    switchConnectionType.setText(STATIC);
+                    containerDns.setVisibility(View.VISIBLE);
+                    disableComponents(true, R.color.transparent);
+                }
+            } else {
+                initDataEmpty();
+                UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+            }
+        }else{
+            initDataEmpty();
+            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+        }
+    }
+
     public void checkConnection(){
         final ProgressDialog progressDialog = new ProgressDialog(ConfigRed.this);
             if(switchConnection.getText().equals("ACTIVADO")){
-                progressDialog.setTitle("Verificando conexion"); // Setting Title
-                progressDialog.setMessage("Conectando a  red LAN.."); // Setting Message
+                progressDialog.setMessage("Conectando a  red LAN..."); // Setting Message
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (!isConected()){
+                        if (!isConnected()){
                             EthernetManager.getInstance().setEtherentEnabled(false);
                             switchConnection.setChecked(false);
-                            wifiManager.setWifiEnabled(true);
                             switchConnection.setText(DESACTIVADO);
+                            initDataEmpty();
+                            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, "EL POS NO SE LOGRÓ CONECTAR A LA RED LAN", Toast.LENGTH_SHORT);
+                            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                        }else{
+                            loadConnection();
                         }
                     }
                 }, 5000);
             }else {
-                progressDialog.setTitle("Verificando conexion"); // Setting Title
-                progressDialog.setMessage("Conectando a una red WIFI.."); // Setting Message
+                progressDialog.setMessage("Desconectando de red LAN..."); // Setting Message
+                initDataEmpty();
             }
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
             progressDialog.show(); // Display Progress Dialog
@@ -272,10 +294,6 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                 public void run() {
                     try {
                         Thread.sleep(5000);
-                        if(!isConected()){
-                            finish();
-                        }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -296,7 +314,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         }
     }
-    public boolean isConected(){
+    public boolean isConnected(){
         ConnectivityManager cm =
                 (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -430,6 +448,28 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         return Integer.parseInt(preferences.getString("port", "9999"));
     }
 
+    public void initDataEmpty(){
+        switchConnectionType.setEnabled(false);
+        etPort.setText("");
+        etPort.setEnabled(false);
+
+        etIp1.setText("");
+        etIp2.setText("");
+        etIp3.setText("");
+        etIp4.setText("");
+
+        etMask1.setText("");
+        etMask2.setText("");
+        etMask3.setText("");
+        etMask4.setText("");
+
+        etGateway1.setText("");
+        etGateway2.setText("");
+        etGateway3.setText("");
+        etGateway4.setText("");
+
+        disableComponents(false, R.color.des_color);
+    }
     public void initDataDHCP() {
         String[] datos, mask, gateway, ip;
 
