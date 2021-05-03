@@ -2813,7 +2813,11 @@ public class FinanceTrans extends Trans {
         pp_response.setTypeMsg(PP);
         pp_response.setRspCodeMsg(OK);
         int prp = retVal;
-        pp_response.setIdCodNetAcq(ISOUtil.padleft(pp_request.getIdCodNetAcq() + "", 2, '0'));
+        if(transEname.equals(ANULACION) || transEname.equals("REVERSAL")){
+            pp_response.setIdCodNetAcq(ISOUtil.padleft("01" + "", 2, '0'));
+        }else{
+            pp_response.setIdCodNetAcq(ISOUtil.padleft(pp_request.getIdCodNetAcq() + "", 2, '0'));
+        }
         pp_response.setRspCode(ISOUtil.spacepadZero(RspCode, 2));
         String mensaje = getStatusInfo(String.valueOf(codersp(transEname)));
         if (mensaje.length() > 20){
