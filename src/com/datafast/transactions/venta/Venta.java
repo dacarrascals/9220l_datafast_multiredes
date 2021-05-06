@@ -19,6 +19,8 @@ import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 
 import cn.desert.newpos.payui.UIUtils;
+
+import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -82,6 +84,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
             if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)){
                 if(!prepareOnline()) {
                     UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                    transUI.showError(timeout, retVal, processPPFail);
+                    return;
                 }
 
                 if (aCmd.equals(PP)){
@@ -179,6 +183,13 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         montos[6] = montoFijo;
                         tipoMontoFijo = GetAmount.getTipoMontoFijo();
                     }
+
+                    if ((retVal = CommonFunctionalities.setTipoCuenta(timeout, ProcCode, transUI, ISOUtil.stringToBoolean(rango.getTIPO_DE_CUENTA()))) != 0) {
+                        return false;
+                    }
+
+                    ProcCode = CommonFunctionalities.getProCode();
+
                     field58();
                     if (retVal == 0) {
                         transUI.handling(timeout, Tcode.Status.connecting_center);
