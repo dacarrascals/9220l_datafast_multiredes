@@ -447,7 +447,7 @@ public class WifiSettings extends AppCompatActivity {
         conexionExitosa = wifiManager.enableNetwork(netId, false);
 
         if(conexionExitosa) {
-            conectar(red);
+            conectar(red, netId);
         } else {
             UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Longitud inválida", Toast.LENGTH_SHORT);
         }
@@ -478,7 +478,7 @@ public class WifiSettings extends AppCompatActivity {
     }
 
     CountDownTimer timer2;
-    private void conectar(final String ssid ) {
+    private void conectar(final String ssid, final int netId) {
         final ProgressDialog progressDialog = new ProgressDialog(context);
         timer.cancel();
         progressDialog.setMessage("Conectando...");
@@ -506,6 +506,7 @@ public class WifiSettings extends AppCompatActivity {
             public void onFinish() {
                 UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Contraseña incorrecta", Toast.LENGTH_SHORT);
                 progressDialog.cancel();
+                wifiManager.removeNetwork(netId);
                 wifiManager.reassociate();
                 mostrarLista();
                 timer.start();
