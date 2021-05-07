@@ -126,10 +126,13 @@ public class Server extends AppCompatActivity {
                             socketServerReplyThread.run();
                         }
                     }else{
+                        Logger.information("Server.java -> No llegó cuerpo en la petición");
+                        Logger.information("Server.java -> Se hace cierre del Socket");
                         socket.close();
                     }
                 }
             } catch (IOException  e) {
+                Logger.information("Server.java -> Entra por Catch de Server SocketServerThread");
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -240,8 +243,10 @@ public class Server extends AppCompatActivity {
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 try {
+                    Logger.information("Server.java -> Se hace cierre del Socket");
                     hostThreadSocket.close();
                 } catch (IOException ioException) {
+                    Logger.information("Server.java -> Entra por Catch de Server SocketServerReplyThread");
                     ioException.printStackTrace();
                 }
                 e.printStackTrace();
