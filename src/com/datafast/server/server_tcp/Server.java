@@ -246,6 +246,7 @@ public class Server extends AppCompatActivity {
                     Logger.information("Server.java -> Se hace cierre del Socket");
                     hostThreadSocket.close();
                 } catch (IOException ioException) {
+                    Logger.information("Server.java -> Información del catch: "+e.toString());
                     Logger.information("Server.java -> Entra por Catch de Server SocketServerReplyThread");
                     ioException.printStackTrace();
                 }

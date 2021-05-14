@@ -82,6 +82,7 @@ import static com.datafast.transactions.common.CommonFunctionalities.Fld58Prompt
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
 import static com.datafast.transactions.common.GetAmount.PIDE_CONFIRMACION;
+import static com.datafast.transactions.common.GetAmount.getBase0;
 import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 import static com.newpos.libpay.trans.Trans.Type.ANULACION;
@@ -3340,8 +3341,7 @@ public class FinanceTrans extends Trans {
             case PP:
 
                 if (pp_request.getAmountTotal()!=null) {
-
-                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals(""))
+                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals("")&& GetAmount.getBase0())
                         AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
 
                     if (pp_request.getAmountIVA()!=null && !pp_request.getAmountIVA().equals(""))
@@ -3350,10 +3350,10 @@ public class FinanceTrans extends Trans {
                     if (pp_request.getIVA()!=null && !pp_request.getIVA().equals(""))
                         IvaAmount = Long.parseLong(pp_request.getIVA());
 
-                    if (pp_request.getService()!=null && !pp_request.getService().equals(""))
+                    if (pp_request.getService()!=null && !pp_request.getService().equals("") && GetAmount.checkService())
                         ServiceAmount = Long.parseLong(pp_request.getService());
 
-                    if (pp_request.getTips()!=null && !pp_request.getTips().equals("")) {
+                    if (pp_request.getTips()!=null && !pp_request.getTips().equals("")&& GetAmount.checkTip()) {
                         TipAmount = Long.parseLong(pp_request.getTips());
                         ExtAmount = ISOUtil.padleft(TipAmount + "", 12, '0');
                     }
