@@ -19,6 +19,8 @@ import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 
 import cn.desert.newpos.payui.UIUtils;
+
+import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -42,6 +44,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
         init(transEname, p);
         processPPFail = new ProcessPPFail(ctx, iso8583);
         processPPFail.setTransName(TransEName);
+        Logger.information("Venta.java -> Se crea constructor de Venta");
     }
 
     private void init(String transEname, TransInputPara p) {
@@ -66,6 +69,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
+        Logger.information("Venta.java -> start()");
+
         final int reverso = validateReverseCash();
         if (reverso != 1995){
             return;
@@ -79,6 +84,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
             if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)){
                 if(!prepareOnline()) {
                     UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                    transUI.showError(timeout, retVal, processPPFail);
+                    return;
                 }
 
                 if (aCmd.equals(PP)){
@@ -115,8 +122,9 @@ public class Venta extends FinanceTrans implements TransPresenter {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                transUI.showError(timeout, retVal,processPPFail);
                 Log.i("Venta" , String.valueOf(retVal));
+                return;
+                //transUI.showError(timeout, retVal,processPPFail);
             }
         }
 
@@ -144,6 +152,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
      */
     private boolean prepareOnline() {
 
+        Logger.information("Venta.java -> Se ingresa al prepareOnline()");
+
         if (retVal == 0) {
             switch (Server.cmd) {
                 case LT:
@@ -156,7 +166,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             return true;
                         }else {
                             transUI.trannSuccess(timeout, Tcode.Status.read_card_ok);
-                            UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
+                           /* UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);*/
                             return true;
                         }
                     }else{
@@ -173,6 +183,13 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         montos[6] = montoFijo;
                         tipoMontoFijo = GetAmount.getTipoMontoFijo();
                     }
+
+                    if ((retVal = CommonFunctionalities.setTipoCuenta(timeout, ProcCode, transUI, ISOUtil.stringToBoolean(rango.getTIPO_DE_CUENTA()))) != 0) {
+                        return false;
+                    }
+
+                    ProcCode = CommonFunctionalities.getProCode();
+
                     field58();
                     if (retVal == 0) {
                         transUI.handling(timeout, Tcode.Status.connecting_center);

@@ -82,6 +82,7 @@ import static com.datafast.transactions.common.CommonFunctionalities.Fld58Prompt
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
 import static com.datafast.transactions.common.GetAmount.PIDE_CONFIRMACION;
+import static com.datafast.transactions.common.GetAmount.getBase0;
 import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 import static com.newpos.libpay.trans.Trans.Type.ANULACION;
@@ -1406,6 +1407,8 @@ public class FinanceTrans extends Trans {
 
     protected int OnlineTrans(EmvTransaction emvTrans) {
 
+        Logger.information("FinanceTrans.java -> Se ingresa al OnlineTrans()");
+
         byte[] tag9f27 = new byte[1];
         byte[] tag9b = new byte[2];
 
@@ -1558,7 +1561,7 @@ public class FinanceTrans extends Trans {
             if (retVal == 0) {
                 ProcCode = "960000";
                 setFieldsSettle();
-                retVal = OnLineTrans();
+                retVal = OnLineTrans(transUI);
                 if (retVal == 0)
                     RspCode = iso8583.getfield(39);
             }
@@ -1641,7 +1644,7 @@ public class FinanceTrans extends Trans {
         TransLogData data = TransLog.getScriptResult();
         if (data != null) {
             ScriptTrans script = new ScriptTrans(context, "SENDSCRIPT");
-            int ret = script.sendScriptResult(data);
+            int ret = script.sendScriptResult(data, transUI);
             if (ret == 0) {
                 TransLog.clearScriptResult();
             }
@@ -1729,7 +1732,7 @@ public class FinanceTrans extends Trans {
             if (!data.isVoided() && !data.isTarjetaCierre()) {
                 setFieldsBatchNo(data);
 
-                retVal = OnLineTrans();
+                retVal = OnLineTrans(transUI);
 
                 if (retVal == 0) {
                     RspCode = iso8583.getfield(39);
@@ -2690,6 +2693,8 @@ public class FinanceTrans extends Trans {
 
     private int verificarCodDiners(){
 
+        Logger.information("FinanceTrans.java -> Se verifica codDiners()");
+
         //Codigo Diners
         if ("88".equals(RspCode)){
             for (int i = 0; i < 3; i++) {
@@ -2705,7 +2710,7 @@ public class FinanceTrans extends Trans {
 
                 transUI.handling(timeout, Tcode.Status.send_data_2_server);
                 isCodDinners = true;
-                retVal = OnLineTrans();
+                retVal = OnLineTrans(transUI);
                 transUI.handling(timeout, Tcode.Status.send_over_2_recv);
                 if (retVal == 0) {
 
@@ -2809,7 +2814,11 @@ public class FinanceTrans extends Trans {
         pp_response.setTypeMsg(PP);
         pp_response.setRspCodeMsg(OK);
         int prp = retVal;
-        pp_response.setIdCodNetAcq(ISOUtil.padleft(pp_request.getIdCodNetAcq() + "", 2, '0'));
+        if(transEname.equals(ANULACION) || transEname.equals("REVERSAL")){
+            pp_response.setIdCodNetAcq(ISOUtil.padleft("01" + "", 2, '0'));
+        }else{
+            pp_response.setIdCodNetAcq(ISOUtil.padleft(pp_request.getIdCodNetAcq() + "", 2, '0'));
+        }
         pp_response.setRspCode(ISOUtil.spacepadZero(RspCode, 2));
         String mensaje = getStatusInfo(String.valueOf(codersp(transEname)));
         if (mensaje.length() > 20){
@@ -3132,6 +3141,7 @@ public class FinanceTrans extends Trans {
     }
 
     protected int validateReverseCash(){
+        Logger.information("Venta.java -> Se ingresa a validar reversos");
         int ret = 1995;
         if (Server.cmd.equals(PP)){
             if (retVal == Tcode.T_mid_tid_invalid){
@@ -3331,8 +3341,7 @@ public class FinanceTrans extends Trans {
             case PP:
 
                 if (pp_request.getAmountTotal()!=null) {
-
-                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals(""))
+                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals("")&& GetAmount.getBase0())
                         AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
 
                     if (pp_request.getAmountIVA()!=null && !pp_request.getAmountIVA().equals(""))
@@ -3341,10 +3350,10 @@ public class FinanceTrans extends Trans {
                     if (pp_request.getIVA()!=null && !pp_request.getIVA().equals(""))
                         IvaAmount = Long.parseLong(pp_request.getIVA());
 
-                    if (pp_request.getService()!=null && !pp_request.getService().equals(""))
+                    if (pp_request.getService()!=null && !pp_request.getService().equals("") && GetAmount.checkService())
                         ServiceAmount = Long.parseLong(pp_request.getService());
 
-                    if (pp_request.getTips()!=null && !pp_request.getTips().equals("")) {
+                    if (pp_request.getTips()!=null && !pp_request.getTips().equals("")&& GetAmount.checkTip()) {
                         TipAmount = Long.parseLong(pp_request.getTips());
                         ExtAmount = ISOUtil.padleft(TipAmount + "", 12, '0');
                     }
@@ -3386,6 +3395,9 @@ public class FinanceTrans extends Trans {
     }
 
     protected boolean CardProcess(int mode) {
+
+        Logger.information("Venta.java -> Se ingresa al CardProcess");
+
         if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_MAG){
             isDebit = false;
             inputMode = ENTRY_MODE_MAG;
@@ -3403,6 +3415,7 @@ public class FinanceTrans extends Trans {
             mode = INMODE_IC | INMODE_MAG | INMODE_HAND;
             cardInfo = transUI.getCardUse(GERCARD_MSG_ICC_SWIPE, timeout, mode, TransEname);
         }else {
+            Logger.information("Venta.java -> Se solicita tarjeta");
             cardInfo = transUI.getCardUseAmount(GERCARD_MSG_SWIPE_ICC_CTL, timeout, mode, transEname,"Monto\nTotal : ",PAYUtils.getStrAmount(Amount));
         }
 
@@ -3426,6 +3439,7 @@ public class FinanceTrans extends Trans {
                     transUI.showError(timeout, Tcode.T_not_allow,processPPFail);
                     return false;
             }
+            Logger.information("Venta.java -> Se asigna inputMode -> " + inputMode);
             para.setInputMode(inputMode);
             processPPFail.setInputMode(inputMode);
             lastInputMode = inputMode;
@@ -3551,6 +3565,7 @@ public class FinanceTrans extends Trans {
     }
 
     public boolean isICC1() {
+        Logger.information("Venta.java -> Se crea ingresa a isICC1");
         String creditCard = "SI";
         para.setAmount(Amount);
         para.setOtherAmount(0);
@@ -3598,6 +3613,7 @@ public class FinanceTrans extends Trans {
     }
 
     protected boolean isMag1(String[] tracks) {
+        Logger.information("Venta.java -> Se igresa a isMag1");
         String data1 = null;
         String data2 = null;
         String data3 = null;
@@ -3766,6 +3782,8 @@ public class FinanceTrans extends Trans {
 
     protected boolean PBOCTrans1() {
 
+        Logger.information("Venta.java -> Se ingresa a PBOCTrans1");
+
         int code = 0;
 
         PBOCTransProperty property = new PBOCTransProperty();
@@ -3886,6 +3904,9 @@ public class FinanceTrans extends Trans {
     }
 
     protected boolean isHandle1() {
+
+        Logger.information("Venta.java -> Se ingresa a isHandle1");
+
         if ((retVal = CommonFunctionalities.setPanManual(timeout, TransEName, transUI)) != 0) {
             return false;
         }

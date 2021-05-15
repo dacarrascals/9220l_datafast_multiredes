@@ -64,7 +64,7 @@ public class LogoutTrans extends Trans implements TransPresenter{
 		Logger.debug("Filed60 = "+Field60);
 		iso8583.setField(60, Field60);
 		iso8583.setField(63, ISOUtil.padleft(cfg.getOprNo()+"",2,'0') + " ");
-		retVal = OnLineTrans();
+		retVal = OnLineTrans(transUI);
 		Logger.debug("LogonTrans>>Logout>>OnLineTrans finish");
 		if (retVal != 0) {
 			return retVal ;

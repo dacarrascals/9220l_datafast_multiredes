@@ -744,7 +744,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
-                    }, 2000);
+                    }, 1000);
 
                     alreadySend = true;
 
@@ -1338,12 +1338,13 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
     @Override
     public void showfinishview() {
+        Logger.information("MasterControl.java -> Finaliza PP");
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 checkCardPresent();
             }
-        }, 2000);
+        }, 1000);
     }
 
     private void checkCardPresent() {
@@ -1570,7 +1571,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
         toolbar.setTitleTextColor(Color.WHITE);
         String title = "<h4>" + titleToolbar + "</h4>";
         toolbar.setTitle(Html.fromHtml(title));
-        toolbar.setLogo(R.drawable.ic_launcher);
+        toolbar.setLogo(R.drawable.ic_launcher_1);
         toolbar.postDelayed(new Runnable() {
             @Override
             public void run() {

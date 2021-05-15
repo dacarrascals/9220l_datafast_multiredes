@@ -115,9 +115,8 @@ public class Control {
     }
 
     private void deleteBatch(){
-        if (ToolsBatch.statusTrans(idAcquirer)) {
+        idAcquirer = idLote;
 
-            idAcquirer = idLote;
             if (ToolsBatch.statusTrans(idAcquirer)) {
                 int val = Integer.parseInt(TMConfig.getInstance().getBatchNo());
                 TMConfig.getInstance().setBatchNopc(val).save();
@@ -129,10 +128,6 @@ public class Control {
             if (TransLogReverse.getInstance().getSize() > 0){
                 TransLogReverse.getInstance().clearAll();
             }
-        }else {
-            /*ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);*/
-        }
 
     }
 }

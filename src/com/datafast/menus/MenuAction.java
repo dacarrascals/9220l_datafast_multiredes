@@ -6,9 +6,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.text.InputFilter;
@@ -36,6 +38,7 @@ import com.datafast.transactions.callbacks.makeInitCallback;
 import com.datafast.transactions.callbacks.waitPrintReport;
 import com.datafast.transactions.callbacks.waitSeatleReport;
 import com.datafast.transactions.common.CommonFunctionalities;
+import com.newpos.libpay.Logger;
 import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.trans.translog.TransLog;
@@ -405,22 +408,46 @@ public class MenuAction {
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
                 break;
+            case DefinesDATAFAST.ITEM_AGENTE_POLARIS:
+                if (estaInstaladaAplicacion("com.downloadmanager", context)) {
+                    Intent intentPolaris = context.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
+                    context.startActivity(intentPolaris);
+                } else {
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.ERROR_AGENTE, Toast.LENGTH_SHORT);
+                }
+                break;
             case DefinesDATAFAST.ITEM_CONFIG_RED:
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setClass(context, ConfigRed.class);
+                context.startActivity(intent);
+               /* ConnectivityManager cm =
+                        (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+                if(isConnected){
                 if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
                     if (!isWifiConnected() && EthernetManager.getInstance().isEtherentEnabled()) {
+                        Logger.information("MenuAction.java -> Ingreso por ethernet");
                         try {
+                            Logger.information("MenuAction.java -> Ingreso por ethernet al try");
                             datos = UtilNetwork.getWifi(context, true);
+                            for (int i = 0; i < datos.length ; i++) {
+                                Logger.information("Datos "+i+" :"+datos[i]);
+                            }
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.setClass(context, ConfigRed.class);
                             context.startActivity(intent);
                         } catch (Exception e) {
+                            Logger.information("MenuAction.java -> Ingreso por ethernet al catch");
                             e.printStackTrace();
                             UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                             toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                         }
                     } else if (isWifiConnected()) {
+                        Logger.information("MenuAction.java -> Ingreso por wifi");
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.setClass(context, ConfigRed.class);
@@ -431,6 +458,11 @@ public class MenuAction {
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
+                }else{
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                }*/
                 break;
 
             case DefinesDATAFAST.ITEM_CONFIG_COMERCIO:
@@ -451,6 +483,16 @@ public class MenuAction {
     private boolean isWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
+    }
+    private boolean estaInstaladaAplicacion(String nombrePaquete, Context context) {
+
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(nombrePaquete, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {

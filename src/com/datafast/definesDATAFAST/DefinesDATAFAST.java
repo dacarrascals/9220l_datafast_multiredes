@@ -52,6 +52,7 @@ public final class DefinesDATAFAST {
     public static final String LOTE_VACIO = "LOTE VACIO";
     public static final String LOTE_VACIO_PREAUTO = "SIN PREAUTORIZACIONES";
     public static final String MSG_SETTLE = "REALICE PROCESO DE CONTROL";
+    public static final String ERROR_AGENTE = "AGENTE POLARIS NO INSTALADO";
     public static final String FILE_NAME_PREAUTO = "_preauto_";
     public static final String FILE_NAME_PREVOUCHER = "_prevoucher_";
     public static final String ITEM_TRANS_EN_PANTALLA = "TRANSACCIONES EN LOTE";
@@ -77,7 +78,9 @@ public final class DefinesDATAFAST {
     public static final String ITEM_APPMANAGER = "APPMANAGER";
     public static final String ITEM_CONFIG_RED = "CONFIGURACION DE RED";
     public static final String ITEM_CONFIG_COMERCIO = "DATOS TRANSACCIONALES";
-    public static final String ITEM_NETWORK_DISCONNET = "EL POS NO ESTÁ CONECTADO A NINGUNA RED";
+    public static final String ITEM_NETWORK_DISCONNET = "EL PINPAD NO ESTÁ CONECTADO A NINGUNA RED";
+    public static final String ITEM_NETWORK_DISCONNET_LAN = "EL PINPAD NO ESTÁ CONECTADO A LA RED LAN";
+    public static final String ITEM_AGENTE_POLARIS = "AGENTE POLARIS";
 
 
     public static final String NAME_FOLDER_CTL_FILES = "CTL_Files";

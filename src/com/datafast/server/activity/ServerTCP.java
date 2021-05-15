@@ -32,6 +32,7 @@ import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
 import com.datafast.tools.Wifi;
 import com.datafast.updateapp.UpdateApk;
+import com.newpos.libpay.Logger;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 import java.io.IOException;
@@ -141,7 +142,7 @@ public class ServerTCP extends AppCompatActivity {
         slide = new slide( ServerTCP.this, true);
         slide.galeria(this, R.id.adcolumn);
         MasterControl.setMcontext(ServerTCP.this);
-        if (isInit) {
+        if (isInit && inyecccionLLaves) {
             if (!isInEcho) {
                 wifi = new Wifi(ServerTCP.this);
                 control = new Control(ServerTCP.this);
@@ -199,10 +200,14 @@ public class ServerTCP extends AppCompatActivity {
                             }
                             break;
                         case PP:
+
+                            Logger.information("ServerTCP.java -> Inicia proceso para un PP");
+
                             PP_Request pp_request = new PP_Request();
 
                             if (!Server.correctLength){
                                 pp_request.UnPackHash(aDat);
+                                Logger.information("ServerTCP.java -> Error longitud de trama no corresponde");
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
@@ -211,6 +216,7 @@ public class ServerTCP extends AppCompatActivity {
 
                             pp_request.UnPackData(aDat);
                             if (pp_request.getCountValid() > 0){
+                                Logger.information("ServerTCP.java -> Error, la trama no es correcta");
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
@@ -232,10 +238,10 @@ public class ServerTCP extends AppCompatActivity {
                         case CP:
                             ret = wifi.comunicacion(aDat, listenerServer);
                             if (ret){
-                                stopServer();
+                                //stopServer();
                                 UIUtils.startResult(ServerTCP.this,true,"DATOS DE RED ACTUALIZADOS",false);
                             }else {
-                                stopServer();
+                                //stopServer();
                                 UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
                             }
                             break;

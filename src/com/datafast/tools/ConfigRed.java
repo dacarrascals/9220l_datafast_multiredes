@@ -1,28 +1,42 @@
 package com.datafast.tools;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SearchRecentSuggestionsProvider;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.android.newpos.pay.StartAppDATAFAST;
+import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
-import com.newpos.libpay.utils.PAYUtils;
+import com.newpos.libpay.Logger;
+import com.newpos.libpay.utils.KeyBoardUtil;
 import com.pos.device.net.eth.EthernetManager;
+import com.pos.device.net.wifi.PosWifiManager;
+import com.pos.device.net.wifi.WifiSsidInfo;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.BaseActivity;
@@ -36,6 +50,9 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     private final static String DHCP = "DHCP";
     private final static String STATIC = "ESTATICO";
 
+    private final static String ACTIVADO = "ACTIVADO";
+    private final static String DESACTIVADO = "DESACTIVADO";
+    private WifiManager wifiManager;
     EditText etPort;
 
     TextView tvMask1, tvMask2, tvMask3, tvMask4, tvMask;
@@ -44,9 +61,14 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     TextView tvGateway1, tvGateway2, tvGateway3, tvGateway4;
     EditText etGateway1, etGateway2, etGateway3, etGateway4;
 
+    TextView tvDns1, tvDns2, tvDns3, tvDns4;
+    EditText etDns1, etDns2, etDns3, etDns4;
+
+    RelativeLayout containerDns;
+
     InputMethodManager inputMethodManager;
 
-    Switch switchConnectionType;
+    Switch switchConnectionType,switchConnection;
     private CounterTimer counterTimer;
 
     @Override
@@ -55,12 +77,16 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_config_red);
         setNaviTitle("CONFIG RED POS");
 
+        KeyBoardUtil.assistActivity(this);
+
         tvMask = findViewById(R.id.tv_Mask);
         inputMethodManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        switchConnection=findViewById(R.id.sw_conf_red);
         switchConnectionType = findViewById(R.id.sw_conf_ip);
-
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         mapObjects();
-        initData();
+
+        etPort.setOnClickListener(ConfigRed.this);
 
         tvIp1.setOnClickListener(ConfigRed.this);
         tvIp2.setOnClickListener(ConfigRed.this);
@@ -77,6 +103,11 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         tvGateway3.setOnClickListener(ConfigRed.this);
         tvGateway4.setOnClickListener(ConfigRed.this);
 
+        tvDns1.setOnClickListener(ConfigRed.this);
+        tvDns2.setOnClickListener(ConfigRed.this);
+        tvDns3.setOnClickListener(ConfigRed.this);
+        tvDns4.setOnClickListener(ConfigRed.this);
+
         etIp1.setSelection(etIp1.getText().length());
         etIp2.setSelection(etIp2.getText().length());
         etIp3.setSelection(etIp3.getText().length());
@@ -92,35 +123,60 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         etGateway3.setSelection(etGateway3.getText().length());
         etGateway4.setSelection(etGateway4.getText().length());
 
-        String stateIp = null;
-        if (isWifiConnected()) {
-            stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
+        etDns1.setSelection(etDns1.getText().length());
+        etDns2.setSelection(etDns2.getText().length());
+        etDns3.setSelection(etDns3.getText().length());
+        etDns4.setSelection(etDns4.getText().length());
+
+        if (EthernetManager.getInstance().isEtherentEnabled()){
+            switchConnection.setText(ACTIVADO);
+            switchConnection.setChecked(true);
         }
 
-        if (EthernetManager.getInstance().isEtherentEnabled() && stateIp == null) {
-            stateIp = IpEthernetConf.getConnectionTypeEther();
-        }
 
-        if (stateIp.equals(DHCP)) {
-            etPort.setImeOptions(6);
-            switchConnectionType.setChecked(false);
-            switchConnectionType.setText(DHCP);
-            disableComponents(false, R.color.des_color);
-        } else {
-            etPort.setImeOptions(5);
-            switchConnectionType.setChecked(true);
-            switchConnectionType.setText(STATIC);
-            disableComponents(true, R.color.transparent);
-        }
+        switchConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                counterTimer();
+                if (switchConnection.isChecked()) {
+                    if ( wifiManager.isWifiEnabled() ){
+                        wifiManager.setWifiEnabled(false);
+                    }
+                    EthernetManager.getInstance().setEtherentEnabled(true);
+                    switchConnection.setText(ACTIVADO);
+                    checkConnection();
+                } else {
+                    EthernetManager.getInstance().setEtherentEnabled(false);
+                    switchConnection.setText(DESACTIVADO);
+                    containerDns.setVisibility(View.GONE);
+                    checkConnection();
+                }
+            }
+        });
+
+        loadConnection();
 
         switchConnectionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                counterTimer();
                 if (switchConnectionType.isChecked()) {
                     switchConnectionType.setText(STATIC);
+                    etPort.clearFocus();
+                    etPort.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+                    inputMethodManager.hideSoftInputFromWindow(etPort.getWindowToken(), 0);
+                    etPort.requestFocus();
+                    inputMethodManager.showSoftInput(etPort,0);
+                    containerDns.setVisibility(View.VISIBLE);
                     disableComponents(true, R.color.transparent);
                 } else {
                     switchConnectionType.setText(DHCP);
+                    etPort.clearFocus();
+                    etPort.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                    inputMethodManager.hideSoftInputFromWindow(etPort.getWindowToken(),0);
+                    etPort.requestFocus();
+                    inputMethodManager.showSoftInput(etPort,0);
+                    containerDns.setVisibility(View.GONE);
                     disableComponents(false, R.color.des_color);
                 }
             }
@@ -133,9 +189,11 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        operatingEditTextPORT();
         operatingEditTextIP();
         operatingEditTextMA();
         operatingEditTextGA();
+        operatingEditTextDNS();
 
         etIp4.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -159,12 +217,112 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        if (StartAppDATAFAST.isInit){
-            counterTimer = new CounterTimer(this);
-            counterTimer.counterDownTimer();
+        counterTimer();
+    }
+
+    private void loadConnection() {
+        if(isConnected()) {
+            String stateIp = null;
+            if (isWifiConnected()) {
+                stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
+            }
+
+            if (EthernetManager.getInstance().isEtherentEnabled() && stateIp == null) {
+                stateIp = IpEthernetConf.getConnectionTypeEther();
+            }
+
+            if (stateIp != null) {
+                switchConnectionType.setEnabled(true);
+                if (stateIp.equals(DHCP)) {
+                    initDataDHCP();
+                    etPort.setImeOptions(6);
+                    switchConnectionType.setChecked(false);
+                    switchConnectionType.setText(DHCP);
+                    containerDns.setVisibility(View.GONE);
+                    disableComponents(false, R.color.des_color);
+                } else {
+                    initDataStatic();
+                    etPort.setImeOptions(5);
+                    switchConnectionType.setChecked(true);
+                    switchConnectionType.setText(STATIC);
+                    containerDns.setVisibility(View.VISIBLE);
+                    disableComponents(true, R.color.transparent);
+                }
+            } else {
+                initDataEmpty();
+                UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+            }
+        }else{
+            initDataEmpty();
+            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
         }
+    }
+
+    public void checkConnection(){
+        final ProgressDialog progressDialog = new ProgressDialog(ConfigRed.this);
+            if(switchConnection.getText().equals("ACTIVADO")){
+                progressDialog.setMessage("Conectando a  red LAN..."); // Setting Message
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isConnected()){
+                            EthernetManager.getInstance().setEtherentEnabled(false);
+                            switchConnection.setChecked(false);
+                            switchConnection.setText(DESACTIVADO);
+                            initDataEmpty();
+                            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, "EL POS NO SE LOGRÓ CONECTAR A LA RED LAN", Toast.LENGTH_SHORT);
+                            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                        }else{
+                            loadConnection();
+                        }
+                    }
+                }, 5000);
+            }else {
+                progressDialog.setMessage("Desconectando de red LAN..."); // Setting Message
+                initDataEmpty();
+            }
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
+            progressDialog.show(); // Display Progress Dialog
+            progressDialog.setCancelable(false);
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    progressDialog.dismiss();
+                }
+            }).start();
 
     }
+
+    public void counterTimer(){
+        if (StartAppDATAFAST.isInit){
+            if(counterTimer != null){
+                counterTimer.countDownTimer.cancel();
+                counterTimer.countDownTimer.start();
+            }else {
+                counterTimer = new CounterTimer(this);
+                counterTimer.counterDownTimer();
+            }
+        }
+    }
+    public boolean isConnected(){
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
 
     @Override
     protected void back() {
@@ -181,6 +339,8 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     public void mapObjects() {
 
         etPort = findViewById(R.id.et_Port);
+
+        containerDns = findViewById(R.id.containerDns);
 
         tvIp1 = findViewById(R.id.tvIp1);
         tvIp2 = findViewById(R.id.tvIp2);
@@ -211,6 +371,16 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         etGateway2 = findViewById(R.id.etGateway2);
         etGateway3 = findViewById(R.id.etGateway3);
         etGateway4 = findViewById(R.id.etGateway4);
+
+        tvDns1 = findViewById(R.id.tvDns1);
+        tvDns2 = findViewById(R.id.tvDns2);
+        tvDns3 = findViewById(R.id.tvDns3);
+        tvDns4 = findViewById(R.id.tvDns4);
+
+        etDns1 = findViewById(R.id.etDns1);
+        etDns2 = findViewById(R.id.etDns2);
+        etDns3 = findViewById(R.id.etDns3);
+        etDns4 = findViewById(R.id.etDns4);
 
     }
 
@@ -256,6 +426,21 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         etGateway3.setBackgroundColor(getResources().getColor(color));
         etGateway4.setEnabled(isEnable);
         etGateway4.setBackgroundColor(getResources().getColor(color));
+
+        tvDns1.setEnabled(isEnable);
+        tvDns2.setEnabled(isEnable);
+        tvDns3.setEnabled(isEnable);
+        tvDns4.setEnabled(isEnable);
+
+        etDns1.setEnabled(isEnable);
+        etDns1.setBackgroundColor(getResources().getColor(color));
+        etDns2.setEnabled(isEnable);
+        etDns2.setBackgroundColor(getResources().getColor(color));
+        etDns3.setEnabled(isEnable);
+        etDns3.setBackgroundColor(getResources().getColor(color));
+        etDns4.setEnabled(isEnable);
+        etDns4.setBackgroundColor(getResources().getColor(color));
+
     }
 
     private int getListeningPort() {
@@ -263,20 +448,54 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         return Integer.parseInt(preferences.getString("port", "9999"));
     }
 
-    public void initData() {
+    public void initDataEmpty(){
+        switchConnectionType.setEnabled(false);
+        etPort.setText("");
+        etPort.setEnabled(false);
+
+        etIp1.setText("");
+        etIp2.setText("");
+        etIp3.setText("");
+        etIp4.setText("");
+
+        etMask1.setText("");
+        etMask2.setText("");
+        etMask3.setText("");
+        etMask4.setText("");
+
+        etGateway1.setText("");
+        etGateway2.setText("");
+        etGateway3.setText("");
+        etGateway4.setText("");
+
+        disableComponents(false, R.color.des_color);
+    }
+    public void initDataDHCP() {
         String[] datos, mask, gateway, ip;
 
         if (isWifiConnected()) {
+            Logger.information("ConfigRed.java -> Ingreso por wifi");
             datos = UtilNetwork.getWifi(getApplicationContext(), false);
+            for (int i = 0; i < datos.length ; i++) {
+                Logger.information("Datos ConfigRed wifi "+i+" :"+datos[i]);
+            }
             mask = datos[0].split("\\.");
             gateway = datos[3].split("\\.");
             ip = UtilNetwork.getIPAddress(true).split("\\.");
 
         } else {
+            Logger.information("ConfigRed.java -> Ingreso por ethernet");
             datos = UtilNetwork.getWifi(getApplicationContext(), true);
-            ip = datos[0].split("\\.");
+            for (int i = 0; i < datos.length ; i++) {
+                Logger.information("Datos ConfigRed ethernet "+i+" :"+datos[i]);
+            }
+            ip = UtilNetwork.getIPAddress(true).split("\\.");
             mask = datos[1].split("\\.");
             gateway = datos[3].split("\\.");
+        }
+
+        for(int i = 0; i < datos.length; i++){
+            System.out.println("PASO -> "+ datos[i]);
         }
 
         etPort.setText(String.valueOf(getListeningPort()));
@@ -305,8 +524,68 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
     }
 
+    public void initDataStatic() {
+        String[] datos, mask, gateway, ip, dns;
+
+        if (isWifiConnected()) {
+            Logger.information("ConfigRed.java -> Ingreso por wifi");
+            datos = UtilNetwork.getNetInformation(getApplicationContext(), false);
+            for (int i = 0; i < datos.length ; i++) {
+                Logger.information("Datos ConfigRed wifi "+i+" :"+datos[i]);
+            }
+            ip = datos[0].split("\\.");
+            dns = datos[1].split("\\.");
+            gateway = datos[2].split("\\.");
+            mask = datos[3].split("\\.");
+        } else {
+            Logger.information("ConfigRed.java -> Ingreso por ethernet");
+            datos = UtilNetwork.getNetInformation(getApplicationContext(), true);
+            for (int i = 0; i < datos.length ; i++) {
+                Logger.information("Datos ConfigRed ethernet "+i+" :"+datos[i]);
+            }
+            ip = datos[0].split("\\.");
+            dns = datos[1].split("\\.");
+            gateway = datos[2].split("\\.");
+            mask = datos[3].split("\\.");
+        }
+
+        for(int i = 0; i < datos.length; i++){
+            System.out.println("PASO -> "+ datos[i]);
+        }
+
+        etPort.setText(String.valueOf(getListeningPort()));
+
+        etIp1.setText(ip[0]);
+        etIp2.setText(ip[1]);
+        etIp3.setText(ip[2]);
+        etIp4.setText(ip[3]);
+
+        etMask1.setText(mask[0]);
+        etMask2.setText(mask[1]);
+        etMask3.setText(mask[2]);
+        etMask4.setText(mask[3]);
+
+        etGateway1.setText(gateway[0]);
+        etGateway2.setText(gateway[1]);
+        etGateway3.setText(gateway[2]);
+        etGateway4.setText(gateway[3]);
+
+        etDns1.setText(dns[0]);
+        etDns2.setText(dns[1]);
+        etDns3.setText(dns[2]);
+        etDns4.setText(dns[3]);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        if (switchConnectionType.isChecked()){
+            etIp4.requestFocus();
+        }else {
+            etPort.requestFocus();
+        }
+
+    }
+
     private String[] getDataConnection(){
-        String[] dataCon = {concatIP(), concatMask(), concatGateway()};
+        String[] dataCon = {concatIP(), concatMask(), concatGateway(), concatDns()};
         for(String data : dataCon){
             if (data.equals("")){
                 dataCon = null;
@@ -320,7 +599,17 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         if (isWifiConnected()) {
             try {
                 if (staticConnection) {
-                    IpWifiConf.setStaticIpConfiguration(getApplicationContext(), dataConnection[0], dataConnection[1], dataConnection[2]);
+                    if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
+                        IpWifiConf.setStaticIpConfiguration(getApplicationContext(), dataConnection[0], dataConnection[1], dataConnection[2], dataConnection[3]);
+                    }else {
+                        PosWifiManager wifiManager = PosWifiManager.getInstance();
+                        WifiSsidInfo wifiSsidInfo = new WifiSsidInfo();
+                        wifiSsidInfo.setConnectionType(WifiSsidInfo.NetType.STATIC_IP);
+                        WifiSsidInfo.StaticIP staticIP = new WifiSsidInfo.StaticIP(dataConnection[0], dataConnection[3], dataConnection[2], "24");
+                        wifiSsidInfo.setStaticIpConfigs(staticIP);
+                        wifiManager.setCurrentSsidConfigs(wifiSsidInfo);
+
+                    }
                 } else {
                     IpWifiConf.wifiDhcp(getApplicationContext());
                 }
@@ -333,7 +622,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         if (EthernetManager.getInstance().isEtherentEnabled()) {
             try {
                 if (staticConnection) {
-                    IpEthernetConf.setConnectionStaticIP(dataConnection[0], dataConnection[1], dataConnection[2]);
+                    IpEthernetConf.setConnectionStaticIP(dataConnection[0], dataConnection[3], dataConnection[1], dataConnection[2]);
                 } else {
                     IpEthernetConf.etherDhcp();
                 }
@@ -413,73 +702,155 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    public String concatDns() {
+        String ret = "";
+        if (etDns1.getText().toString().equals("") || etDns2.getText().toString().equals("") ||
+                etDns3.getText().toString().equals("") || etDns4.getText().toString().equals("")) {
+            return "8.8.8.8";
+        } else {
+            ret = etDns1.getText().toString() + "." + etDns2.getText().toString() + "." + etDns3.getText().toString() + "." + etDns4.getText().toString();
+            return ret;
+        }
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            //PORT
+            case R.id.et_Port:
+                counterTimer();
+                etPort.requestFocus();
+                etPort.setSelection(etPort.getText().length());
+                inputMethodManager.showSoftInput(etPort, 0);
+                break;
             //IP
             case R.id.tvIp1:
+                counterTimer();
                 etIp1.requestFocus();
                 etIp1.setSelection(etIp1.getText().length());
                 inputMethodManager.showSoftInput(etIp1, 0);
                 break;
             case R.id.tvIp2:
+                counterTimer();
                 etIp2.requestFocus();
                 etIp2.setSelection(etIp2.getText().length());
                 inputMethodManager.showSoftInput(etIp2, 0);
                 break;
             case R.id.tvIp3:
+                counterTimer();
                 etIp3.requestFocus();
                 etIp3.setSelection(etIp3.getText().length());
                 inputMethodManager.showSoftInput(etIp3, 0);
                 break;
             case R.id.tvIp4:
+                counterTimer();
                 etIp4.requestFocus();
                 etIp4.setSelection(etIp4.getText().length());
                 inputMethodManager.showSoftInput(etIp4, 0);
                 break;
             //MASK
             case R.id.tvMask1:
+                counterTimer();
                 etMask1.requestFocus();
                 etMask1.setSelection(etMask1.getText().length());
                 inputMethodManager.showSoftInput(etMask1, 0);
                 break;
             case R.id.tvMask2:
+                counterTimer();
                 etMask2.requestFocus();
                 etMask2.setSelection(etMask2.getText().length());
                 inputMethodManager.showSoftInput(etMask2, 0);
                 break;
             case R.id.tvMask3:
+                counterTimer();
                 etMask3.requestFocus();
                 etMask3.setSelection(etMask3.getText().length());
                 inputMethodManager.showSoftInput(etMask3, 0);
                 break;
             case R.id.tvMask4:
+                counterTimer();
                 etMask4.requestFocus();
                 etMask4.setSelection(etMask4.getText().length());
                 inputMethodManager.showSoftInput(etMask4, 0);
                 break;
             //GATEWAY
             case R.id.tvGateway1:
+                counterTimer();
                 etGateway1.requestFocus();
                 etGateway1.setSelection(etGateway1.getText().length());
                 inputMethodManager.showSoftInput(etGateway1, 0);
                 break;
             case R.id.tvGateway2:
+                counterTimer();
                 etGateway2.requestFocus();
                 etGateway2.setSelection(etGateway2.getText().length());
                 inputMethodManager.showSoftInput(etGateway2, 0);
                 break;
             case R.id.tvGateway3:
+                counterTimer();
                 etGateway3.requestFocus();
                 etGateway3.setSelection(etGateway3.getText().length());
                 inputMethodManager.showSoftInput(etGateway3, 0);
                 break;
             case R.id.tvGateway4:
+                counterTimer();
                 etGateway4.requestFocus();
                 etGateway4.setSelection(etGateway4.getText().length());
                 inputMethodManager.showSoftInput(etGateway4, 0);
                 break;
+            //DNS
+            case R.id.tvDns1:
+                counterTimer();
+                etDns1.requestFocus();
+                etDns1.setSelection(etDns1.getText().length());
+                inputMethodManager.showSoftInput(etDns1, 0);
+                break;
+            case R.id.tvDns2:
+                counterTimer();
+                etDns2.requestFocus();
+                etDns2.setSelection(etDns2.getText().length());
+                inputMethodManager.showSoftInput(etDns2, 0);
+                break;
+            case R.id.tvDns3:
+                counterTimer();
+                etDns3.requestFocus();
+                etDns3.setSelection(etDns3.getText().length());
+                inputMethodManager.showSoftInput(etDns3, 0);
+                break;
+            case R.id.tvDns4:
+                counterTimer();
+                etDns4.requestFocus();
+                etDns4.setSelection(etDns4.getText().length());
+                inputMethodManager.showSoftInput(etDns4, 0);
+                break;
         }
+    }
+
+    private void operatingEditTextPORT(){
+        etPort.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        etPort.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp1);
+                    action = true;
+                }
+                return action;
+            }
+        });
     }
 
     boolean borrado = false;
@@ -515,6 +886,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
                 if (s.length() > 0) {
                     if (Integer.parseInt(String.valueOf(s)) > 255) {
                         etIp1.setText("");
@@ -531,10 +903,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etIp1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp2);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etIp2.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     if (s.length() > 1 || s.toString().trim().contains(".")) {
                         if (s.toString().trim().contains(".")) {
@@ -558,14 +942,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etIp2.getText().toString().length() == 0){
+                    etIp1.setFocusable(true);
+                    etIp1.requestFocus();
+                    etIp1.setSelection(etIp1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etIp1.getText().toString())
                         && etIp1.length() > 1 && borrado) {
                     borrado = false;
                     etIp1.setFocusable(true);
                     etIp1.requestFocus();
                     etIp1.setSelection(etIp1.getText().length());
-                }
+                }*/
 
             }
 
@@ -588,10 +978,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etIp2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp3);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etIp3.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     if (s.length() > 1 || s.toString().trim().contains(".")) {
                         if (s.toString().trim().contains(".")) {
@@ -617,14 +1019,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etIp3.getText().toString().length() == 0){
+                    etIp2.setFocusable(true);
+                    etIp2.requestFocus();
+                    etIp2.setSelection(etIp2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etIp2.getText().toString())
                         && etIp2.length() > 1 && borrado) {
                     borrado = false;
                     etIp2.setFocusable(true);
                     etIp2.requestFocus();
                     etIp2.setSelection(etIp2.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -646,10 +1054,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etIp3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvIp4);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etIp4.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     mTextIP4 = s.toString().trim();
 
@@ -663,14 +1083,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     editor.apply();
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etIp4.getText().toString().length() == 0){
+                    etIp3.setFocusable(true);
+                    etIp3.requestFocus();
+                    etIp3.setSelection(etIp3.getText().length());
+                }
+
+               /* if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etIp3.getText().toString())
                         && etIp3.length() > 1 && borrado) {
                     borrado = false;
                     etIp3.setFocusable(true);
                     etIp3.requestFocus();
                     etIp3.setSelection(etIp3.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -689,6 +1115,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                         etIp4.setText("");
                     }
                 }
+            }
+        });
+
+        etIp4.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvMask1);
+                    action = true;
+                }
+                return action;
             }
         });
     }
@@ -727,6 +1165,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
                 if (s.length() > 0) {
                     if (Integer.parseInt(String.valueOf(s)) > 255) {
                         etMask1.setText("");
@@ -743,10 +1182,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etMask1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvMask2);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etMask2.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     if (s.length() > 1 || s.toString().trim().contains(".")) {
                         if (s.toString().trim().contains(".")) {
@@ -770,14 +1221,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etMask2.getText().toString().length() == 0){
+                    etMask1.setFocusable(true);
+                    etMask1.requestFocus();
+                    etMask1.setSelection(etMask1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etMask1.getText().toString())
                         && etMask1.length() > 1 && borradoM) {
                     borradoM = false;
                     etMask1.setFocusable(true);
                     etMask1.requestFocus();
                     etMask1.setSelection(etMask1.getText().length());
-                }
+                }*/
 
             }
 
@@ -800,10 +1257,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etMask2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvMask3);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etMask3.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     if (s.length() > 1 || s.toString().trim().contains(".")) {
                         if (s.toString().trim().contains(".")) {
@@ -829,14 +1298,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etMask3.getText().toString().length() == 0){
+                    etMask2.setFocusable(true);
+                    etMask2.requestFocus();
+                    etMask2.setSelection(etMask2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etMask2.getText().toString())
                         && etMask2.length() > 1 && borradoM) {
                     borradoM = false;
                     etMask2.setFocusable(true);
                     etMask2.requestFocus();
                     etMask2.setSelection(etMask2.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -858,10 +1333,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etMask3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvMask4);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etMask4.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     mTextMA4 = s.toString().trim();
 
@@ -875,14 +1362,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     editor.apply();
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etMask4.getText().toString().length() == 0){
+                    etMask3.setFocusable(true);
+                    etMask3.requestFocus();
+                    etMask3.setSelection(etMask3.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etMask3.getText().toString())
                         && etMask3.length() > 1 && borradoM) {
                     borradoM = false;
                     etMask3.setFocusable(true);
                     etMask3.requestFocus();
                     etMask3.setSelection(etMask3.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -901,6 +1394,18 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                         etMask4.setText("");
                     }
                 }
+            }
+        });
+
+        etMask4.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvGateway1);
+                    action = true;
+                }
+                return action;
             }
         });
     }
@@ -939,6 +1444,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
                 if (s.length() > 0) {
                     if (Integer.parseInt(String.valueOf(s)) > 255) {
                         etGateway1.setText("");
@@ -955,10 +1461,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etGateway1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvGateway2);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etGateway2.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     if (s.length() > 1 || s.toString().trim().contains(".")) {
                         if (s.toString().trim().contains(".")) {
@@ -982,14 +1500,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etGateway2.getText().toString().length() == 0){
+                    etGateway1.setFocusable(true);
+                    etGateway1.requestFocus();
+                    etGateway1.setSelection(etGateway1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etGateway1.getText().toString())
                         && etGateway1.length() > 1 && borradoG) {
                     borradoG = false;
                     etGateway1.setFocusable(true);
                     etGateway1.requestFocus();
                     etGateway1.setSelection(etGateway1.getText().length());
-                }
+                }*/
 
             }
 
@@ -1012,10 +1536,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etGateway2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvGateway3);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etGateway3.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     if (s.length() > 1 || s.toString().trim().contains(".")) {
                         if (s.toString().trim().contains(".")) {
@@ -1041,14 +1577,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     }
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etGateway3.getText().toString().length() == 0){
+                    etGateway2.setFocusable(true);
+                    etGateway2.requestFocus();
+                    etGateway2.setSelection(etGateway2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etGateway2.getText().toString())
                         && etGateway2.length() > 1 && borradoG) {
                     borradoG = false;
                     etGateway2.setFocusable(true);
                     etGateway2.requestFocus();
                     etGateway2.setSelection(etGateway2.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -1070,10 +1612,22 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        etGateway3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvGateway4);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
         etGateway4.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                counterTimer();
                 if (s != null && s.length() > 0) {
                     mTextGA4 = s.toString().trim();
 
@@ -1087,14 +1641,20 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     editor.apply();
                 }
 
-                if (start == 0 && s != null && s.length() == 0
+                if(etGateway4.getText().toString().length() == 0){
+                    etGateway3.setFocusable(true);
+                    etGateway3.requestFocus();
+                    etGateway3.setSelection(etGateway3.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
                         && !PAYUtils.isNullWithTrim(etGateway3.getText().toString())
                         && etGateway3.length() > 1 && borradoG) {
                     borradoG = false;
                     etGateway3.setFocusable(true);
                     etGateway3.requestFocus();
                     etGateway3.setSelection(etGateway3.getText().length());
-                }
+                }*/
             }
 
             @Override
@@ -1111,6 +1671,284 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     if (Integer.parseInt(etGateway4.getText().toString()) > 255) {
                         borradoG = false;
                         etGateway4.setText("");
+                    }
+                }
+            }
+        });
+
+        etGateway4.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvDns1);
+                    action = true;
+                }
+                return action;
+            }
+        });
+    }
+
+    boolean borradoD = false;
+    int lenTxtD = 0;
+    private String mTextDNS1;
+    private String mTextDNS2;
+    private String mTextDNS3;
+    private String mTextDNS4;
+    private SharedPreferences mPreferencesDNS;
+
+    private void operatingEditTextDNS() {
+
+        mPreferencesDNS = getApplicationContext().getSharedPreferences("config_DNS", Context.MODE_PRIVATE);
+
+        etDns1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (s != null && s.length() > 0) {
+                    if (s.length() > 1 || s.toString().trim().contains(".")) {
+                        if (s.toString().trim().contains(".")) {
+                            mTextDNS1 = s.toString().substring(0, s.length() - 1);
+                            etDns1.setText(mTextDNS1);
+                        } else {
+                            mTextDNS1 = s.toString().trim();
+                        }
+                        SharedPreferences.Editor editor = mPreferencesDNS.edit();
+                        editor.putInt("DNS_FIRST", mTextDNS1.length());
+                        editor.apply();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
+                if (s.length() > 0) {
+                    if (Integer.parseInt(String.valueOf(s)) > 255) {
+                        etDns1.setText("");
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 2 && Integer.parseInt(String.valueOf(s)) <= 255) {
+                    etDns2.setFocusable(true);
+                    etDns2.requestFocus();
+                }
+            }
+        });
+
+        etDns1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvDns2);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
+        etDns2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
+                if (s != null && s.length() > 0) {
+                    if (s.length() > 1 || s.toString().trim().contains(".")) {
+                        if (s.toString().trim().contains(".")) {
+                            mTextDNS2 = s.toString().substring(0, s.length() - 1);
+                            etDns2.setText(mTextDNS2);
+                        } else {
+                            mTextDNS2 = s.toString().trim();
+                        }
+                        if (Integer.parseInt(mTextDNS2) > 255) {
+                            //TODO  zq
+                            return;
+                        }
+                        SharedPreferences.Editor editor = mPreferencesDNS.edit();
+                        editor.putInt("DNS_SECOND", mTextDNS2.length());
+                        editor.apply();
+
+                        if (s.length() > 2) {
+                            etDns3.setFocusable(true);
+                            etDns3.requestFocus();
+                        }
+                    }
+                }
+
+                if(etDns2.getText().toString().length() == 0){
+                    etDns1.setFocusable(true);
+                    etDns1.requestFocus();
+                    etDns1.setSelection(etDns1.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
+                        && !PAYUtils.isNullWithTrim(etDns1.getText().toString())
+                        && etDns1.length() > 1 && borradoD) {
+                    borradoD = false;
+                    etDns1.setFocusable(true);
+                    etDns1.requestFocus();
+                    etDns1.setSelection(etDns1.getText().length());
+                }*/
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                lenTxtD = s.length();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() < lenTxtD) {
+                    borradoD = true;
+                }
+                if (etDns2.getText().length() > 0) {
+                    if (Integer.parseInt(etDns2.getText().toString()) > 255) {
+                        borradoD = false;
+                        etDns2.setText("");
+                    }
+                }
+            }
+        });
+
+        etDns2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvDns3);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
+        etDns3.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
+                if (s != null && s.length() > 0) {
+                    if (s.length() > 1 || s.toString().trim().contains(".")) {
+                        if (s.toString().trim().contains(".")) {
+                            mTextDNS3 = s.toString().substring(0, s.length() - 1);
+                            etDns3.setText(mTextDNS3);
+                        } else {
+                            mTextDNS3 = s.toString().trim();
+                        }
+
+                        if (Integer.parseInt(mTextDNS3) > 255) {
+                            //TODO  zq
+                            return;
+                        }
+
+                        SharedPreferences.Editor editor = mPreferencesDNS.edit();
+                        editor.putInt("DNS_THIRD", mTextDNS3.length());
+                        editor.apply();
+
+                        if (s.length() > 2) {
+                            etDns4.setFocusable(true);
+                            etDns4.requestFocus();
+                        }
+                    }
+                }
+
+                if(etDns3.getText().toString().length() == 0){
+                    etDns2.setFocusable(true);
+                    etDns2.requestFocus();
+                    etDns2.setSelection(etDns2.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
+                        && !PAYUtils.isNullWithTrim(etDns2.getText().toString())
+                        && etDns2.length() > 1 && borradoD) {
+                    borradoD = false;
+                    etDns2.setFocusable(true);
+                    etDns2.requestFocus();
+                    etDns2.setSelection(etDns2.getText().length());
+                }*/
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                lenTxtD = s.length();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() < lenTxtD) {
+                    borradoD = true;
+                }
+                if (etDns3.getText().length() > 0) {
+                    if (Integer.parseInt(etDns3.getText().toString()) > 255) {
+                        borradoD = false;
+                        etDns3.setText("");
+                    }
+                }
+            }
+        });
+
+        etDns3.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean action=false;
+                if(actionId == EditorInfo.IME_ACTION_NEXT){
+                    onClick(tvDns4);
+                    action = true;
+                }
+                return action;
+            }
+        });
+
+        etDns4.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                counterTimer();
+                if (s != null && s.length() > 0) {
+                    mTextDNS4 = s.toString().trim();
+
+                    if (Integer.parseInt(mTextDNS4) > 255) {
+                        //TODO  zq
+                        return;
+                    }
+
+                    SharedPreferences.Editor editor = mPreferencesDNS.edit();
+                    editor.putInt("DNS_FOURTH", mTextDNS4.length());
+                    editor.apply();
+                }
+
+                if(etDns4.getText().toString().length() == 0){
+                    etDns3.setFocusable(true);
+                    etDns3.requestFocus();
+                    etDns3.setSelection(etDns3.getText().length());
+                }
+
+                /*if (start == 0 && s != null && s.length() == 0
+                        && !PAYUtils.isNullWithTrim(etDns3.getText().toString())
+                        && etDns3.length() > 1 && borradoD) {
+                    borradoD = false;
+                    etDns3.setFocusable(true);
+                    etDns3.requestFocus();
+                    etDns3.setSelection(etDns3.getText().length());
+                }*/
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                lenTxtD = s.length();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() < lenTxtD) {
+                    borradoD = true;
+                }
+                if (etDns4.getText().length() > 0) {
+                    if (Integer.parseInt(etDns4.getText().toString()) > 255) {
+                        borradoD = false;
+                        etDns4.setText("");
                     }
                 }
             }

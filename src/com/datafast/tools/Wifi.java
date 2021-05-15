@@ -3,6 +3,7 @@ package com.datafast.tools;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.widget.Toast;
 
 import com.android.newpos.pay.StartAppDATAFAST;
@@ -16,6 +17,8 @@ import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.net.eth.EthernetManager;
+import com.pos.device.net.wifi.PosWifiManager;
+import com.pos.device.net.wifi.WifiSsidInfo;
 
 import org.jpos.iso.IF_CHAR;
 
@@ -166,7 +169,17 @@ public class Wifi {
         if (isWifiConnected()) {
             try {
                 if (staticConnection){
-                    IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+                    if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
+                        IpWifiConf.setStaticIpConfiguration(this.ctx, cp_request.getIp(), cp_request.getMask(), cp_request.getGateway(), "8.8.8.8");
+                    }else {
+                        PosWifiManager wifiManager = PosWifiManager.getInstance();
+                        WifiSsidInfo wifiSsidInfo = new WifiSsidInfo();
+                        wifiSsidInfo.setConnectionType(WifiSsidInfo.NetType.STATIC_IP);
+                        WifiSsidInfo.StaticIP staticIP = new WifiSsidInfo.StaticIP(cp_request.getIp(), "8.8.8.8", cp_request.getGateway(),"24");
+                        wifiSsidInfo.setStaticIpConfigs(staticIP);
+                        wifiManager.setCurrentSsidConfigs(wifiSsidInfo);
+
+                    }
                 }else {
                     IpWifiConf.wifiDhcp(ctx);
                 }
@@ -179,7 +192,7 @@ public class Wifi {
         if (EthernetManager.getInstance().isEtherentEnabled()) {
             try {
                 if (staticConnection){
-                    IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), cp_request.getMask(), cp_request.getGateway());
+                    IpEthernetConf.setConnectionStaticIP(cp_request.getIp(), "8.8.8.8", cp_request.getMask(), cp_request.getGateway());
                 }else {
                     IpEthernetConf.etherDhcp();
                 }

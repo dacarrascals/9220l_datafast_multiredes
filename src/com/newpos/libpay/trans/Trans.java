@@ -754,11 +754,13 @@ public abstract class Trans {
      * @return
      */
     protected int send() {
+        Logger.information("Trans.java -> Se ingresa a hacer el send()");
         byte[] pack = iso8583.packetISO8583();
         if (pack == null) {
             return -1;
         }
         Logger.debug("交易:" + TransEName + "\n发送报文:" + ISOUtil.hexString(pack));
+        Logger.information("Trans.java -> send() -> " + TransEName + " send: " + ISOUtil.hexString(pack));
         return netWork.Send(pack);
     }
 
@@ -768,6 +770,7 @@ public abstract class Trans {
      * @return
      */
     protected byte[] recive() {
+        Logger.information("Trans.java -> Se ingresa a hacer el receive()");
         byte[] recive = null;
         try {
             recive = netWork.Recive(2048);
@@ -776,6 +779,7 @@ public abstract class Trans {
         }
         if (recive != null) {
             Logger.debug("交易:" + TransEName + "\n接收报文:" + ISOUtil.hexString(recive));
+            Logger.information("Trans.java -> receive() -> " + TransEName + " receive: " + ISOUtil.hexString(recive));
         }
         return recive;
     }
@@ -785,7 +789,7 @@ public abstract class Trans {
      *
      * @return
      */
-    protected int OnLineTrans() {
+    protected int OnLineTrans(TransUI transUI) {
 
         int reintentos = Integer.parseInt(host_confi.getREINTENTOS());
         int showReintentos = 1;

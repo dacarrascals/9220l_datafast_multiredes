@@ -25,7 +25,7 @@ public class ConfigTransactional extends BaseActivity{
     EditText port1, port2;
     EditText etIp1, etIp2, etIp3, etIp4;
     EditText et2Ip1, et2Ip2, et2Ip3, et2Ip4;
-    String estado, nombreIP1, nombreIP2;
+    String estado, nombreIP1, nombreIP2, portNom1, portNom2;;
 
     private CounterTimer counterTimer;
 
@@ -51,12 +51,12 @@ public class ConfigTransactional extends BaseActivity{
         });
 
         /**
-         * Se verifica si las IP'S son las mismas para aplicar la configuración del TLS a ambas
+         * Se verifica si los puertos de las IP'S son los mismos para aplicar la configuración del TLS a ambas
          */
         switchTls1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (nombreIP1.equals(nombreIP2)){
+                if (portNom1.equals(portNom2)){
                     switchTls2.setChecked(isChecked);
                 }
             }
@@ -65,7 +65,7 @@ public class ConfigTransactional extends BaseActivity{
         switchTls2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (nombreIP2.equals(nombreIP1)){
+                if (portNom2.equals(portNom1)){
                     switchTls1.setChecked(isChecked);
                 }
             }
@@ -112,6 +112,7 @@ public class ConfigTransactional extends BaseActivity{
         tablaIp = ChequeoIPs.seleccioneIP(0);
         String[] ip = tablaIp.getIP_HOST().split("\\.");
         nombreIP1 = tablaIp.getNOMBRE_IP();
+        portNom1 = tablaIp.getPUERTO();
         etIp1.setText(ip[0]);
         etIp2.setText(ip[1]);
         etIp3.setText(ip[2]);
@@ -129,6 +130,7 @@ public class ConfigTransactional extends BaseActivity{
         port2.setText(tablaIp.getPUERTO());
         String[] ip = tablaIp.getIP_HOST().split("\\.");
         nombreIP2 = tablaIp.getNOMBRE_IP();
+        portNom2 = tablaIp.getPUERTO();
         et2Ip1.setText(ip[0]);
         et2Ip2.setText(ip[1]);
         et2Ip3.setText(ip[2]);

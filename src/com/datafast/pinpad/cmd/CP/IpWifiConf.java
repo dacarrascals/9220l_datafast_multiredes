@@ -23,13 +23,15 @@ public class IpWifiConf {
     public static String ip = null;
     public static String mask = null;
     public static String gateway = null;
+    public static String dns = null;
 
-    public static void setStaticIpConfiguration(Context context, String ip, String mask, String gateway) throws Exception {
+    public static void setStaticIpConfiguration(Context context, String ip, String mask, String gateway, String dns) throws Exception {
         IpWifiConf.ip = ip;
         IpWifiConf.mask = mask;
         IpWifiConf.gateway = gateway;
+        IpWifiConf.dns = dns;
 
-       setStaticIpConfiguration(context,  IpWifiConf.ip, IpWifiConf.mask, IpWifiConf.gateway, new InetAddress[] { InetAddress.getByName("8.8.8.8"), InetAddress.getByName("8.8.4.4")});
+       setStaticIpConfiguration(context,  IpWifiConf.ip, IpWifiConf.mask, IpWifiConf.gateway, new InetAddress[] { InetAddress.getByName(IpWifiConf.dns), InetAddress.getByName("8.8.4.4")});
     }
 
     public static void setStaticIpConfiguration(Context context, String ip, String mask, String puertaEnlace, InetAddress[] dns) throws Exception {

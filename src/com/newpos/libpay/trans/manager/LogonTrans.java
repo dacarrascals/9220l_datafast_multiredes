@@ -136,7 +136,7 @@ public class LogonTrans extends Trans implements TransPresenter{
 		Field60 = Field60.substring(0, 8) + f60_3;
 		iso8583.setField(63, ISOUtil.padleft(cfg.getOprNo()+"",2,'0') + " ");
 		setFields();
-		retVal = OnLineTrans();
+		retVal = OnLineTrans(transUI);
 		Logger.debug("LogonTrans>>SignIn>>OnLineTrans finish");
 		if (retVal != 0) {
 			return retVal ;

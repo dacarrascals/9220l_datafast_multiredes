@@ -28,7 +28,9 @@ import cn.desert.newpos.payui.base.BaseActivity;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.datafast.menus.MenuAction.callBackSeatle;
 import static com.datafast.menus.menus.contFallback;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 import static java.lang.Thread.sleep;
 
 /**
@@ -78,13 +80,23 @@ public class ResultControl extends BaseActivity {
                     }
                 }, 5 * second);
             } else {
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        //over();
-                        removeCard();
-                    }
-                }, 5 * second);
+                if(Server.cmd.equals(PC) || Server.cmd.equals(CP)){
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //over();
+                            removeCard();
+                        }
+                    }, (long) (0.5 * second));
+                }else{
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //over();
+                            removeCard();
+                        }
+                    }, 1 * second);
+                }
             }
             over();
         } else {
