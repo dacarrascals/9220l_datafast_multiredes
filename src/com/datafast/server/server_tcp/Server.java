@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
+
+import com.datafast.server.EFTGCPinpad;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.unpack.dataReceived;
@@ -38,11 +40,24 @@ public class Server extends AppCompatActivity {
     public static byte[] info;
     public static boolean correctLength;
 
+    EFTGCPinpad eftgcPinpad;
+
     public Server(ServerTCP activity) {
         this.activity = activity;
         socketServerPORT = getListeningPort();
-        Thread socketServerThread = new Thread(new SocketServerThread());
-        socketServerThread.start();
+        /*Thread socketServerThread = new Thread(new SocketServerThread());
+        socketServerThread.start();*/
+
+        eftgcPinpad = new EFTGCPinpad(this.activity);
+        eftgcPinpad.start();
+    }
+
+    public static void setCmd(String cmd) {
+        Server.cmd = cmd;
+    }
+
+    public static void setDat(byte[] dat) {
+        Server.dat = dat;
     }
 
     public int getPort() {
@@ -55,14 +70,15 @@ public class Server extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        if (serverSocket != null && !serverSocket.isClosed()) {
+        /*if (serverSocket != null && !serverSocket.isClosed()) {
             try {
                 serverSocket.close();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }
+        }*/
+        eftgcPinpad = null;
     }
 
     void startTimer() {

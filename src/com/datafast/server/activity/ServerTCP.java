@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.trans_init.Init;
@@ -35,9 +36,12 @@ import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
+
 import java.io.IOException;
+
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
+
 import static com.android.newpos.pay.StartAppDATAFAST.inyecccionLLaves;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
@@ -81,12 +85,12 @@ public class ServerTCP extends AppCompatActivity {
 
         isInEcho = false;
 
-        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest){
+        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest) {
             Control.echoTest = false;
             Actualizacion.echoTest = false;
             Actualizacion.goEchoTest = false;
             isInEcho = true;
-            MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
+            MenuAction menuAction = new MenuAction(ServerTCP.this, "ECHO TEST");
             menuAction.SelectAction();
         }
 
@@ -96,14 +100,15 @@ public class ServerTCP extends AppCompatActivity {
             updateApk.instalarApp(ServerTCP.this);
         }
 
-        slide = new slide( ServerTCP.this, true);
+        slide = new slide(ServerTCP.this, true);
         slide.galeria(this, R.id.adcolumn);
 
         toolbar();
         MasterControl.setMcontext(ServerTCP.this);
         if (isInit && inyecccionLLaves) {
             if (!isInEcho) {
-                server = new Server(ServerTCP.this);
+                if (server == null)
+                    server = new Server(ServerTCP.this);
                 wifi = new Wifi(ServerTCP.this);
                 control = new Control(ServerTCP.this);
                 actualizacion = new Actualizacion(ServerTCP.this);
@@ -120,16 +125,16 @@ public class ServerTCP extends AppCompatActivity {
         stopServer();
     }
 
-    public void validacionesInciales(){
+    public void validacionesInciales() {
 
         isInEcho = false;
 
-        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest){
+        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest) {
             Control.echoTest = false;
             Actualizacion.echoTest = false;
             Actualizacion.goEchoTest = false;
             isInEcho = true;
-            MenuAction menuAction =  new MenuAction(ServerTCP.this, "ECHO TEST");
+            MenuAction menuAction = new MenuAction(ServerTCP.this, "ECHO TEST");
             menuAction.SelectAction();
         }
 
@@ -139,7 +144,7 @@ public class ServerTCP extends AppCompatActivity {
             updateApk.instalarApp(ServerTCP.this);
         }
 
-        slide = new slide( ServerTCP.this, true);
+        slide = new slide(ServerTCP.this, true);
         slide.galeria(this, R.id.adcolumn);
         MasterControl.setMcontext(ServerTCP.this);
         if (isInit && inyecccionLLaves) {
@@ -154,8 +159,8 @@ public class ServerTCP extends AppCompatActivity {
         }
     }
 
-    private void stopServer(){
-        if (server != null) {
+    private void stopServer() {
+        /*if (server != null) {
             if (server.getServerSocket() != null && !server.getServerSocket().isClosed()) {
                 try {
                     server.getServerSocket().close();
@@ -164,14 +169,15 @@ public class ServerTCP extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
+        server = null;
     }
 
     /**
      * Enciende la pantalla cuando llega una transacción
-     * */
-    public void unlockScreen(Context context){
-        PowerManager.WakeLock powerManager = ((PowerManager)context.getSystemService(POWER_SERVICE)).newWakeLock(
+     */
+    public void unlockScreen(Context context) {
+        PowerManager.WakeLock powerManager = ((PowerManager) context.getSystemService(POWER_SERVICE)).newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tag:");
         powerManager.acquire();
         powerManager.release();
@@ -185,7 +191,7 @@ public class ServerTCP extends AppCompatActivity {
         new Thread() {
             @Override
             public void run() {
-                if (checkCardPresent(aCmd)){
+                if (checkCardPresent(aCmd)) {
                     Intent intent = new Intent();
                     seleccion = 0;
 
@@ -193,10 +199,10 @@ public class ServerTCP extends AppCompatActivity {
                         case CB:
                             boolean cbRet = configuracionBasica.procesoCb(aDat);
                             listenerServer.waitRspHost(configuracionBasica.getCb_response().packData());
-                            if (cbRet){
-                                UIUtils.startResult(ServerTCP.this,true,"CONFIGURACION BASICA\nENVIADA",false);
-                            }else {
-                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                            if (cbRet) {
+                                UIUtils.startResult(ServerTCP.this, true, "CONFIGURACION BASICA\nENVIADA", false);
+                            } else {
+                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
                             }
                             break;
                         case PP:
@@ -205,56 +211,56 @@ public class ServerTCP extends AppCompatActivity {
 
                             PP_Request pp_request = new PP_Request();
 
-                            if (!Server.correctLength){
+                            if (!Server.correctLength) {
                                 pp_request.UnPackHash(aDat);
                                 Logger.information("ServerTCP.java -> Error longitud de trama no corresponde");
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
-                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
                                 break;
                             }
 
                             pp_request.UnPackData(aDat);
-                            if (pp_request.getCountValid() > 0){
+                            if (pp_request.getCountValid() > 0) {
                                 Logger.information("ServerTCP.java -> Error, la trama no es correcta");
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
-                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
                                 break;
                             }
                             seleccion = Integer.parseInt(pp_request.getTypeTrans());
-                            if (Control.echoTest && Control.failEchoTest){
+                            if (Control.echoTest && Control.failEchoTest) {
                                 Control.failEchoTest = false;
                             }
                         case LT:
                         case CT:
-                            if (seleccion == 0){
+                            if (seleccion == 0) {
                                 seleccion = 1;
                             }
-                            tipoVenta = new String[] {"VENTA","DIFERIDO","ANULACION","VENTA","NN","PAGOS CON CODIGO","NN"};
-                            MenuAction menuAction =  new MenuAction(ServerTCP.this, tipoVenta[seleccion - 1]);
+                            tipoVenta = new String[]{"VENTA", "DIFERIDO", "ANULACION", "VENTA", "NN", "PAGOS CON CODIGO", "NN"};
+                            MenuAction menuAction = new MenuAction(ServerTCP.this, tipoVenta[seleccion - 1]);
                             menuAction.SelectAction();
                             break;
                         case CP:
                             ret = wifi.comunicacion(aDat, listenerServer);
-                            if (ret){
+                            if (ret) {
                                 //stopServer();
-                                UIUtils.startResult(ServerTCP.this,true,"DATOS DE RED ACTUALIZADOS",false);
-                            }else {
+                                UIUtils.startResult(ServerTCP.this, true, "DATOS DE RED ACTUALIZADOS", false);
+                            } else {
                                 //stopServer();
-                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
                             }
                             break;
                         case PC:
                             int pcRet = control.actualizacionControl(aDat);
                             listenerServer.waitRspHost(control.getPc_response().packData());
 
-                            if (pcRet == 0){
-                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                            if (pcRet == 0) {
+                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
                             }
 
-                            if (pcRet == 1){
-                                UIUtils.startResult(ServerTCP.this,true,"TRANS. BORRADAS\nINICIO DE DIA REALIZADO",false);
+                            if (pcRet == 1) {
+                                UIUtils.startResult(ServerTCP.this, true, "TRANS. BORRADAS\nINICIO DE DIA REALIZADO", false);
                             }
 
                             break;
@@ -263,13 +269,13 @@ public class ServerTCP extends AppCompatActivity {
                         case PA:
                             actualizacion.procesoActualizacion(aDat);
                             if (actualizacion.tramaValida == -1) {
-                                UIUtils.startResult(ServerTCP.this,false,"ERROR EN TRAMA",false);
+                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
                             } else {
-                                if (actualizacion.intentOK){
+                                if (actualizacion.intentOK) {
                                     resumePA = true;
                                     //UIUtils.startResult(ServerTCP.this,true,"PROCESO DE ACTUALIZACION INICIADO",true);
-                                }else {
-                                    UIUtils.startResult(ServerTCP.this,false,actualizacion.msgfail,false);
+                                } else {
+                                    UIUtils.startResult(ServerTCP.this, false, actualizacion.msgfail, false);
                                 }
                             }
                             listenerServer.waitRspHost(actualizacion.getPa_response().packData());
@@ -341,7 +347,7 @@ public class ServerTCP extends AppCompatActivity {
 
                 String np = newEdit.getText().toString();
 
-                if (!np.equals("")){
+                if (!np.equals("")) {
                     if (np.equals(pwd)) {
 
                         Intent intent = new Intent();
@@ -357,7 +363,7 @@ public class ServerTCP extends AppCompatActivity {
                         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                     }
-                }else{
+                } else {
                     UIUtils.toast(ServerTCP.this, R.drawable.ic_launcher_1, getString(R.string.err_msg_password), Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
@@ -373,7 +379,7 @@ public class ServerTCP extends AppCompatActivity {
         });
     }
 
-    private void settings(){
+    private void settings() {
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
         toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
 
@@ -385,19 +391,20 @@ public class ServerTCP extends AppCompatActivity {
         intent.putExtra(DefinesDATAFAST.DATO_MENU, DefinesDATAFAST.ITEM_COMUNICACION);
         startActivity(intent);
     }
+
     private boolean checkCardPresent(String aCmd) {
-        if (lastCmd.equals(LT) && aCmd.equals(PP)){
+        if (lastCmd.equals(LT) && aCmd.equals(PP)) {
             return true;
         }
         final IccReader iccReader0;
         iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
         do {
-            if (iccReader0.isCardPresent()){
-                try{
-                    toneG.startTone(ToneGenerator.TONE_PROP_BEEP2,1000);
+            if (iccReader0.isCardPresent()) {
+                try {
+                    toneG.startTone(ToneGenerator.TONE_PROP_BEEP2, 1000);
                     Thread.sleep(1000);
-                }catch (Exception e){
+                } catch (Exception e) {
                     break;
                 }
             }
@@ -407,7 +414,8 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {}
+    public void onBackPressed() {
+    }
 
     @Override
     protected void onRestart() {
