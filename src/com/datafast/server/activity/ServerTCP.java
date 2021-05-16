@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -244,7 +247,13 @@ public class ServerTCP extends AppCompatActivity {
                         case CP:
                             ret = wifi.comunicacion(aDat, listenerServer);
                             if (ret) {
-                                //stopServer();
+                                new Handler(Looper.getMainLooper()) {
+                                    @Override
+                                    public void handleMessage(Message message) {
+                                        stopServer();
+                                        server = new Server(ServerTCP.this);
+                                    }
+                                };
                                 UIUtils.startResult(ServerTCP.this, true, "DATOS DE RED ACTUALIZADOS", false);
                             } else {
                                 //stopServer();

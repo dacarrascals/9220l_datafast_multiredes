@@ -45,6 +45,7 @@ public class Server extends AppCompatActivity {
     public Server(ServerTCP activity) {
         this.activity = activity;
         socketServerPORT = getListeningPort();
+        Logger.information("Puerto escucha: -> " + socketServerPORT);
         /*Thread socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();*/
 
