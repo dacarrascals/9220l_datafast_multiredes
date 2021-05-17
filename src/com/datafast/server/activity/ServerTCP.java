@@ -79,6 +79,7 @@ public class ServerTCP extends AppCompatActivity {
     boolean isInEcho;
     public static boolean installApp = false;
     public static boolean interrupInit = false;
+    public static boolean updateManualConf = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,13 +248,7 @@ public class ServerTCP extends AppCompatActivity {
                         case CP:
                             ret = wifi.comunicacion(aDat, listenerServer);
                             if (ret) {
-                                new Handler(Looper.getMainLooper()) {
-                                    @Override
-                                    public void handleMessage(Message message) {
-                                        stopServer();
-                                        server = new Server(ServerTCP.this);
-                                    }
-                                };
+                                resetServer();
                                 UIUtils.startResult(ServerTCP.this, true, "DATOS DE RED ACTUALIZADOS", false);
                             } else {
                                 //stopServer();
@@ -301,6 +296,13 @@ public class ServerTCP extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         slide.setTimeoutSlide(5000);
+
+        if (ServerTCP.updateManualConf) {
+            ServerTCP.updateManualConf = false;
+
+            resetServer();
+        }
+
         if (resumePA) {
             resumePA = false;
             Intent intent = new Intent();
@@ -430,5 +432,15 @@ public class ServerTCP extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         validacionesInciales();
+    }
+
+    private void resetServer(){
+        new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                stopServer();
+                server = new Server(ServerTCP.this);
+            }
+        };
     }
 }

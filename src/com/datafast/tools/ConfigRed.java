@@ -32,6 +32,7 @@ import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
+import com.datafast.server.activity.ServerTCP;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.KeyBoardUtil;
 import com.pos.device.net.eth.EthernetManager;
@@ -656,6 +657,8 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             SharedPreferences.Editor edit = preferences.edit();
             edit.putString("port", etPort.getText().toString());
             edit.apply();
+
+            ServerTCP.updateManualConf = true;
 
             UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
         } else if (!invalidDataConnection) {
