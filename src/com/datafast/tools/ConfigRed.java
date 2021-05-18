@@ -39,10 +39,14 @@ import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.net.wifi.PosWifiManager;
 import com.pos.device.net.wifi.WifiSsidInfo;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.BaseActivity;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
+import static com.pos.device.sys.SystemManager.reboot;
 
 public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
@@ -658,9 +662,17 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             edit.putString("port", etPort.getText().toString());
             edit.apply();
 
-            ServerTCP.updateManualConf = true;
+            UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS \n REINICIANDO POS", false);
 
-            UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    //over();
+                    reboot();
+                }
+            }, 2 * 1000);
+
         } else if (!invalidDataConnection) {
             UIUtils.startResult(ConfigRed.this, false, "ERROR AL ACTUALIZAR DATOS", false);
         }

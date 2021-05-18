@@ -31,6 +31,7 @@ import static com.datafast.menus.menus.contFallback;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
+import static com.pos.device.sys.SystemManager.reboot;
 import static java.lang.Thread.sleep;
 
 /**
@@ -80,7 +81,7 @@ public class ResultControl extends BaseActivity {
                     }
                 }, 5 * second);
             } else {
-                if(Server.cmd.equals(PC) || Server.cmd.equals(CP)){
+                if(Server.cmd.equals(PC)){
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -88,6 +89,14 @@ public class ResultControl extends BaseActivity {
                             removeCard();
                         }
                     }, (long) (0.5 * second));
+                } else if(Server.cmd.equals(CP)){
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //over();
+                            reboot();
+                        }
+                    }, 2 * second);
                 }else{
                     timer.schedule(new TimerTask() {
                         @Override

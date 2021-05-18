@@ -59,6 +59,9 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.NN;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.TO;
+import static com.pos.device.sys.SystemManager.reboot;
+import static java.lang.Thread.sleep;
 
 public class ServerTCP extends AppCompatActivity {
 
@@ -79,7 +82,6 @@ public class ServerTCP extends AppCompatActivity {
     boolean isInEcho;
     public static boolean installApp = false;
     public static boolean interrupInit = false;
-    public static boolean updateManualConf = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,10 +248,10 @@ public class ServerTCP extends AppCompatActivity {
                             menuAction.SelectAction();
                             break;
                         case CP:
+                            Logger.information("ServerTCP.java -> Inicia proceso para un CP");
                             ret = wifi.comunicacion(aDat, listenerServer);
                             if (ret) {
-                                resetServer();
-                                UIUtils.startResult(ServerTCP.this, true, "DATOS DE RED ACTUALIZADOS", false);
+                                UIUtils.startResult(ServerTCP.this, true, "DATOS DE RED ACTUALIZADOS \n REINICIANDO POS", false);
                             } else {
                                 //stopServer();
                                 UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
@@ -296,13 +298,6 @@ public class ServerTCP extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         slide.setTimeoutSlide(5000);
-
-        if (ServerTCP.updateManualConf) {
-            ServerTCP.updateManualConf = false;
-
-            resetServer();
-        }
-
         if (resumePA) {
             resumePA = false;
             Intent intent = new Intent();
@@ -311,7 +306,7 @@ public class ServerTCP extends AppCompatActivity {
             intent.setClass(ServerTCP.this, Init.class);
             intent.putExtra("PARCIAL", false);
             try {
-                Thread.sleep(1000);
+                sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -414,7 +409,7 @@ public class ServerTCP extends AppCompatActivity {
             if (iccReader0.isCardPresent()) {
                 try {
                     toneG.startTone(ToneGenerator.TONE_PROP_BEEP2, 1000);
-                    Thread.sleep(1000);
+                    sleep(1000);
                 } catch (Exception e) {
                     break;
                 }
@@ -432,15 +427,5 @@ public class ServerTCP extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         validacionesInciales();
-    }
-
-    private void resetServer(){
-        new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message message) {
-                stopServer();
-                server = new Server(ServerTCP.this);
-            }
-        };
     }
 }

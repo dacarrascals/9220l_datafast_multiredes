@@ -103,7 +103,7 @@ public class Server extends AppCompatActivity {
         return Integer.parseInt(preferences.getString("port", "9999"));
     }
 
-    private class SocketServerThread extends Thread {
+    /*private class SocketServerThread extends Thread {
 
         int len;
         byte[] text;
@@ -118,7 +118,7 @@ public class Server extends AppCompatActivity {
 
                 while(true) {
 
-                    Logger.information("Server.java -> Se ingrea a escuchar peticiones");
+                    Logger.information("Server.java -> Se ingresa a escuchar peticiones");
 
                     Socket socket = serverSocket.accept();
                     socket.setReuseAddress(true);
@@ -196,7 +196,7 @@ public class Server extends AppCompatActivity {
             }
             return data;
         }
-    }
+    }*/
 
     private class SocketServerReplyThread extends Thread {
 
