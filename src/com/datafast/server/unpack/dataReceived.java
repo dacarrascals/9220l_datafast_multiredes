@@ -100,8 +100,8 @@ public class dataReceived {
                     break;
             }
 
-            dataRaw = new byte[len];
-            System.arraycopy(aMsg, offset, dataRaw, 0, len);
+            dataRaw = new byte[len-2];
+            System.arraycopy(aMsg, offset, dataRaw, 0, len-2);
 
         }
         catch(Exception e)

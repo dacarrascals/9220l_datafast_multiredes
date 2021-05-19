@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
+
+import com.datafast.server.EFTGCPinpad;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.unpack.dataReceived;
@@ -38,11 +40,25 @@ public class Server extends AppCompatActivity {
     public static byte[] info;
     public static boolean correctLength;
 
+    EFTGCPinpad eftgcPinpad;
+
     public Server(ServerTCP activity) {
         this.activity = activity;
         socketServerPORT = getListeningPort();
-        Thread socketServerThread = new Thread(new SocketServerThread());
-        socketServerThread.start();
+        Logger.information("Puerto escucha: -> " + socketServerPORT);
+        /*Thread socketServerThread = new Thread(new SocketServerThread());
+        socketServerThread.start();*/
+
+        eftgcPinpad = new EFTGCPinpad(this.activity);
+        eftgcPinpad.start();
+    }
+
+    public static void setCmd(String cmd) {
+        Server.cmd = cmd;
+    }
+
+    public static void setDat(byte[] dat) {
+        Server.dat = dat;
     }
 
     public int getPort() {
@@ -55,14 +71,15 @@ public class Server extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        if (serverSocket != null && !serverSocket.isClosed()) {
+        /*if (serverSocket != null && !serverSocket.isClosed()) {
             try {
                 serverSocket.close();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }
+        }*/
+        eftgcPinpad = null;
     }
 
     void startTimer() {
@@ -86,7 +103,7 @@ public class Server extends AppCompatActivity {
         return Integer.parseInt(preferences.getString("port", "9999"));
     }
 
-    private class SocketServerThread extends Thread {
+    /*private class SocketServerThread extends Thread {
 
         int len;
         byte[] text;
@@ -101,7 +118,7 @@ public class Server extends AppCompatActivity {
 
                 while(true) {
 
-                    Logger.information("Server.java -> Se ingrea a escuchar peticiones");
+                    Logger.information("Server.java -> Se ingresa a escuchar peticiones");
 
                     Socket socket = serverSocket.accept();
                     socket.setReuseAddress(true);
@@ -179,9 +196,9 @@ public class Server extends AppCompatActivity {
             }
             return data;
         }
-    }
+    }*/
 
-    private class SocketServerReplyThread extends Thread {
+    /*private class SocketServerReplyThread extends Thread {
 
         private Socket hostThreadSocket;
         byte[] echoData;
@@ -254,7 +271,7 @@ public class Server extends AppCompatActivity {
             }
         }
 
-    }
+    }*/
 
     /**
      * Convert bcd to int

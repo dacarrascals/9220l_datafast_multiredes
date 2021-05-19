@@ -31,6 +31,7 @@ import static com.datafast.menus.menus.contFallback;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
+import static com.pos.device.sys.SystemManager.reboot;
 import static java.lang.Thread.sleep;
 
 /**
@@ -68,7 +69,8 @@ public class ResultControl extends BaseActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            displayDetails(bundle.getBoolean("flag"), bundle.getString("info"));
+            flag = bundle.getBoolean("flag");
+            displayDetails(flag, bundle.getString("info"));
             if (bundle.getBoolean("boton")) {
                 confirm.setVisibility(View.VISIBLE);
                 buttonActive = true;
@@ -80,7 +82,7 @@ public class ResultControl extends BaseActivity {
                     }
                 }, 5 * second);
             } else {
-                if(Server.cmd.equals(PC) || Server.cmd.equals(CP)){
+                if (Server.cmd.equals(PC)) {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -88,7 +90,18 @@ public class ResultControl extends BaseActivity {
                             removeCard();
                         }
                     }, (long) (0.5 * second));
-                }else{
+                } else if (Server.cmd.equals(CP)) {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //over();
+                            if (flag)
+                                reboot();
+                            else
+                                removeCard();
+                        }
+                    }, 2 * second);
+                } else {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -178,12 +191,12 @@ public class ResultControl extends BaseActivity {
                     });
 
                     if (checkCard()) {
-                        if(info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")
-                                || info.equals("ECHO TEST OK") || info.equals("NO HUBO RESPUESTA")){
+                        if (info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")
+                                || info.equals("ECHO TEST OK") || info.equals("NO HUBO RESPUESTA")) {
                             startActivity(new Intent(ResultControl.this, ServerTCP.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        }else{
+                        } else {
                             finish();
                         }
                         if (callBackSeatle != null)

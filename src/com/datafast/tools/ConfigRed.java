@@ -32,16 +32,21 @@ import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
 import com.datafast.pinpad.cmd.CP.IpWifiConf;
+import com.datafast.server.activity.ServerTCP;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.KeyBoardUtil;
 import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.net.wifi.PosWifiManager;
 import com.pos.device.net.wifi.WifiSsidInfo;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.BaseActivity;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
+import static com.pos.device.sys.SystemManager.reboot;
 
 public class ConfigRed extends BaseActivity implements View.OnClickListener {
 
@@ -657,7 +662,17 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             edit.putString("port", etPort.getText().toString());
             edit.apply();
 
-            UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS", false);
+            UIUtils.startResult(ConfigRed.this, true, "DATOS DE RED ACTUALIZADOS \n REINICIANDO POS", false);
+
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    //over();
+                    reboot();
+                }
+            }, 2 * 1000);
+
         } else if (!invalidDataConnection) {
             UIUtils.startResult(ConfigRed.this, false, "ERROR AL ACTUALIZAR DATOS", false);
         }
