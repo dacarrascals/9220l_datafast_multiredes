@@ -198,7 +198,7 @@ public class Server extends AppCompatActivity {
         }
     }*/
 
-    private class SocketServerReplyThread extends Thread {
+    /*private class SocketServerReplyThread extends Thread {
 
         private Socket hostThreadSocket;
         byte[] echoData;
@@ -271,7 +271,7 @@ public class Server extends AppCompatActivity {
             }
         }
 
-    }
+    }*/
 
     /**
      * Convert bcd to int

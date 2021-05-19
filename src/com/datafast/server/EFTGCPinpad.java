@@ -19,6 +19,7 @@ import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.ISOSource;
 import org.jpos.iso.event.EventISOServer;
+import org.jpos.iso.server.ISOServerGC;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -60,12 +61,12 @@ public class EFTGCPinpad implements EventISOServer {
         try {
             //loggerReformateador.info("EFTGC start at: " + "5020");
             port = getListeningPort();;
-            org.jpos.iso.server.ISOServerGC isoServerGC = new org.jpos.iso.server.ISOServerGC(this);
+            ISOServerGC isoServerGC = new ISOServerGC(this);
             isoServerGC.setPort(port);
-            isoServerGC.setMinThreadPool(100);
-            isoServerGC.setMaxThreadPool(500);
+            isoServerGC.setMinThreadPool(10);
+            isoServerGC.setMaxThreadPool(50);
             isoServerGC.setInactivityTimeout((45*1000) + 5000); //Le suma 5 seg mas por que el timeout de envio al autorizador es TMConfig.getInstance().getTimeoutData()
-            isoServerGC.getInactivityTimeout();
+            //isoServerGC.getInactivityTimeout();
             isoServerGC.setEnableLogXml(false);
             isoServerGC.start();
         } catch (Exception ex) {

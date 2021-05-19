@@ -69,7 +69,8 @@ public class ResultControl extends BaseActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            displayDetails(bundle.getBoolean("flag"), bundle.getString("info"));
+            flag = bundle.getBoolean("flag");
+            displayDetails(flag, bundle.getString("info"));
             if (bundle.getBoolean("boton")) {
                 confirm.setVisibility(View.VISIBLE);
                 buttonActive = true;
@@ -81,7 +82,7 @@ public class ResultControl extends BaseActivity {
                     }
                 }, 5 * second);
             } else {
-                if(Server.cmd.equals(PC)){
+                if (Server.cmd.equals(PC)) {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -89,15 +90,18 @@ public class ResultControl extends BaseActivity {
                             removeCard();
                         }
                     }, (long) (0.5 * second));
-                } else if(Server.cmd.equals(CP)){
+                } else if (Server.cmd.equals(CP)) {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
                             //over();
-                            reboot();
+                            if (flag)
+                                reboot();
+                            else
+                                removeCard();
                         }
                     }, 2 * second);
-                }else{
+                } else {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -187,12 +191,12 @@ public class ResultControl extends BaseActivity {
                     });
 
                     if (checkCard()) {
-                        if(info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")
-                                || info.equals("ECHO TEST OK") || info.equals("NO HUBO RESPUESTA")){
+                        if (info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")
+                                || info.equals("ECHO TEST OK") || info.equals("NO HUBO RESPUESTA")) {
                             startActivity(new Intent(ResultControl.this, ServerTCP.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        }else{
+                        } else {
                             finish();
                         }
                         if (callBackSeatle != null)
