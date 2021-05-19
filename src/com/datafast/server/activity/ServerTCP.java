@@ -49,6 +49,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.inyecccionLLaves;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
+import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
@@ -65,7 +66,6 @@ import static java.lang.Thread.sleep;
 
 public class ServerTCP extends AppCompatActivity {
 
-    private Server server;
     private ImageView setting;
     private Dialog mDialog;
     private Wifi wifi;
@@ -128,7 +128,7 @@ public class ServerTCP extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopServer();
+
     }
 
     public void validacionesInciales() {
