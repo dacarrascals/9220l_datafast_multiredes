@@ -1426,7 +1426,11 @@ public class FinanceTrans extends Trans {
         int indexRev = -1;
 
         setNII();
-        SetFieldTrans();
+        try {
+            SetFieldTrans();
+        } catch (Exception e){
+            return Tcode.T_err_trm;
+        }
 
         transUI.handling(timeout, Tcode.Status.connecting_center);
 

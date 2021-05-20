@@ -69,82 +69,86 @@ public class Venta extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        Logger.information("Venta.java -> start()");
+        try {
+            Logger.information("Venta.java -> start()");
 
-        final int reverso = validateReverseCash();
-        if (reverso != 1995){
-            return;
-        }
+            final int reverso = validateReverseCash();
+            if (reverso != 1995) {
+                return;
+            }
 
-        if (!checkBatchAndSettle(true,true)){
-            return;
-        }
+            if (!checkBatchAndSettle(true, true)) {
+                return;
+            }
 
-        if (setAmountPP()) {
-            if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)){
-                if(!prepareOnline()) {
-                    UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-                    transUI.showError(timeout, retVal, processPPFail);
-                    return;
-                }
-
-                if (aCmd.equals(PP)){
-                    if ((inputMode == ENTRY_MODE_MAG && !isPinExist) && retVal == Tcode.T_user_cancel_input) {
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        callbackRsp = null;
-                    } else {
-                        callbackRsp = new waitRspReverse() {
-                            @Override
-                            public void getWaitRspReverse(int status) {
-                                retVal = status;
-                                if (Reverse() != 0) {
-                                    if (retVal != Tcode.T_not_reverse) {
-                                        UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-                                        transUI.showError(timeout, retVal);
-                                    } else {
-                                        transUI.showfinish();
-                                    }
-                                } else {
-                                    transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
-                                }
-                            }
-                        };
+            if (setAmountPP()) {
+                if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)) {
+                    if (!prepareOnline()) {
+                        UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                        transUI.showError(timeout, retVal, processPPFail);
+                        return;
                     }
+
+                    if (aCmd.equals(PP)) {
+                        if ((inputMode == ENTRY_MODE_MAG && !isPinExist) && retVal == Tcode.T_user_cancel_input) {
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            callbackRsp = null;
+                        } else {
+                            callbackRsp = new waitRspReverse() {
+                                @Override
+                                public void getWaitRspReverse(int status) {
+                                    retVal = status;
+                                    if (Reverse() != 0) {
+                                        if (retVal != Tcode.T_not_reverse) {
+                                            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                                            transUI.showError(timeout, retVal);
+                                        } else {
+                                            transUI.showfinish();
+                                        }
+                                    } else {
+                                        transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
+                                    }
+                                }
+                            };
+                        }
+                    }
+                } else {
+                    UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Log.i("Venta", String.valueOf(retVal));
+                    return;
+                    //transUI.showError(timeout, retVal,processPPFail);
                 }
-            } else {
-                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+            }
+
+            if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Log.i("Venta" , String.valueOf(retVal));
-                return;
-                //transUI.showError(timeout, retVal,processPPFail);
+                if (callbackRsp != null) {
+                    callbackRsp.getWaitRspReverse(retVal);
+                }
+            } else if (!aCmd.equals(LT) && !aCmd.equals(CT)) {
+                transUI.showfinish();
             }
-        }
+            if (Control.failEchoTest) {
+                Control.failEchoTest = false;
+                Control.echoTest = true;
+            }
+            Logger.debug("SaleTrans>>finish");
+        } catch (Exception e){
 
-        if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (callbackRsp != null) {
-                callbackRsp.getWaitRspReverse(retVal);
-            }
-        } else if (!aCmd.equals(LT) && !aCmd.equals(CT)){
-            transUI.showfinish();
         }
-        if (Control.failEchoTest) {
-            Control.failEchoTest = false;
-            Control.echoTest = true;
-        }
-        Logger.debug("SaleTrans>>finish");
     }
 
     /**
