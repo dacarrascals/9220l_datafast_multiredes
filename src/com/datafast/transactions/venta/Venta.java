@@ -124,6 +124,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         e.printStackTrace();
                     }
                     Log.i("Venta", String.valueOf(retVal));
+                    transUI.showError(timeout, retVal, processPPFail);
                     return;
                     //transUI.showError(timeout, retVal,processPPFail);
                 }
