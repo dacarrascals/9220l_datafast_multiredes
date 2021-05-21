@@ -39,51 +39,54 @@ public class Control {
     public int actualizacionControl(byte[] data){
         int ret = 2;
 
-        if (!Server.correctLength){
-            pc_request.UnPackHash(data);
-            processInvalid();
-            echoTest = false;
-            return 0;
-        }
-
-        pc_request.UnPackData(data);
-
-        if (pc_request.getCountValid() > 0){
-            processInvalid();
-            echoTest = false;
-            return 0;
-        }
-
-        if (!PAYUtils.isNullWithTrim(pc_request.getMID()) &&
-            !PAYUtils.isNullWithTrim(pc_request.getTID())){
-
-            if(!PAYUtils.isNullWithTrim(pc_request.getBatchNumber())){
-                TMConfig.getInstance().setBatchNo(Integer.parseInt(pc_request.getBatchNumber()) - 1).save();
-            }else{
-                TMConfig.getInstance().setBatchNo(-1).save();
-            }
-            if(!PAYUtils.isNullWithTrim(pc_request.getTracerNumber())){
-                TMConfig.getInstance().setTraceNo(Integer.parseInt(pc_request.getTracerNumber())).save();
-            }else{
-                TMConfig.getInstance().setTraceNo(1).save();
-            }
-            if(!PAYUtils.isNullWithTrim(pc_request.getCID())){
-                TMConfig.getInstance().setCID(pc_request.getCID()).save();
+        try {
+            if (!Server.correctLength) {
+                pc_request.UnPackHash(data);
+                processInvalid();
+                echoTest = false;
+                return 0;
             }
 
-            TMConfig.getInstance().setMerchID(pc_request.getMID())
-                                  .setTermID(pc_request.getTID()).save();
+            pc_request.UnPackData(data);
 
-            deleteBatch();
+            if (pc_request.getCountValid() > 0) {
+                processInvalid();
+                echoTest = false;
+                return 0;
+            }
 
-            saveDateSettle(context);
+            if (!PAYUtils.isNullWithTrim(pc_request.getMID()) &&
+                    !PAYUtils.isNullWithTrim(pc_request.getTID())) {
 
-            processOk();
-            ret = 1;
-            echoTest = true;
-            failEchoTest = false;
+                if (!PAYUtils.isNullWithTrim(pc_request.getBatchNumber())) {
+                    TMConfig.getInstance().setBatchNo(Integer.parseInt(pc_request.getBatchNumber()) - 1).save();
+                }
 
-        }else{
+                if (!PAYUtils.isNullWithTrim(pc_request.getTracerNumber())) {
+                    TMConfig.getInstance().setTraceNo(Integer.parseInt(pc_request.getTracerNumber())).save();
+                }
+
+                if (!PAYUtils.isNullWithTrim(pc_request.getCID())) {
+                    TMConfig.getInstance().setCID(pc_request.getCID()).save();
+                }
+
+                TMConfig.getInstance().setMerchID(pc_request.getMID())
+                        .setTermID(pc_request.getTID()).save();
+
+                deleteBatch();
+
+                saveDateSettle(context);
+
+                processOk();
+                ret = 1;
+                echoTest = true;
+                failEchoTest = false;
+
+            } else {
+                processFail();
+                echoTest = false;
+            }
+        }catch (Exception e){
             processFail();
             echoTest = false;
         }

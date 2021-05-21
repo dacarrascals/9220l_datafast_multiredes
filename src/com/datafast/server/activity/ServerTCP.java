@@ -261,12 +261,10 @@ public class ServerTCP extends AppCompatActivity {
                             int pcRet = control.actualizacionControl(aDat);
                             listenerServer.waitRspHost(control.getPc_response().packData());
 
-                            if (pcRet == 0) {
-                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
-                            }
-
                             if (pcRet == 1) {
                                 UIUtils.startResult(ServerTCP.this, true, "TRANS. BORRADAS\nINICIO DE DIA REALIZADO", false);
+                            }else{
+                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
                             }
 
                             break;
