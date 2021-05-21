@@ -482,9 +482,10 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
             }
         } else {
             if (info.getErrno() == 0) {
-
+                retVal = Tcode.T_unknow_err;
                 transUI.showError(timeout, Tcode.T_user_cancel_input, processPPFail);
             } else {
+                retVal = Tcode.T_unknow_err;
                 transUI.showError(timeout, info.getErrno(), processPPFail);
             }
         }
