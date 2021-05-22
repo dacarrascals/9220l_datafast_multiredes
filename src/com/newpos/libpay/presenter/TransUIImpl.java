@@ -589,7 +589,7 @@ public class TransUIImpl implements TransUI {
         if (Locale.getDefault().getLanguage().equals("zh")) {
             return "未知信息";
         } else {
-            return "Error Desconocido";
+            return "ERROR EN TRAMA";
         }
     }
 
@@ -608,7 +608,7 @@ public class TransUIImpl implements TransUI {
         if (Locale.getDefault().getLanguage().equals("zh")) {
             return "未知错误";
         } else {
-            return "Codigo de Error Desconocido";
+            return "ERROR EN TRAMA";
         }
     }
 

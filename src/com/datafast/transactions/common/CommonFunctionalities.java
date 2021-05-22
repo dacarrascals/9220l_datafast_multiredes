@@ -1068,7 +1068,7 @@ public class CommonFunctionalities {
         while (true){
             try {
                 if (iccReader0.isCardPresent()) {
-                    transUI.showMessage("Retire la tarjeta",true);
+                    transUI.showMessage("Retire la tarjeta",false);
                     toneG.startTone(ToneGenerator.TONE_PROP_BEEP2, 2000);
 
                     try {

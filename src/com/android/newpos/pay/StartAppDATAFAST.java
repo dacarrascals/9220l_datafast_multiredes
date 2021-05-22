@@ -27,6 +27,7 @@ import com.datafast.inicializacion.tools.PolarisUtil;
 import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.PwMasterKey;
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.server.server_tcp.Server;
 import com.datafast.tools.BatteryStatus;
 import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
@@ -67,6 +68,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
     public static int lastInputMode = 0x00;
     public static String[] lastTrack = null;
     public static boolean resumePA = false;
+    public static Server server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

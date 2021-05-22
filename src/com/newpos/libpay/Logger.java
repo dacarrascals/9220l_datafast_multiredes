@@ -29,11 +29,13 @@ public class Logger {
 
     public static Wrlg wrlg = null;
     public static void information(String msg){
-        if (wrlg == null) {
-            wrlg = new Wrlg();
+        if(TMConfig.getInstance().isDebug()) {
+            if (wrlg == null) {
+                wrlg = new Wrlg();
+            }
+            Log.i(TAG, msg);
+            wrlg.wrDataTxt(TAG2 + ": " + msg);
         }
-        Log.i(TAG, msg);
-        wrlg.wrDataTxt(TAG2 + ": " + msg);
     }
 
     public static void debug(String msg){

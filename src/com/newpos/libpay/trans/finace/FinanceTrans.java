@@ -1426,7 +1426,11 @@ public class FinanceTrans extends Trans {
         int indexRev = -1;
 
         setNII();
-        SetFieldTrans();
+        try {
+            SetFieldTrans();
+        } catch (Exception e){
+            return Tcode.T_err_trm;
+        }
 
         transUI.handling(timeout, Tcode.Status.connecting_center);
 
@@ -3089,7 +3093,7 @@ public class FinanceTrans extends Trans {
                     ret = msg;
                     break;
                 case "021":
-                    ret = msg.substring(19);
+                    ret = msg.substring(22);
                     break;
                 case "016":
                 case "025":
@@ -3706,7 +3710,7 @@ public class FinanceTrans extends Trans {
                                 char iccChar = data2.charAt(splitIndex + 5);
 
                                 if ((iccChar == '2' || iccChar == '6') && (!isFallBack)) {
-                                    //retVal = Tcode.T_ic_not_allow_swipe;
+                                    retVal = Tcode.T_ic_not_allow_swipe;
                                     transUI.showError(timeout, Tcode.T_ic_not_allow_swipe,processPPFail);
                                     return false;
                                 } else {
