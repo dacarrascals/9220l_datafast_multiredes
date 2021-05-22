@@ -3093,7 +3093,7 @@ public class FinanceTrans extends Trans {
                     ret = msg;
                     break;
                 case "021":
-                    ret = msg.substring(19);
+                    ret = msg.substring(22);
                     break;
                 case "016":
                 case "025":

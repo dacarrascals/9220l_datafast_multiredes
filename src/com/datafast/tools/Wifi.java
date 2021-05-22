@@ -184,7 +184,7 @@ public class Wifi {
                     IpWifiConf.wifiDhcp(ctx);
                 }
             } catch (Exception e) {
-                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
@@ -197,7 +197,7 @@ public class Wifi {
                     IpEthernetConf.etherDhcp();
                 }
             } catch (Exception e) {
-                Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ctx, "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
