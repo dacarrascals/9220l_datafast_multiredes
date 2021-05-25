@@ -3531,7 +3531,21 @@ public class FinanceTrans extends Trans {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        cardInfo = transUI.getCardUse(GERCARD_MSG_FALLBACK, timeout,  INMODE_MAG, transEname);
+
+        String TransEname = "";
+        if (Server.cmd.equals(LT)){
+            TransEname = "LECTURA\nDE TARJETA";
+        }else if (Server.cmd.equals(CT)){
+            TransEname = "CONSULTA\nDE TARJETA";
+        }
+
+        if (Server.cmd.equals(LT) || Server.cmd.equals(CT)){
+            cardInfo = transUI.getCardUse(GERCARD_MSG_FALLBACK, timeout,  INMODE_MAG, TransEname);
+        }else {
+            Logger.information("Venta.java -> Se solicita tarjeta");
+            cardInfo = transUI.getCardUse(GERCARD_MSG_FALLBACK, timeout,  INMODE_MAG, transEname);
+        }
+
         if (cardInfo.isResultFalg()) {
             int type = cardInfo.getCardType();
             switch (type) {
