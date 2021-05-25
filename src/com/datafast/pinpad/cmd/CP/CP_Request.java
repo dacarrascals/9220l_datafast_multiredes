@@ -177,6 +177,11 @@ public class CP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.portPrimary = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            for(int i=0; i<portPrimary.length();i++){
+                if(!Character.isDigit(portPrimary.charAt(i)))
+                    countValid ++;
+                break;
+            }
 
             //ipSecundary
             tmp = new byte[15];
