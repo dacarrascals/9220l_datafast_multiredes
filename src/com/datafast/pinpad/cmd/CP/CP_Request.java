@@ -178,9 +178,10 @@ public class CP_Request {
             offset += 6;
             this.portPrimary = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
             for(int i=0; i<portPrimary.length();i++){
-                if(!Character.isDigit(portPrimary.charAt(i)))
-                    countValid ++;
-                break;
+                if(!Character.isDigit(portPrimary.charAt(i))) {
+                    countValid++;
+                    break;
+                }
             }
 
             //ipSecundary
@@ -194,6 +195,12 @@ public class CP_Request {
             System.arraycopy(aData, offset, tmp, 0, 6);
             offset += 6;
             this.portSecundary = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            for(int i=0; i<portSecundary.length();i++){
+                if(!Character.isDigit(portSecundary.charAt(i))) {
+                    countValid++;
+                    break;
+                }
+            }
 
             //filler1
             tmp = new byte[15];

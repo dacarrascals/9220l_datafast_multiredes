@@ -1735,7 +1735,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
             public void onFinish() {
                 countDownTimer.cancel();
                 if (usarStar){
-                    UIUtils.startResult(MasterControl.this, false, mensaje);
+                    //UIUtils.startResult(MasterControl.this, false, mensaje);
                     listener.cancel();
                 }else {
                     listener.confirm(0);
