@@ -352,15 +352,6 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
                 edtInvisible.requestFocus();
                 edtInvisible.setInputType(InputType.TYPE_NULL);
-                edtInvisible.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if(keyCode == KeyEvent.KEYCODE_BACK){
-                            listener.cancel();
-                        }
-                        return false;
-                    }
-                });
 
                 LinearLayout relativeLayout = (LinearLayout) findViewById(R.id.LinearTimeout);
                 relativeLayout.setVisibility(View.VISIBLE);
@@ -416,16 +407,6 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
 
                 edtInvisible.requestFocus();
                 edtInvisible.setInputType(InputType.TYPE_NULL);
-                edtInvisible.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if(keyCode == KeyEvent.KEYCODE_BACK){
-                            contFallback = 0;
-                            listener.cancel();
-                        }
-                        return false;
-                    }
-                });
 
                 try {
                     et_title.setText(title.replace("_", " "));
