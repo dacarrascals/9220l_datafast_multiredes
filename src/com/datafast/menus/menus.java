@@ -72,6 +72,10 @@ public class menus extends AppCompatActivity {
         version = (TextView) findViewById(R.id.textView_vrs);
         permissionStatus = new PermissionStatus(menus.this, this);
 
+        if(isInit) {
+            relativeLayoutBack.setVisibility(View.VISIBLE);
+        }
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
