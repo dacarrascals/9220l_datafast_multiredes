@@ -406,7 +406,7 @@ public class WifiSettings extends AppCompatActivity {
                                                 ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
                                                 final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
                                                 final String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
-                                                if (!(titulo.equals(redConectadaActual.replace("\"", ""))) && wifi.isConnected() && wifi.isConnected()){
+                                                if (!(titulo.equals(redConectadaActual.replace("\"", ""))) && wifi.isConnected()){
                                                     modificarRed(redConectadaActual.replace("\"", ""),titulo);
                                                     new Handler().postDelayed(new Runnable() {
                                                         @Override

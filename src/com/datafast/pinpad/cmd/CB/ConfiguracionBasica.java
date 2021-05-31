@@ -31,6 +31,7 @@ public class ConfiguracionBasica {
         if (!Server.correctLength){
             cb_request.UnPackHash(aDat);
             processInvalid();
+            cb_request.setCountValid(0);
             return false;
         }
 
@@ -38,6 +39,7 @@ public class ConfiguracionBasica {
         
         if (cb_request.getCountValid() > 0){
             processInvalid();
+            cb_request.setCountValid(0);
             return false;
         }
         
