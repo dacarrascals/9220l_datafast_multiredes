@@ -14,6 +14,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.text.InputFilter;
+import android.text.format.Formatter;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -55,6 +56,7 @@ import cn.desert.newpos.payui.master.MasterControl;
 import cn.desert.newpos.payui.setting.ui.simple.CommunSettings;
 import cn.desert.newpos.payui.transrecord.HistoryTrans;
 
+import static android.content.Context.WIFI_SERVICE;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.android.newpos.pay.StartAppDATAFAST.batteryStatus;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
@@ -365,15 +367,17 @@ public class MenuAction {
                 String[] datos;
                 if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
                     if (isWifiConnected()) {
+                        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
+                        String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
                         datos = UtilNetwork.getWifi(context, false);
                         UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
-                                "IP: " + UtilNetwork.getIPAddress(true) + "\n" +
+                                "IP: " + ipAddress + "\n" +
                                         "MASK: " + datos[0] + "\n" +
                                         "GATEWAY: " + datos[3] + "\n" +
                                         "RED: " + datos[4]);
                     } else if (EthernetManager.getInstance().isEtherentEnabled()){
                         try {
-                            datos = UtilNetwork.getWifi(context, true);
+                            datos = UtilNetwork.getNetInformation(context, true);
                             UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                                     "IP: " + datos[0] + "\n" +
                                             "MASK: " + datos[1] + "\n" +

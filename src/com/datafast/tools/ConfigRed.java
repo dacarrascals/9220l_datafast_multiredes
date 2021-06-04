@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -142,20 +143,14 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         switchConnection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                counterTimer();
-                if (switchConnection.isChecked()) {
-                    if ( wifiManager.isWifiEnabled() ){
-                        wifiManager.setWifiEnabled(false);
-                    }
-                    EthernetManager.getInstance().setEtherentEnabled(true);
-                    switchConnection.setText(ACTIVADO);
-                    checkConnection();
-                } else {
-                    EthernetManager.getInstance().setEtherentEnabled(false);
-                    switchConnection.setText(DESACTIVADO);
-                    containerDns.setVisibility(View.GONE);
-                    checkConnection();
-                }
+                redEthernet();
+            }
+        });
+
+        switchConnection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                redEthernet();
             }
         });
 
@@ -223,6 +218,23 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         });
 
         counterTimer();
+    }
+
+    private void redEthernet() {
+        counterTimer();
+        if (switchConnection.isChecked()) {
+            if ( wifiManager.isWifiEnabled() ){
+                wifiManager.setWifiEnabled(false);
+            }
+            EthernetManager.getInstance().setEtherentEnabled(true);
+            switchConnection.setText(ACTIVADO);
+            checkConnection();
+        } else {
+            EthernetManager.getInstance().setEtherentEnabled(false);
+            switchConnection.setText(DESACTIVADO);
+            containerDns.setVisibility(View.GONE);
+            checkConnection();
+        }
     }
 
     private void loadConnection() {

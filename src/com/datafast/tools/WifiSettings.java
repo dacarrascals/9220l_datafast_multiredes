@@ -258,10 +258,8 @@ public class WifiSettings extends AppCompatActivity {
                                                 }).create();
                                 opciones.show();
                             } else {
-                                ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                                NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-                                if (wifi.isConnected()){
+                                if (isConnected()){
                                     AlertDialog.Builder b=new AlertDialog.Builder(WifiSettings.this);
                                     b.setTitle(red);
                                     b.setMessage("¿Desea conectarse a la red?");
@@ -327,10 +325,8 @@ public class WifiSettings extends AppCompatActivity {
                                                 }).create();
                                 opciones.show();
                             } else {
-                                ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                                final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-                                if (wifi.isConnected()){
+                                if (isConnected()){
                                     final String finalRed = red;
                                     ingresarContraseña(finalRed,true);
 
@@ -403,10 +399,8 @@ public class WifiSettings extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog,
                                                             int selected) {
                                             if (selected == 0) {
-                                                ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                                                final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
                                                 final String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
-                                                if (!(titulo.equals(redConectadaActual.replace("\"", ""))) && wifi.isConnected()){
+                                                if (!(titulo.equals(redConectadaActual.replace("\"", ""))) && isConnected()){
                                                     modificarRed(redConectadaActual.replace("\"", ""),titulo);
                                                     new Handler().postDelayed(new Runnable() {
                                                         @Override
@@ -436,9 +430,7 @@ public class WifiSettings extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             final String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
-                            ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                            final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                            if (wifi.isConnected()){
+                            if (isConnected()){
                                 modificarRed(redConectadaActual.replace("\"", ""),titulo);
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -655,10 +647,8 @@ public class WifiSettings extends AppCompatActivity {
         timer2 = new CountDownTimer(15000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-                if (wifi.isConnected()) {
+                if (isConnected()) {
                     if (wifiManager.getConnectionInfo().getSSID().replace("\"", "").equals(ssid)) {
                         UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Conexión establecida", Toast.LENGTH_SHORT);
                         progressDialog.cancel();
@@ -685,8 +675,6 @@ public class WifiSettings extends AppCompatActivity {
     }
 
     private void modificarRed(String titulo,String red) {
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         boolean desconexionExitosa;
 
         final int typeKey = typeNetwork(titulo);
@@ -708,7 +696,7 @@ public class WifiSettings extends AppCompatActivity {
         }
         String tituloDialog="Desconectando de " + titulo + "...";
         desconexionExitosa = wifiManager.disableNetwork(netId);        // desconectar
-        if (!(red.equals(titulo.replace("\"", ""))) && wifi.isConnected()){
+        if (!(red.equals(titulo.replace("\"", ""))) && isConnected()){
              tituloDialog="Desconectando de " + titulo + " para conectar a " + red;
         }
 
@@ -732,5 +720,11 @@ public class WifiSettings extends AppCompatActivity {
         mostrarLista();
         timer.start();
 
+    }
+    public boolean isConnected(){
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        return  wifi.isConnected();
     }
 }
