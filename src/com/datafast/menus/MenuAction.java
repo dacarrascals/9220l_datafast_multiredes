@@ -377,7 +377,7 @@ public class MenuAction {
                                         "RED: " + datos[4]);
                     } else if (EthernetManager.getInstance().isEtherentEnabled()){
                         try {
-                            datos = UtilNetwork.getNetInformation(context, true);
+                            datos = UtilNetwork.getWifi(context, true);
                             UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                                     "IP: " + datos[0] + "\n" +
                                             "MASK: " + datos[1] + "\n" +
