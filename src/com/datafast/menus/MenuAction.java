@@ -15,13 +15,17 @@ import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.text.format.Formatter;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
@@ -506,6 +510,22 @@ public class MenuAction {
         final EditText newEdit = mDialog.findViewById(R.id.setting_pass_new);
         final TextView title_pass = mDialog.findViewById(R.id.title_pass);
         Button confirm = mDialog.findViewById(R.id.setting_pass_confirm);
+        final ToggleButton ivShowHidePass= mDialog.findViewById(R.id.ivShowHidePass);
+        ivShowHidePass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    newEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    ivShowHidePass.setBackground(context.getResources().getDrawable(R.drawable.ic_visibility));
+
+                }else{
+                    newEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    ivShowHidePass.setBackground(context.getResources().getDrawable(R.drawable.ic_invisible));
+
+                }
+                newEdit.setSelection(newEdit.getText().length());
+            }
+        });
         newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(lenEdit)});
         newEdit.requestFocus();
         title_pass.setText(title);

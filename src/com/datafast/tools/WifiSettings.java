@@ -21,18 +21,22 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.newpos.pay.R;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
@@ -457,6 +461,23 @@ public class WifiSettings extends AppCompatActivity {
                     final EditText newEdit = dialog.findViewById(R.id.setting_pass_new);
                     final TextView title_pass = dialog.findViewById(R.id.title_pass);
                     Button confirm = dialog.findViewById(R.id.setting_pass_confirm);
+                    final ToggleButton ivShowHidePass= dialog.findViewById(R.id.ivShowHidePass);
+                    ivShowHidePass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked){
+                                newEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                                ivShowHidePass.setBackground(getResources().getDrawable(R.drawable.ic_visibility));
+
+                            }else{
+                                newEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                                ivShowHidePass.setBackground(getResources().getDrawable(R.drawable.ic_invisible));
+
+                            }
+                            newEdit.setSelection(newEdit.getText().length());
+                        }
+                    });
+
                     newEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
                     newEdit.requestFocus();
@@ -662,7 +683,7 @@ public class WifiSettings extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Contraseña incorrecta", Toast.LENGTH_SHORT);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "No es posible establecer conexión, reintente", Toast.LENGTH_SHORT);
                 progressDialog.cancel();
                 wifiManager.removeNetwork(netId);
                 wifiManager.reassociate();

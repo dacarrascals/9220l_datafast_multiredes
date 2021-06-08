@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -16,6 +19,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.newpos.pay.R;
 import com.newpos.libpay.global.TMConfig;
@@ -153,6 +157,22 @@ public class SettingsFrags extends Activity implements AdapterView.OnItemClickLi
         final EditText newEdit = (EditText) mDialog.findViewById(R.id.setting_pass_new);
         final EditText oldEdit = (EditText) mDialog.findViewById(R.id.setting_pass_old);
         Button confirm = (Button) mDialog.findViewById(R.id.setting_pass_confirm);
+        final ToggleButton ivShowHidePass= mDialog.findViewById(R.id.ivShowHidePass);
+        ivShowHidePass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    newEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    ivShowHidePass.setBackground(getResources().getDrawable(R.drawable.ic_visibility));
+
+                }else{
+                    newEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    ivShowHidePass.setBackground(getResources().getDrawable(R.drawable.ic_invisible));
+
+                }
+                newEdit.setSelection(newEdit.getText().length());
+            }
+        });
         mDialog.findViewById(R.id.setting_pass_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
