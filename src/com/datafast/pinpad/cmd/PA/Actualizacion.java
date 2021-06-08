@@ -49,6 +49,7 @@ public class Actualizacion{
             processFail(ERROR_PROCESO, "ERROR EN TRAMA");
             tramaValida = -1;
             echoTest = false;
+            pa_request.setCountValid(0);
             return false;
         }
 
@@ -58,9 +59,10 @@ public class Actualizacion{
             processFail(ERROR_PROCESO, "ERROR EN TRAMA");
             tramaValida = -1;
             echoTest = false;
+            pa_request.setCountValid(0);
             return false;
         }
-
+        tramaValida=0;
         if (!PAYUtils.isNullWithTrim(pa_request.getMID()) && !PAYUtils.isNullWithTrim(pa_request.getTID())){
             TMConfig.getInstance().setMerchID(pa_request.getMID()).setTermID(pa_request.getTID()).save();
         }

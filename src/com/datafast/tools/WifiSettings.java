@@ -21,18 +21,22 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.newpos.pay.R;
 import com.datafast.pinpad.cmd.CP.IpEthernetConf;
@@ -238,31 +242,107 @@ public class WifiSettings extends AppCompatActivity {
                 listaWifi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
-                        String red = redFormateada.get(position);
+                        final String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
+                        final String red = redFormateada.get(position);
                         if (redConectadaActual != null) {
                             if (red.equals(redConectadaActual.replace("\"", ""))) {
-                                modificarRed(red);
+                                String[] opc = new String[] { "Desconectar Red"};
+
+                                AlertDialog opciones = new AlertDialog.Builder(
+                                        WifiSettings.this)
+                                        .setTitle(red)
+                                        .setItems(opc,
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,
+                                                                        int selected) {
+                                                        if (selected == 0) {
+                                                            modificarRed(redConectadaActual.replace("\"", ""),red);
+                                                        }
+                                                    }
+                                                }).create();
+                                opciones.show();
                             } else {
-                                ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                                NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-                                if (wifi.isConnected()){
-                                    modificarRed(redConectadaActual.replace("\"", ""));
-                                    final String finalRed = red;
-
-                                    new Handler().postDelayed(new Runnable() {
+                                if (isConnected()){
+                                    AlertDialog.Builder b=new AlertDialog.Builder(WifiSettings.this);
+                                    b.setTitle(red);
+                                    b.setMessage("¿Desea conectarse a la red?");
+                                    b.setCancelable(false);
+                                    b.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                                         @Override
-                                        public void run() {
-                                            ingresarContraseña(finalRed);
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            modificarRed(redConectadaActual.replace("\"", ""),red);
+                                            final String finalRed = red;
+
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    ingresarContraseña(finalRed,false);
+                                                }
+                                            },3000);
                                         }
-                                    },3000);
+                                    });
+                                    b.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    b.show();
                                 } else {
-                                    ingresarContraseña(red);
+                                    ingresarContraseña(red,false);
                                 }
                             }
                         }
                     }
+                });
+
+                listaWifi.setOnItemLongClickListener(new android.widget.AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
+                        final String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
+                        final String red = redFormateada.get(position);
+                        if (redConectadaActual != null) {
+                            if (red.equals(redConectadaActual.replace("\"", ""))) {
+                                String[] opc = new String[] { "Desconectar red", "Olvidar red"};
+
+                                AlertDialog opciones = new AlertDialog.Builder(
+                                        WifiSettings.this)
+                                        .setTitle(red)
+                                        .setItems(opc,
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,
+                                                                        int selected) {
+                                                        if (selected == 0) {
+                                                            modificarRed(redConectadaActual.replace("\"", ""),red);
+                                                        } else if (selected == 1) {
+                                                            final int typeNet = typeNetwork(red);
+                                                            final String preSharedKey = getExistingNetworkKey("\"" + red + "\"");
+                                                            WifiConfiguration wc = new WifiConfiguration();
+                                                            wc.SSID = "\"" + red + "\"";
+                                                            if (typeNet != WifiConfiguration.KeyMgmt.NONE) {
+                                                                wc.preSharedKey = "\""+ preSharedKey + "\"";
+                                                            }
+                                                            olvidarRed(red, preSharedKey, typeNet);
+                                                        }
+                                                    }
+                                                }).create();
+                                opciones.show();
+                            } else {
+
+                                if (isConnected()){
+                                    final String finalRed = red;
+                                    ingresarContraseña(finalRed,true);
+
+                                } else {
+                                    ingresarContraseña(red,true);
+
+                                }
+                            }
+                        }
+                        return true;
+                    }
+
                 });
             }
         } else {
@@ -306,48 +386,149 @@ public class WifiSettings extends AppCompatActivity {
         return resultados;
     }
 
-    private void ingresarContraseña(final String titulo) {
+    private void ingresarContraseña(final String titulo, final boolean valida) {
         final int typeNet = typeNetwork(titulo);
         if (typeNet > 0) {
 
-            String preSharedKey = getExistingNetworkKey("\"" + titulo + "\"");
-
+            final String preSharedKey = getExistingNetworkKey("\"" + titulo + "\"");
             if (preSharedKey != null && !preSharedKey.equals("")) {
+                if(valida){
+                    String[] opc = new String[] { "Conectar red", "Olvidar red"};
 
-                validarRed(titulo, preSharedKey, typeNet);
-
+                    AlertDialog opciones = new AlertDialog.Builder(
+                            WifiSettings.this)
+                            .setTitle(titulo)
+                            .setItems(opc,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog,
+                                                            int selected) {
+                                            if (selected == 0) {
+                                                final String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
+                                                if (!(titulo.equals(redConectadaActual.replace("\"", ""))) && isConnected()){
+                                                    modificarRed(redConectadaActual.replace("\"", ""),titulo);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            validarRed(titulo, preSharedKey, typeNet);
+                                                        }
+                                                    },3000);
+                                                }else{
+                                                    validarRed(titulo, preSharedKey, typeNet);
+                                                }
+                                            } else if (selected == 1) {
+                                                olvidarRed(titulo, preSharedKey, typeNet);
+                                            }
+                                        }
+                                    }).create();
+                    opciones.show();
+                }else{
+                    validarRed(titulo, preSharedKey, typeNet);
+                }
             } else {
+                if(valida){
+                    AlertDialog.Builder b=new AlertDialog.Builder(WifiSettings.this);
+                    b.setTitle(titulo);
+                    b.setMessage("Conectar red");
+                    b.setCancelable(false);
+                    b.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String redConectadaActual =  wifiManager.getConnectionInfo().getSSID();
+                            if (isConnected()){
+                                modificarRed(redConectadaActual.replace("\"", ""),titulo);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ingresarContraseña(titulo,!valida);
+                                    }
+                                },3000);
+                            }else {
+                                ingresarContraseña(titulo, !valida);
+                            }
 
-                final Dialog dialog = UIUtils.centerDialog(context, R.layout.setting_home_pass, R.id.setting_pass_layout);
-                final EditText newEdit = dialog.findViewById(R.id.setting_pass_new);
-                final TextView title_pass = dialog.findViewById(R.id.title_pass);
-                Button confirm = dialog.findViewById(R.id.setting_pass_confirm);
-                newEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
-                newEdit.requestFocus();
-                title_pass.setText(titulo);
+                        }
+                    });
+                    b.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    b.show();
 
-                dialog.findViewById(R.id.setting_pass_close).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
+                }else{
+                    final Dialog dialog = UIUtils.centerDialog(context, R.layout.setting_home_pass, R.id.setting_pass_layout);
+                    final EditText newEdit = dialog.findViewById(R.id.setting_pass_new);
+                    final TextView title_pass = dialog.findViewById(R.id.title_pass);
+                    Button confirm = dialog.findViewById(R.id.setting_pass_confirm);
+                    final ToggleButton ivShowHidePass= dialog.findViewById(R.id.ivShowHidePass);
+                    ivShowHidePass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked){
+                                newEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                                ivShowHidePass.setBackground(getResources().getDrawable(R.drawable.ic_visibility));
 
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        validarRed( titulo, newEdit.getText().toString(), typeNet);
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
+                            }else{
+                                newEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                                ivShowHidePass.setBackground(getResources().getDrawable(R.drawable.ic_invisible));
 
+                            }
+                            newEdit.setSelection(newEdit.getText().length());
+                        }
+                    });
+
+                    newEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
+                    newEdit.requestFocus();
+                    title_pass.setText(titulo);
+
+                    dialog.findViewById(R.id.setting_pass_close).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            validarRed( titulo, newEdit.getText().toString(), typeNet);
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+
+                }
             }
 
         } else {
             validarRed( titulo, "", typeNet);
         }
+    }
+
+    private void olvidarRed(String red, String contraseña, int typeKey){
+        WifiConfiguration wc = new WifiConfiguration();
+        wc.SSID = "\"" + red + "\"";
+        if (typeKey != WifiConfiguration.KeyMgmt.NONE) {
+            wc.preSharedKey = "\""+ contraseña + "\"";
+        }
+        wc.status = WifiConfiguration.Status.ENABLED;
+        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        wc.allowedKeyManagement.set(typeKey);
+        wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+        // connect to and enable the connection
+        int netId = wifiManager.addNetwork(wc);
+        if (netId == -1) {
+            netId = getExistingNetworkId(wc.SSID);
+        }
+        wifiManager.disableNetwork(netId);
+        wifiManager.removeNetwork(netId);
+        wifiManager.reassociate();
+        mostrarLista();
     }
 
     private int typeNetwork(String titulo) {
@@ -487,10 +668,8 @@ public class WifiSettings extends AppCompatActivity {
         timer2 = new CountDownTimer(15000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-                if (wifi.isConnected()) {
+                if (isConnected()) {
                     if (wifiManager.getConnectionInfo().getSSID().replace("\"", "").equals(ssid)) {
                         UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Conexión establecida", Toast.LENGTH_SHORT);
                         progressDialog.cancel();
@@ -504,7 +683,7 @@ public class WifiSettings extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Contraseña incorrecta", Toast.LENGTH_SHORT);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "No es posible establecer conexión, reintente", Toast.LENGTH_SHORT);
                 progressDialog.cancel();
                 wifiManager.removeNetwork(netId);
                 wifiManager.reassociate();
@@ -516,7 +695,7 @@ public class WifiSettings extends AppCompatActivity {
         timer2.start();
     }
 
-    private void modificarRed(String titulo) {
+    private void modificarRed(String titulo,String red) {
         boolean desconexionExitosa;
 
         final int typeKey = typeNetwork(titulo);
@@ -536,11 +715,15 @@ public class WifiSettings extends AppCompatActivity {
         if (netId == -1) {
             netId = wifiManager.getConnectionInfo().getNetworkId();
         }
+        String tituloDialog="Desconectando de " + titulo + "...";
         desconexionExitosa = wifiManager.disableNetwork(netId);        // desconectar
+        if (!(red.equals(titulo.replace("\"", ""))) && isConnected()){
+             tituloDialog="Desconectando de " + titulo + " para conectar a " + red;
+        }
 
         if (desconexionExitosa){
             final ProgressDialog progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Desconectando de " + titulo + "...");
+            progressDialog.setMessage(tituloDialog);
             progressDialog.setCancelable(false);
             progressDialog.show();
             new Handler().postDelayed(new Runnable() {
@@ -558,5 +741,11 @@ public class WifiSettings extends AppCompatActivity {
         mostrarLista();
         timer.start();
 
+    }
+    public boolean isConnected(){
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        return  wifi.isConnected();
     }
 }

@@ -14,13 +14,18 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.text.InputFilter;
+import android.text.format.Formatter;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
@@ -55,6 +60,7 @@ import cn.desert.newpos.payui.master.MasterControl;
 import cn.desert.newpos.payui.setting.ui.simple.CommunSettings;
 import cn.desert.newpos.payui.transrecord.HistoryTrans;
 
+import static android.content.Context.WIFI_SERVICE;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.android.newpos.pay.StartAppDATAFAST.batteryStatus;
 import static com.android.newpos.pay.StartAppDATAFAST.isInit;
@@ -365,9 +371,11 @@ public class MenuAction {
                 String[] datos;
                 if (isWifiConnected() || EthernetManager.getInstance().isEtherentEnabled()) {
                     if (isWifiConnected()) {
+                        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
+                        String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
                         datos = UtilNetwork.getWifi(context, false);
                         UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
-                                "IP: " + UtilNetwork.getIPAddress(true) + "\n" +
+                                "IP: " + ipAddress + "\n" +
                                         "MASK: " + datos[0] + "\n" +
                                         "GATEWAY: " + datos[3] + "\n" +
                                         "RED: " + datos[4]);
@@ -502,6 +510,22 @@ public class MenuAction {
         final EditText newEdit = mDialog.findViewById(R.id.setting_pass_new);
         final TextView title_pass = mDialog.findViewById(R.id.title_pass);
         Button confirm = mDialog.findViewById(R.id.setting_pass_confirm);
+        final ToggleButton ivShowHidePass= mDialog.findViewById(R.id.ivShowHidePass);
+        ivShowHidePass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    newEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    ivShowHidePass.setBackground(context.getResources().getDrawable(R.drawable.ic_visibility));
+
+                }else{
+                    newEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    ivShowHidePass.setBackground(context.getResources().getDrawable(R.drawable.ic_invisible));
+
+                }
+                newEdit.setSelection(newEdit.getText().length());
+            }
+        });
         newEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(lenEdit)});
         newEdit.requestFocus();
         title_pass.setText(title);

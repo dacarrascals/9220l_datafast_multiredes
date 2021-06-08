@@ -57,6 +57,7 @@ public class Wifi {
             cp_request.UnPackHash(aDat);
             processInvalid();
             listener.waitRspHost(getCp_response().packData());
+            cp_request.setCountValid(0);
             return false;
         }
 
@@ -65,6 +66,7 @@ public class Wifi {
         if (cp_request.getCountValid() > 0){
             processInvalid();
             listener.waitRspHost(getCp_response().packData());
+            cp_request.setCountValid(0);
             return false;
         }
 

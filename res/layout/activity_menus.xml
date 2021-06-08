@@ -55,7 +55,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimaryDark"
-        android:onClick="onClickBack">
+        android:onClick="onClickBack"
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/textView5"
