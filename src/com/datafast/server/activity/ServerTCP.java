@@ -41,6 +41,7 @@ import com.datafast.slide.slide;
 import com.datafast.tools.Wifi;
 import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
+import com.pos.device.beeper.Beeper;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 
@@ -417,12 +418,25 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     private boolean checkCardPresent(String aCmd) {
-        if (lastCmd.equals(LT) && aCmd.equals(PP)) {
-            return true;
-        }
         final IccReader iccReader0;
         iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
+        if (!iccReader0.isCardPresent()) {
+            try {
+                toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000);
+                sleep(1000);
+            } catch (Exception e) {
+            }
+        }
+        if (lastCmd.equals(LT) && aCmd.equals(PP)) {
+            try {
+                toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000);
+                sleep(1000);
+            } catch (Exception e) {
+            }
+            return true;
+        }
+
         do {
             if (iccReader0.isCardPresent()) {
                 try {
