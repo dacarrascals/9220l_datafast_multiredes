@@ -92,7 +92,7 @@ def getLongDate() {
 }
 
 def getShortDate() {
-    return getDate("ddMM")
+    return getDate("yyMMdd")
 }
 
 android {
