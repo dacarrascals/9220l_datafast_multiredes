@@ -16,6 +16,7 @@ import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.Formatter;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -496,9 +497,11 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             for (int i = 0; i < datos.length ; i++) {
                 Logger.information("Datos ConfigRed wifi "+i+" :"+datos[i]);
             }
+            WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(WIFI_SERVICE);
+            String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
             mask = datos[0].split("\\.");
             gateway = datos[3].split("\\.");
-            ip = UtilNetwork.getIPAddress(true).split("\\.");
+            ip = ipAddress.split("\\.");
 
         } else {
             Logger.information("ConfigRed.java -> Ingreso por ethernet");
@@ -511,9 +514,9 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             gateway = datos[3].split("\\.");
         }
 
-        for(int i = 0; i < datos.length; i++){
+/*        for(int i = 0; i < datos.length; i++){
             System.out.println("PASO -> "+ datos[i]);
-        }
+        }*/
 
         etPort.setText(String.valueOf(getListeningPort()));
 

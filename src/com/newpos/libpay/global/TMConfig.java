@@ -935,10 +935,10 @@ public class TMConfig implements Serializable {
                                 setHeader(prop);
                                 break;
                             case 17:
-                                String SN = DevConfig.getSN();
+                                /*String SN = DevConfig.getSN();
                                 SN = SN.substring(4, SN.length());
-                                setTermID("NP" + SN);
-                                //setTermID(prop);
+                                setTermID("NP" + SN);*/
+                                setTermID(prop);
                                 break;
                             case 18:
                                 setMerchID(prop);

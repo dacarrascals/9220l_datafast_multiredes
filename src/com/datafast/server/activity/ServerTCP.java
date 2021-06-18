@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -38,9 +40,11 @@ import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
+import com.datafast.tools.CounterTimer;
 import com.datafast.tools.Wifi;
 import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
+import com.pos.device.beeper.Beeper;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
 
@@ -80,6 +84,7 @@ public class ServerTCP extends AppCompatActivity {
     private boolean ret;
     private String[] tipoVenta;
     private int seleccion = 0;
+    CounterTimer counterTimer;
 
     public static waitResponse listenerServer;
 
@@ -204,7 +209,9 @@ public class ServerTCP extends AppCompatActivity {
                 if (checkCardPresent(aCmd)) {
                     Intent intent = new Intent();
                     seleccion = 0;
-
+                    if (mDialog!=null){
+                        mDialog.dismiss();
+                    }
                     switch (aCmd) {
                         case CB:
                             boolean cbRet = configuracionBasica.procesoCb(aDat);
@@ -299,6 +306,9 @@ public class ServerTCP extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (mDialog!=null){
+            mDialog.dismiss();
+        }
         slide.setTimeoutSlide(5000);
         if (resumePA) {
             resumePA = false;
@@ -338,9 +348,23 @@ public class ServerTCP extends AppCompatActivity {
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {
         final Intent intent = new Intent();
+        counterTimer();
         mDialog = UIUtils.centerDialog(ServerTCP.this, R.layout.setting_home_pass, R.id.setting_pass_layout);
         mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        LinearLayout reiniciar=mDialog.findViewById(R.id.setting_pass_layout);
+        reiniciar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                counterTimer();
+            }
+        });
         final EditText newEdit = mDialog.findViewById(R.id.setting_pass_new);
+        newEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                counterTimer();
+            }
+        });
         final TextView title_pass = mDialog.findViewById(R.id.title_pass);
         Button confirm = mDialog.findViewById(R.id.setting_pass_confirm);
         final ToggleButton ivShowHidePass= mDialog.findViewById(R.id.ivShowHidePass);
@@ -366,6 +390,7 @@ public class ServerTCP extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                counterTimer();
                 InputMethodManager imm = (InputMethodManager) ServerTCP.this.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(newEdit.getWindowToken(), 0);
 
@@ -416,13 +441,36 @@ public class ServerTCP extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private boolean checkCardPresent(String aCmd) {
-        if (lastCmd.equals(LT) && aCmd.equals(PP)) {
-            return true;
+    private void counterTimer() {
+        if(counterTimer != null){
+            counterTimer.counterDownTimer();
+        }else {
+            counterTimer = new CounterTimer(this);
+            counterTimer.counterDownTimer();
         }
+    }
+
+
+    private boolean checkCardPresent(String aCmd) {
         final IccReader iccReader0;
         iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
+        if (!iccReader0.isCardPresent() && !(lastCmd.equals(LT) && aCmd.equals(PP))) {
+            try {
+                toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000);
+                sleep(1000);
+            } catch (Exception e) {
+            }
+        }
+        if (lastCmd.equals(LT) && aCmd.equals(PP)) {
+            try {
+                toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000);
+                sleep(1000);
+            } catch (Exception e) {
+            }
+            return true;
+        }
+
         do {
             if (iccReader0.isCardPresent()) {
                 try {
