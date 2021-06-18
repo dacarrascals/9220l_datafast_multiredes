@@ -105,6 +105,9 @@ public class Tcode {
     public static final int T_trans_rejected = 3005;
     public static final int T_unknow_err = 999 ;//未知错误
 
+    public static final int T_blocked_aplication = 2063;
+    public static final int T_decline_offline = 2069;
+
     public interface Status{
         public int downing_capk = 1 ;
         public int downing_aid = 2 ;

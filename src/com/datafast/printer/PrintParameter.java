@@ -176,6 +176,11 @@ public class PrintParameter extends AppCompatActivity implements TransUI {
     }
 
     @Override
+    public PinInfo getPinpadOfflinePin(int timeout, int i, OfflineRSA key, int offlinecounts) {
+        return null;
+    }
+
+    @Override
     public int showCardConfirm(int timeout, String cn) {
         return 0;
     }

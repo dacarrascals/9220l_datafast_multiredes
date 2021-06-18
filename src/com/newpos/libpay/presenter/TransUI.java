@@ -84,6 +84,15 @@ public interface TransUI {
     PinInfo getPinpadOfflinePin(int timeout , String amount , String cardNo);
 
     /**
+     * @param timeout       Timeout
+     * @param i             Listener
+     * @param key           Key
+     * @param offlinecounts Contador
+     * @return return
+     */
+    PinInfo getPinpadOfflinePin(int timeout, int i, OfflineRSA key, int offlinecounts);
+
+    /**
      * 人机交互显示UI接口(卡号确认)
      *
      * @param cn 卡号

@@ -81,18 +81,30 @@ public class TransUIImpl implements TransUI {
     };
 
     @Override
-    public PinInfo getPinpadOfflinePin(int timeout, String amount, String cardNo) {
-        Logger.debug("Masterctl>>getPinpadOfflinePin");
+    public PinInfo getPinpadOfflinePin(int timeout, int i, OfflineRSA key, int counts) {
         this.mLatch = new CountDownLatch(1);
         final PinInfo pinInfo = new PinInfo();
         PinpadManager pinpadManager = PinpadManager.getInstance();
-        pinpadManager.getOfflinePin(timeout,amount,cardNo, new PinpadListener() {
+        pinpadManager.getOfflinePin(i, key, counts, new PinpadListener() {
             @Override
             public void callback(PinInfo info) {
+                pinInfo.setResultFlag(info.isResultFlag());
+                pinInfo.setErrno(info.getErrno());
+                pinInfo.setNoPin(info.isNoPin());
+                pinInfo.setPinblock(info.getPinblock());
+                mLatch.countDown();
+                //listenNotify();
             }
         });
-        transView.showMsgInfo(timeout, getStatusInfo(String.valueOf(Tcode.Status.handling)),false);
-        return null ;
+        try {
+            this.mLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Logger.error("Exception" + e.toString());
+        }
+        //funWait();
+        transView.showMsgInfo(timeout, getStatusInfo(String.valueOf(Tcode.Status.handling)), false);
+        return pinInfo;
     }
 
     @Override
@@ -331,6 +343,33 @@ public class TransUIImpl implements TransUI {
             Thread.currentThread().interrupt();
             Logger.error("Exception" + e.toString());
         }
+        transView.showMsgInfo(timeout, getStatusInfo(String.valueOf(Tcode.Status.handling)),false);
+        return pinInfo;
+    }
+
+    @Override
+    public PinInfo getPinpadOfflinePin(int timeout, String amount, String cardNo) {
+        this.mLatch = new CountDownLatch(1);
+        final PinInfo pinInfo = new PinInfo();
+        PinpadManager pinpadManager = PinpadManager.getInstance();
+        pinpadManager.getPin(timeout, amount, cardNo, new PinpadListener() {
+            @Override
+            public void callback(PinInfo info) {
+                pinInfo.setResultFlag(info.isResultFlag());
+                pinInfo.setErrno(info.getErrno());
+                pinInfo.setNoPin(info.isNoPin());
+                pinInfo.setPinblock(info.getPinblock());
+                mLatch.countDown();
+                //listenNotify();
+            }
+        });
+        try {
+            this.mLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Logger.error("Exception" + e.toString());
+        }
+        //funWait();
         transView.showMsgInfo(timeout, getStatusInfo(String.valueOf(Tcode.Status.handling)),false);
         return pinInfo;
     }

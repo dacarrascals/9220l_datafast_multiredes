@@ -10,6 +10,7 @@ import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.SDKException;
 import com.pos.device.icc.SlotType;
 //import com.pos.device.ped.IccOfflinePinApdu;
+import com.pos.device.ped.IccOfflinePinApdu;
 import com.pos.device.ped.KeySystem;
 import com.pos.device.ped.MACMode;
 import com.pos.device.ped.Ped;
@@ -17,6 +18,7 @@ import com.pos.device.ped.PedRetCode;
 import com.pos.device.ped.PinBlockCallback;
 import com.pos.device.ped.PinBlockFormat;
 //import com.pos.device.ped.RsaPinKey;
+import com.pos.device.ped.RsaPinKey;
 import com.secure.api.PadView;
 
 import java.util.Locale;
@@ -154,48 +156,7 @@ public class PinpadManager {
         }
     }
 
-    /**
-     * 获取脱机PIN
-     * @param t
-     * @param c
-     * @param l
-     */
-    public void getOfflinePin(int t, String amount , String c , PinpadListener l){
-        this.listener = l ;
-        this.timeout = t ;
-        this.pinCardNo = c ;
-        final PinInfo info = new PinInfo();
-        if(null == l){
-            info.setResultFlag(false);
-            info.setErrno(Tcode.T_invoke_para_err);
-            listener.callback(info);
-        }else if(pinCardNo == null || pinCardNo.equals("")){
-            info.setResultFlag(false);
-            info.setErrno(Tcode.T_ped_card_err);
-            listener.callback(info);
-        }else {
-            Logger.debug("PinpadManager>>getPin>>");
-            final Ped ped = Ped.getInstance() ;
-            ped.setPinInputRegion(40, 242, 2, 2);
-            pinCardNo = pinCardNo.substring(pinCardNo.length() - 13, pinCardNo.length() - 1);
-            pinCardNo = ISOUtil.padleft(pinCardNo, pinCardNo.length() + 4, '0');
-            PadView padView = new PadView();
-
-            padView.setTitleMsg("SECURITY KEYBOARD");
-            padView.setAmountTitle("AMOUNT:");
-            padView.setAmount(PAYUtils.TwoWei(amount));
-            padView.setPinTips("Please Input PIN / Entry for bypass PIN");
-            try {
-                ped.setPinEntryTimeout(60);
-            } catch (SDKException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            ped.setPinPadView(padView);
-        }
-    }
-
-    /*public void getOfflinePin(int i , OfflineRSA key , int counts , PinpadListener l){
+    public void getOfflinePin(int i , OfflineRSA key , int counts , PinpadListener l){
         this.listener = l ;
         Ped ped = Ped.getInstance() ;
         PadView padView = new PadView();
@@ -248,7 +209,7 @@ public class PinpadManager {
                         listener.callback(info);
                     }
                 });
-    }*/
+    }
 
     /**
      * 获取加密后的MAC信息
@@ -333,29 +294,29 @@ public class PinpadManager {
      * @param offlinePinBlcok
      * @return
      */
-    /*public int getOfflinePin(int tryTime, int keyType, long amount,RsaPinKey rsaPinkey, final byte[] len, final byte[] offlinePinBlcok) {
+    public int getOfflinePin(int tryTime, int keyType, long amount, RsaPinKey rsaPinkey, final byte[] len, final byte[] offlinePinBlcok) {
         Ped ped = Ped.getInstance() ;
         PadView padView = new PadView();
         //long amount = 10000;
-        *//*if (amount >= 0) {
+        /*if (amount >= 0) {
             double amt = (double)amount/(double)100;
             DecimalFormat df = new DecimalFormat("0.00");
             padView.setAmount(df.format(amt));
             padView.setAmountTitle("TO DO");
-        }*//*
+        }*/
         try {
             ped.setPinEntryTimeout(60);
         } catch (SDKException e) {
             Logger.error("Exception" + e.toString());
         }
 
-        *//*if(tryTime == Integer.MAX_VALUE)
+        /*if(tryTime == Integer.MAX_VALUE)
             padView.setTitleMsg(" ");
         else {
             String temp = "Ingrese PIN";
             String strTip = String.format(temp, tryTime);
             padView.setTitleMsg(strTip);
-        }*//*
+        }*/
 
         padView.setPinTips("INGRESE PIN OFFLINE ");
         ped.setPinPadView(padView);
@@ -373,6 +334,8 @@ public class PinpadManager {
         if (keyType == 1) {
             //Log.d("EMVTransDemo",EMVtest.bcd2str(rsaPinkey.getIccrandom(),0,8,false));
             apdu.setRsakey(rsaPinkey);
+            Logger.debug("JM offline pin key info ="+ISOUtil.byte2hex(rsaPinkey.getExp()));
+            Logger.debug("JM offline pin key info ="+rsaPinkey.getExplen());
         }
         apdu.setCla(0x00);
         apdu.setIns(0x20);
@@ -389,6 +352,7 @@ public class PinpadManager {
 
                 if (result != 0) {
                     mErrorCode = result;
+                    Logger.debug("JM offline pin key mErrorCode ="+mErrorCode);
                 } else { //成功
                     if (pinBlock != null && len != null && offlinePinBlcok != null) {
                         len[0] = (byte)pinBlock.length;
@@ -403,7 +367,7 @@ public class PinpadManager {
         tryLock(offlinePinLock, TIME_OUT);
 
         return mErrorCode;
-    }*/
+    }
 
 
 

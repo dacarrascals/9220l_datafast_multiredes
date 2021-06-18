@@ -4,6 +4,7 @@ import android.os.SystemClock;
 
 import com.android.desert.keyboard.InputInfo;
 import com.android.desert.keyboard.InputManager;
+import com.datafast.server.server_tcp.Server;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.datafast.transactions.common.GetAmount;
 import com.newpos.libpay.Logger;
@@ -18,6 +19,7 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.SDKException;
 import com.pos.device.config.DevConfig;
+import com.pos.device.emv.CandidateApp;
 import com.pos.device.emv.CandidateListApp;
 import com.pos.device.emv.CoreParam;
 import com.pos.device.emv.EMVHandler;
@@ -37,6 +39,8 @@ import com.pos.device.picc.PiccReader;
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.transactions.common.GetAmount.AUTOMATICO;
 import static com.newpos.libpay.trans.finace.FinanceTrans.LOCAL;
 
@@ -257,6 +261,9 @@ public class EmvTransaction {
         initEmvKernel();
 
         ret = emvReadData(true);
+
+        Logger.debug("EmvTransaction>>EMVTramsProcess>>ret" + ret);
+
         if (ret != 0) {
             return ret;
         }
@@ -341,7 +348,18 @@ public class EmvTransaction {
         Logger.debug("EmvTransaction>>EMVTramsProcess>>cardholderVerify=" + ret);
         if (ret != 0) {
             Logger.debug("EmvTransaction>>EMVTramsProcess>>cardholderVerify fail");
-            return Tcode.T_card_holder_auth_err;
+
+            if (ret==2065)
+                return Tcode.T_user_cancel_input;
+
+            switch (Server.cmd) {
+                case LT:
+                case CT:
+                    return 0;
+                default:
+                    return Tcode.T_card_holder_auth_err;
+            }
+
         }
 
         Logger.debug("EmvTransaction>>EMVTramsProcess>>终端风险分析");
@@ -362,6 +380,9 @@ public class EmvTransaction {
             isNeedOnline = emvHandler.terminalActionAnalysis();
         } catch (SDKException e) {
             Logger.error("Exception" + e.toString());
+            if (e.toString().contains("2069")){
+                return Tcode.T_decline_offline;
+            }
         }
         Logger.debug("EmvTransaction>>EMVTramsProcess>>terminalActionAnalysis=" + isNeedOnline);
         if (isNeedOnline) {
@@ -398,8 +419,30 @@ public class EmvTransaction {
         //int ret = emvHandler.selectApp(Integer.parseInt(ISOUtil.padleft(2 + "", 6, '0')));
         Logger.debug("EmvTransaction>>emvReadData>>selectApp = " + ret);
         if (ret != 0) {
-            Logger.debug("EmvTransaction>>emvReadData>>selectApp fail");
-            return Tcode.T_select_app_err;
+            if (ret == 2064){
+                if (retExpApp==2063)
+                    return Tcode.T_blocked_aplication;
+                else
+                    return Tcode.T_err_fallback;
+            }else {
+                Logger.debug("EmvTransaction>>emvReadData>>selectApp fail");
+                if (retExpApp == 2063) {
+                    return Tcode.T_blocked_aplication;
+                }else if (retExpApp == 116) {
+                    return Tcode.T_user_cancel_operation;
+                }
+                return Tcode.T_select_app_err;
+            }
+        }
+
+        String AID = null;
+        try {
+            AID = getAID();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (AID == null || AID.equals("")){
+            return Tcode.T_err_fallback;
         }
 
         if (para.isECTrans()) {
@@ -557,7 +600,7 @@ public class EmvTransaction {
 
         // 配置MCK,支持项默认为支持，不支持的请设置为-1
         TerminalMckConfigure configure = new TerminalMckConfigure();
-        configure.setTerminalType(0x22);
+        configure.setTerminalType(0x21);
         configure.setTerminalCapabilities(new byte[]{(byte) 0xE0,
                 (byte) 0xF8, (byte) 0xC8});
         configure.setAdditionalTerminalCapabilities(new byte[]{0x60, 0x00,
@@ -616,10 +659,73 @@ public class EmvTransaction {
         return true;
     }
 
+    private String getAID() {
+        byte[] temp = new byte[128];
+        int len = PAYUtils.get_tlv_data_kernal(0x9F06, temp);
+        String aux = ISOUtil.bcd2str(temp, 0, len);
+        return aux.trim();
+    }
+
     private IEMVCallback.EMVInitListener emvInitListener = new IEMVCallback.EMVInitListener() {
         @Override
         public int candidateAppsSelection() {
-            Logger.debug("======candidateAppsSelection=====");
+            Logger.debug("candidateAppsSelection");
+            CandidateApp[] listappall;
+            CandidateListApp[] listapp;
+            int numData = 0;
+            int ret = 0;
+
+            try {
+                listappall = EMVHandler.getInstance().getAllCandidateApps();
+                listapp = EMVHandler.getInstance().getCandidateList();
+                numData = listapp.length;
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < numData; i++) {
+                    Logger.debug("应用名称：" + listapp[i].toString());
+                    if (i == 0) {
+                        sb.append(new String(listapp[i].gettCandAppName()));
+                    } else {
+                        sb.append(",").append(new String(listapp[i].gettCandAppName()));
+                    }
+                }
+
+                if(numData > 1){//more than 1 app, so it will call callbackSelApp
+                    Logger.debug("卡片多应用选择");
+                    int select = transUI.showCardApplist(timeout, sb.toString().split(","));
+                    if (select >= 0) {
+                        ret = select;
+                    } else {
+                        retExpApp = Tcode.T_user_cancel_operation;
+                        return -1;
+                    }
+                    return ret;
+                }
+
+                Logger.error("getPriority pri =" + listappall[0].getPriority());
+                int priority=listappall[0].getPriority();
+                if(priority>80){
+                    Logger.error("need to do card holder confirm");
+                    //add you UI function here , if user confirm ,return 0,if not , return other value and it will cancel the transaction
+                    int select = transUI.showCardApplist(timeout, sb.toString().split(","));
+                    if (select >= 0) {
+                        ret = select;
+                    } else {
+                        retExpApp = Tcode.T_user_cancel_operation;
+                        return -1;
+                    }
+                }else{
+                    Logger.error("no need to do card holder confirm");
+                }
+
+
+                return ret;
+            } catch (SDKException e) {
+                e.printStackTrace();
+                return -1;
+            }
+
+            /*Logger.debug("======candidateAppsSelection=====");
             int[] numData = new int[1];
             CandidateListApp[] listapp = new CandidateListApp[32];
             try {
@@ -658,7 +764,7 @@ public class EmvTransaction {
                 return ret;
             } else {
                 return -1;
-            }
+            }*/
         }
 
         @Override
@@ -697,11 +803,6 @@ public class EmvTransaction {
             Logger.debug("=====getOfflinePin======");
             // 读PED倒计时并为零 才继续执行
             // 请输入OFFLINE PIN
-            return 0;
-        }
-
-        @Override
-        public int getOfflinePin(int i, RsaPinKey rsaPinKey, byte[] bytes, byte[] bytes1) {
             return 0;
         }
 
@@ -840,48 +941,24 @@ public class EmvTransaction {
         }
 
         //增加脱机PIN回调接口
-        /*@Override
+        @Override
         public int getOfflinePin(int i, RsaPinKey rsaPinKey, byte[] bytes, byte[] bytes1) {
-            int ret = PinpadManager.getInstance().getOfflinePin(offlinePinTryCounts, i, Amount, rsaPinKey, bytes, bytes1);
-            offlinePinTryCounts = Integer.MAX_VALUE;
+            int ret = 0;
+            switch (Server.cmd) {
+                case LT:
+                case CT:
+                    break;
+                default:
+                    ret = PinpadManager.getInstance().getOfflinePin(offlinePinTryCounts, i, Amount, rsaPinKey, bytes, bytes1);
+                    offlinePinTryCounts = Integer.MAX_VALUE;
+                    Logger.debug("======getOfflinePin===");
+                    Logger.debug("ret = "+ ret);
+                    break;
+            }
+
             return ret;
 
-        }*/
-        /*@Override
-        public int getOfflinePin(int i, RsaPinKey rsaPinKey, byte[] recvLen, byte[] recvData) {
-            Logger.debug("======getOfflinePin===");
-            try {
-                //获取脱机PIN次数
-                byte[] counts = emvHandler.getDataElement(new byte[]{(byte) 0x9F, (byte) 0x17});
-                if (counts != null) {
-                    Logger.debug("getDataElement(9F17):" + ISOUtil.hexString(counts));
-                    offlinePinTryCounts = counts[0];
-                }
-            } catch (SDKException e) {
-                e.printStackTrace();
-            }
-            OfflineRSA offlineRSA = null;
-            if (i == 1) {
-                offlineRSA.setIccRandom(rsaPinKey.getIccrandom());
-                offlineRSA.setModLen(rsaPinKey.getMod().length);
-                offlineRSA.setMod(rsaPinKey.getMod());
-                offlineRSA.setExpLen(rsaPinKey.getExp().length);
-                offlineRSA.setExp(rsaPinKey.getExp());
-            }
-            PinInfo info = transUI.getPinpadOfflinePin(timeout, i, offlineRSA, offlinePinTryCounts);
-            if (info.isResultFlag()) {
-                byte[] rsp = info.getPinblock();
-                if (rsp == null) {
-                    return -1;
-                }
-                Logger.debug("getOfflinePin->rsp:" + ISOUtil.byte2hex(rsp));
-                recvLen[0] = (byte) rsp.length;
-                System.arraycopy(rsp, 0, recvData, 0, recvLen[0]);
-                Logger.debug("getOfflinePin return 0 to kernel");
-                return 0;
-            }
-            return info.getErrno();
-        }*/
+        }
     };
 
     private IEMVCallback.ApduExchangeListener apduExchangeListener = new IEMVCallback.ApduExchangeListener() {

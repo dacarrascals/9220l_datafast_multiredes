@@ -389,6 +389,11 @@ public class HistoryTrans extends Activity implements
     }
 
     @Override
+    public PinInfo getPinpadOfflinePin(int timeout, int i, OfflineRSA key, int offlinecounts) {
+        return null;
+    }
+
+    @Override
     public void showCardImg(String img) {
     }
 
