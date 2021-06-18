@@ -85,7 +85,7 @@ public class menus extends AppCompatActivity {
             if (menu.equals(DefinesDATAFAST.ITEM_PRINCIPAL)) {
                 relativeLayoutBack.setVisibility(View.INVISIBLE);
                 /*version.setText(StartAppDATAFAST.CERT + StartAppDATAFAST.VERSION);*/
-                version.setText("V" + getVersion().split("_")[0]+"."+ getVersion().split("_")[1]);
+                version.setText("V" + getVersion().split("_")[0]+" B"+ getVersion().split("_")[1]);
                 version.setVisibility(View.VISIBLE);
             }
         }

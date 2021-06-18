@@ -455,7 +455,7 @@ public class ServerTCP extends AppCompatActivity {
         final IccReader iccReader0;
         iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
         ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
-        if (!iccReader0.isCardPresent()) {
+        if (!iccReader0.isCardPresent() && !(lastCmd.equals(LT) && aCmd.equals(PP))) {
             try {
                 toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000);
                 sleep(1000);
