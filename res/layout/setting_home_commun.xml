@@ -403,7 +403,6 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/setting_com_timeout_resp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"

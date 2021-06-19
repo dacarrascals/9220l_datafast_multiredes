@@ -26,7 +26,6 @@
             android:visibility="invisible">
 
             <ImageView
-                android:id="@+id/imgTimer"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginEnd="5dp"
@@ -42,7 +41,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/TxtTimeout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="seg"

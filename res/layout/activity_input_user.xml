@@ -9,7 +9,6 @@
         layout="@layout/toolbar_cancel" />
 
     <LinearLayout
-        android:id="@+id/setting_changepwd_root_layout"
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_below="@+id/toolbar_id"

@@ -135,7 +135,6 @@
                 android:layout_marginLeft="@dimen/dp_10"
                 android:background="#FFFFFF">
                 <TextView
-                    android:id="@+id/tv_socketPort"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -173,7 +172,6 @@
                 android:layout_marginBottom="15dp"
                 android:background="#FFFFFF">
                 <TextView
-                    android:id="@+id/tv_conf_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -332,7 +330,6 @@
                 android:background="#FFFFFF">
 
                 <TextView
-                    android:id="@+id/tv_socketPort_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -370,7 +367,6 @@
                 android:layout_marginBottom="15dp"
                 android:background="#FFFFFF">
                 <TextView
-                    android:id="@+id/tv_conf_ip_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"

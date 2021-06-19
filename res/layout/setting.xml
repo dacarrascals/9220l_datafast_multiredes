@@ -20,7 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <LinearLayout
-        android:id="@+id/setting_maintain_layout"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="#FFFFFF"
@@ -55,7 +54,6 @@
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/setting_android_layout"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="#FFFFFF"
@@ -90,7 +88,6 @@
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/setting_errlog_layout"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="#FFFFFF"
@@ -125,7 +122,6 @@
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/setting_advice_layout"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="#FFFFFF"

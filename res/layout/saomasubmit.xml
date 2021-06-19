@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/capture_containter"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/top"
-        layout="@layout/top_title" />
+    <include layout="@layout/top_title" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -46,7 +43,6 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/top_mask"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="64dip"

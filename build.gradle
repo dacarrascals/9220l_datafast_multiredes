@@ -139,7 +139,7 @@ android {
     productFlavors {
     }
     aaptOptions {
-        cruncherEnabled = false
+        cruncherEnabled = true
     }
     buildTypes {
         debug {

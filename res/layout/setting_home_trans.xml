@@ -52,7 +52,6 @@
             android:textStyle="bold" />
 
         <RelativeLayout
-            android:id="@+id/setting_home_trans_sys"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -85,7 +84,6 @@
             android:textStyle="bold" />
 
         <RelativeLayout
-            android:id="@+id/setting_home_trans_pass"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -119,7 +117,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <RelativeLayout
-            android:id="@+id/setting_home_trans_scan"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
@@ -154,7 +151,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:id="@+id/setting_home_trans_force_pboc"
                 android:background="@android:color/transparent"
                 android:src="@drawable/home2_setting_commun_open"
                 android:layout_alignParentRight="true"
@@ -187,7 +183,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:id="@+id/setting_home_trans_input_pass"
                 android:background="@android:color/transparent"
                 android:src="@drawable/home2_setting_commun_open"
                 android:layout_alignParentRight="true"
@@ -220,7 +215,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:id="@+id/setting_home_trans_use_card"
                 android:background="@android:color/transparent"
                 android:src="@drawable/home2_setting_commun_open"
                 android:layout_alignParentRight="true"

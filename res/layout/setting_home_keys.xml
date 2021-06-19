@@ -64,7 +64,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <RadioButton
-                android:id="@+id/master_key_gm"
                 android:text="@string/gm"
                 android:textColor="#ff333333"
                 android:textSize="16sp"

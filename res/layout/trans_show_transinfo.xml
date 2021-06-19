@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/trans_cardno_layout"
     android:orientation="vertical"
     android:background="#eeeeee"
     android:layout_width="match_parent"
@@ -98,7 +97,6 @@
         <ImageView
             android:scaleType="fitCenter"
             android:visibility="gone"
-            android:id="@+id/transinfo__iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </RelativeLayout>

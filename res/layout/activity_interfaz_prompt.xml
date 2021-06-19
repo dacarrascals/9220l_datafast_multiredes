@@ -10,7 +10,6 @@
         layout="@layout/toolbar_cancel" />
 
     <LinearLayout
-        android:id="@+id/plantilla_prompts"
         android:layout_width="500dp"
         android:layout_height="290dp"
         android:layout_below="@+id/toolbar_id"

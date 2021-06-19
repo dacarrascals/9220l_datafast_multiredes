@@ -14,14 +14,12 @@
         android:layout_alignParentLeft="true">
 
         <ImageView
-            android:id="@+id/top_left_img"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:background="@drawable/back_normal"/>
     </LinearLayout>
 
     <TextView
-        android:id="@+id/top_scan_mode"
         android:layout_width="wrap_content"
         android:layout_height="54dip"
         android:layout_alignParentRight="true"
