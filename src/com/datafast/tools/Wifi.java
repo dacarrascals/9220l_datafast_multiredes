@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.widget.Toast;
 
 import com.android.newpos.pay.StartAppDATAFAST;
 import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
@@ -20,21 +19,21 @@ import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.net.wifi.PosWifiManager;
 import com.pos.device.net.wifi.WifiSsidInfo;
 
-import org.jpos.iso.IF_CHAR;
-
 import static android.net.ConnectivityManager.TYPE_WIFI;
+import static com.android.newpos.pay.StartAppDATAFAST.tablaIp;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
-import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_EN_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
-import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 
 public class Wifi {
 
-    Context ctx;
-    CP_Response cp_response;
-    CP_Request cp_request;
+    private static SharedPreferences preferences;
+    public static Context ctx;
+    public static CP_Response cp_response;
+    public static CP_Request cp_request;
+    public static String[] data;
+    public static boolean ret;
 
     public Wifi(Context ctx) {
         this.ctx = ctx;
@@ -42,16 +41,15 @@ public class Wifi {
         cp_request = new CP_Request();
     }
 
-    SharedPreferences preferences;
-    SharedPreferences.Editor edit;
+    public static SharedPreferences.Editor edit;
 
     public CP_Response getCp_response() {
         return cp_response;
     }
 
     public boolean comunicacion(byte[] aDat, waitResponse listener) {
-        String[] data = new String[2];
-        boolean ret = false;
+        data = new String[2];
+        ret = false;
 
         if (!Server.correctLength){
             cp_request.UnPackHash(aDat);
@@ -70,30 +68,7 @@ public class Wifi {
             return false;
         }
 
-        preferences = ctx.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
-        edit = preferences.edit();
-
-        if (!cp_request.getPortListenPinpad().equals("000000")){
-            edit.putString("port", cp_request.getPortListenPinpad());
-        }
-
-        if (!PAYUtils.isNullWithTrim(cp_request.getIpPrimary()) && !PAYUtils.isNullWithTrim(cp_request.getPortPrimary())) {
-            data[0] = cp_request.getIpPrimary();
-            data[1] = cp_request.getPortPrimary();
-            ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 0, this.ctx);
-            edit.putString("ip_primary", cp_request.getIpPrimary());
-            edit.putString("port_primary", cp_request.getPortPrimary());
-        }
-
-        if (!PAYUtils.isNullWithTrim(cp_request.getIpSecundary()) && !PAYUtils.isNullWithTrim(cp_request.getPortSecundary())) {
-            data[0] = cp_request.getIpSecundary();
-            data[1] = cp_request.getPortSecundary();
-            ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 1, this.ctx);
-            edit.putString("ip_secundary", cp_request.getIpSecundary());
-            edit.putString("port_secundary", cp_request.getPortSecundary());
-        }
-
-        edit.apply();
+        cargarIP(false);
 
         StartAppDATAFAST.listIPs = ChequeoIPs.selectIP(ctx);
 
@@ -138,6 +113,40 @@ public class Wifi {
         }*/
 
         return ret;
+
+    }
+    public  void cargarIP(boolean b){
+        preferences = ctx.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
+        edit = preferences.edit();
+
+        if (b){
+            tablaIp = ChequeoIPs.seleccioneIP(0);
+            edit.putString("ip_primary", tablaIp.getIP_HOST());
+            edit.putString("port_primary", tablaIp.getPUERTO());
+
+        }else{
+            if (!cp_request.getPortListenPinpad().equals("000000")){
+                edit.putString("port", cp_request.getPortListenPinpad());
+            }
+
+            if (!PAYUtils.isNullWithTrim(cp_request.getIpPrimary()) && !PAYUtils.isNullWithTrim(cp_request.getPortPrimary())) {
+                data[0] = cp_request.getIpPrimary();
+                data[1] = cp_request.getPortPrimary();
+                ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 0, ctx);
+                edit.putString("ip_primary", cp_request.getIpPrimary());
+                edit.putString("port_primary", cp_request.getPortPrimary());
+            }
+
+            if (!PAYUtils.isNullWithTrim(cp_request.getIpSecundary()) && !PAYUtils.isNullWithTrim(cp_request.getPortSecundary())) {
+                data[0] = cp_request.getIpSecundary();
+                data[1] = cp_request.getPortSecundary();
+                ret = ChequeoIPs.updateSelectIps(ChequeoIPs.fieldsIP, data, 1, ctx);
+                edit.putString("ip_secundary", cp_request.getIpSecundary());
+                edit.putString("port_secundary", cp_request.getPortSecundary());
+            }
+        }
+        edit.apply();
+
 
     }
 

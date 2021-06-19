@@ -21,6 +21,7 @@ import com.datafast.inicializacion.trans_init.trans.UnpackFile;
 import com.datafast.inicializacion.trans_init.trans.dbHelper;
 import com.datafast.pinpad.cmd.PA.Actualizacion;
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.tools.Wifi;
 import com.datafast.transactions.callbacks.waitInitCallback;
 import com.google.common.base.Strings;
 import com.newpos.libpay.Logger;
@@ -413,6 +414,9 @@ public class Init extends AppCompatActivity {
                                                 UIUtils.startResult(Init.this,false,"Error al leer tabla, Por favor Inicialice nuevamente",true);
                                                 //finish();
                                             } else {
+
+                                                Wifi wifi = new Wifi(Init.this);
+                                                wifi.cargarIP(true);
 
                                                 int numLote = Integer.parseInt(tconf.getNUMERO_LOTE());
                                                 if (numLote != 0)
