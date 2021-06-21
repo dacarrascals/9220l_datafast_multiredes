@@ -123,6 +123,9 @@ public class Wifi {
             tablaIp = ChequeoIPs.seleccioneIP(0);
             edit.putString("ip_primary", tablaIp.getIP_HOST());
             edit.putString("port_primary", tablaIp.getPUERTO());
+            tablaIp = ChequeoIPs.seleccioneIP(1);
+            edit.putString("ip_secundary", tablaIp.getIP_HOST());
+            edit.putString("port_secundary", tablaIp.getPUERTO());
 
         }else{
             if (!cp_request.getPortListenPinpad().equals("000000")){

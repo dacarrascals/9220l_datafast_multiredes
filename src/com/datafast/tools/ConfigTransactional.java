@@ -1,6 +1,7 @@
 package com.datafast.tools;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -109,10 +110,14 @@ public class ConfigTransactional extends BaseActivity{
     }
 
     public void cargarInfoIP1(){
+        SharedPreferences preferences = this.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         tablaIp = ChequeoIPs.seleccioneIP(0);
-        String[] ip = tablaIp.getIP_HOST().split("\\.");
+        String ipPrimary= preferences.getString("ip_primary", "");
+        int portPrimary = Integer.parseInt(preferences.getString( "port_primary", "0"));
+        tablaIp = ChequeoIPs.seleccioneIP(0);
+        String[] ip = ipPrimary.split("\\.");
         nombreIP1 = tablaIp.getNOMBRE_IP();
-        portNom1 = tablaIp.getPUERTO();
+        portNom1 =String.valueOf(portPrimary);
         etIp1.setText(ip[0]);
         etIp2.setText(ip[1]);
         etIp3.setText(ip[2]);
@@ -126,11 +131,15 @@ public class ConfigTransactional extends BaseActivity{
     }
 
     public void cargarInfoIP2(){
+        SharedPreferences preferences = this.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
+        tablaIp = ChequeoIPs.seleccioneIP(1);
+        String ipSecundary = preferences.getString("ip_secundary", "");
+        int portSecundary = Integer.parseInt(preferences.getString("port_secundary", "0"));
         tablaIp = ChequeoIPs.seleccioneIP(1);
         port2.setText(tablaIp.getPUERTO());
-        String[] ip = tablaIp.getIP_HOST().split("\\.");
+        String[] ip = ipSecundary.split("\\.");
         nombreIP2 = tablaIp.getNOMBRE_IP();
-        portNom2 = tablaIp.getPUERTO();
+        portNom2 = String.valueOf(portSecundary);
         et2Ip1.setText(ip[0]);
         et2Ip2.setText(ip[1]);
         et2Ip3.setText(ip[2]);
