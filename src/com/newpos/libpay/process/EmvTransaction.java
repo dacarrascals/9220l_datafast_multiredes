@@ -423,7 +423,7 @@ public class EmvTransaction {
                 if (retExpApp==2063)
                     return Tcode.T_blocked_aplication;
                 else
-                    return Tcode.T_err_fallback;
+                    return Tcode.T_select_app_err;
             }else {
                 Logger.debug("EmvTransaction>>emvReadData>>selectApp fail");
                 if (retExpApp == 2063) {
