@@ -76,11 +76,11 @@ public class Venta extends FinanceTrans implements TransPresenter {
             if (reverso != 1995) {
                 return;
             }
-
+            Logger.information("Venta.java -> verificar batch");
             if (!checkBatchAndSettle(true, true)) {
                 return;
             }
-
+            Logger.information("Venta.java ->  setea montos");
             if (setAmountPP()) {
                 if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)) {
                     if (!prepareOnline()) {
@@ -209,12 +209,14 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             retVal = OnlineTrans(null);
                         }
                         if (retVal == 0) {
+                            Logger.information("Venta.java -> Ok prepareOnline()");
                             //Solo se usa en la venta (Gasolinera)
                             msgAprob(Tcode.Status.sale_succ,true);
                             CommonFunctionalities.obtenerBin(Pan);
                             clearPan();
                             return true;
                         } else {
+                            Logger.information("Venta.java -> Fallido prepareOnline()");
                             if (retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
                                 processPPFail.cmdCancel(Server.cmd, retVal);
                                 transUI.handlingError(timeout, retVal);
