@@ -124,6 +124,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                         e.printStackTrace();
                     }
                     Log.i("Venta", String.valueOf(retVal));
+                    Logger.information("Venta.java -> retval   "+ String.valueOf(retVal) );
                     if (retVal==Tcode.T_user_cancel_input)
                          transUI.showError(timeout, retVal, processPPFail);
                     return;

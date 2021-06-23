@@ -51,6 +51,7 @@ import java.util.TimerTask;
 
 import cn.desert.newpos.payui.master.ResultControl;
 
+import static com.android.newpos.pay.StartAppDATAFAST.toneG;
 import static java.lang.Thread.sleep;
 
 /**
@@ -636,7 +637,6 @@ public class UIUtils {
     public static void beep(int typeTone) {
 
         int timeOut = 1;
-        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
 
 
         long start = SystemClock.uptimeMillis();
