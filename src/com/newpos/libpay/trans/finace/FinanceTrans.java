@@ -1575,6 +1575,7 @@ public class FinanceTrans extends Trans {
         }
 
         if (!"00".equals(RspCode) && !para.getTransType().equals(Type.REIMPRESION)) {
+            Logger.information("FinanceTrans.java -> Transaccion rechazada ");
             if (indexRev >= 0){
                 TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).deleteTransLog(indexRev);
             }
@@ -1592,6 +1593,7 @@ public class FinanceTrans extends Trans {
         }
 
         if (inputMode == ENTRY_MODE_ICC) {
+            Logger.information("FinanceTrans.java -> Transaccion ICC");
             boolean need2AC = TransEName.equals(Type.VENTA) || TransEName.equals(Type.QUICKPASS);
 
             if (emvTrans != null && retVal == 0 && need2AC) {
@@ -1631,6 +1633,7 @@ public class FinanceTrans extends Trans {
             }
 
         } else if (inputMode == ENTRY_MODE_NFC) {
+            Logger.information("FinanceTrans.java -> Transaccion NFC ");
             if (isNeedGAC2) {
                 retVal = genAC2Trans();
                 if (retVal != PBOCode.PBOC_TRANS_SUCCESS) {
@@ -1657,6 +1660,7 @@ public class FinanceTrans extends Trans {
         TransLogData logData;
 
         if (isSaveLog) {
+            Logger.information("FinanceTrans.java -> Guardado de transaccion");
             logData = setLogData();
             switch (transEname){
                 case Type.VOID_PREAUTO:
@@ -2814,7 +2818,7 @@ public class FinanceTrans extends Trans {
 
     public static byte[] ppResponse;
     private void responsePP() {
-
+        Logger.information("FinanceTrans.java -> Respuesta comando PP");
         pp_response.setTypeMsg(PP);
         pp_response.setRspCodeMsg(OK);
         int prp = retVal;

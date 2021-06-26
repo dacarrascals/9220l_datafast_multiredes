@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -69,6 +70,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
     public static String[] lastTrack = null;
     public static boolean resumePA = false;
     public static Server server;
+    public static ToneGenerator toneG=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

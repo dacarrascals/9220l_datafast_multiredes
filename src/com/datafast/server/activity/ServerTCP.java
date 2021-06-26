@@ -59,6 +59,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.isInit;
 import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
+import static com.android.newpos.pay.StartAppDATAFAST.toneG;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -124,6 +125,8 @@ public class ServerTCP extends AppCompatActivity {
             if (!isInEcho) {
                 if (server == null)
                     server = new Server(ServerTCP.this);
+                if (toneG == null)
+                    toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
                 wifi = new Wifi(ServerTCP.this);
                 control = new Control(ServerTCP.this);
                 actualizacion = new Actualizacion(ServerTCP.this);
@@ -454,7 +457,6 @@ public class ServerTCP extends AppCompatActivity {
     private boolean checkCardPresent(String aCmd) {
         final IccReader iccReader0;
         iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
-        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
         if (!iccReader0.isCardPresent() && !(lastCmd.equals(LT) && aCmd.equals(PP))) {
             try {
                 toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000);

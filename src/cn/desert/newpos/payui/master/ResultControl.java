@@ -214,7 +214,7 @@ public class ResultControl extends BaseActivity {
         if ((Server.cmd.equals(LT)) || (lastCmd == LT)) {
             return true;
         }
-        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+
         //iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
 
         long start = SystemClock.uptimeMillis();
@@ -223,6 +223,7 @@ public class ResultControl extends BaseActivity {
 
             try {
                 if (iccReader0.isCardPresent()) {
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     back = true;
                     toneG.startTone(ToneGenerator.TONE_PROP_BEEP2, 2000);
                     try {

@@ -722,6 +722,7 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            Logger.information("MasterControl.java -> Finaliza PP y responde a la caja");
                             listenerServer.waitRspHost(ppResponse);
                             alreadySend = false;
                         }
