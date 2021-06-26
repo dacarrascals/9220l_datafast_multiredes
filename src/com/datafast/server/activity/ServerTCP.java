@@ -1,5 +1,6 @@
 package com.datafast.server.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -42,6 +45,7 @@ import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
 import com.datafast.tools.CounterTimer;
 import com.datafast.tools.Wifi;
+import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
 import com.pos.device.beeper.Beeper;
@@ -60,6 +64,8 @@ import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.android.newpos.pay.StartAppDATAFAST.toneG;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
+import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -70,6 +76,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.TO;
+import static com.newpos.libpay.trans.Trans.idLote;
 import static com.pos.device.sys.SystemManager.reboot;
 import static java.lang.Thread.sleep;
 
@@ -203,6 +210,7 @@ public class ServerTCP extends AppCompatActivity {
 
     public void startTrans(final String aCmd, final byte[] aDat, waitResponse l) {
 
+        removeOptionsMenu();
         unlockScreen(this);
 
         this.listenerServer = l;
@@ -338,15 +346,79 @@ public class ServerTCP extends AppCompatActivity {
     public void toolbar() {
         setting = (ImageView) findViewById(R.id.iv_close);
         setting.setVisibility(View.VISIBLE);
-        setting.setImageResource(R.drawable.ic_configuracion);
+        setting.setImageResource(R.drawable.ic_menu);
 
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
+                //maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
+                OptionsMenu();
             }
         });
 
+    }
+
+    private void OptionsMenu(){
+        RelativeLayout contenedor = (RelativeLayout) findViewById(R.id.servertcp);
+        final LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+        inflater.inflate(R.layout.menu_options,contenedor,true);
+
+        LinearLayout conf = findViewById(R.id.configuracion);
+        conf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
+                removeOptionsMenu();
+            }
+        });
+        LinearLayout datosred = findViewById(R.id.datosdered);
+        datosred.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+            }
+        });
+        LinearLayout resumentrans = findViewById(R.id.resumentrans);
+        resumentrans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+            }
+        });
+        LinearLayout inicializacion = findViewById(R.id.inicializacion);
+        inicializacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+                idAcquirer = idLote;
+                if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
+                    //if (!ToolsBatch.statusTrans(context)) {
+                    Intent intent = new Intent();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(ServerTCP.this, Init.class);
+                    intent.putExtra("PARCIAL", false);
+                    ServerTCP.this.startActivity(intent);
+                } else {
+                    UIUtils.toast((Activity) ServerTCP.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                }
+            }
+        });
+        RelativeLayout m = findViewById(R.id.menuOptions);
+        m.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+            }
+        });
+    }
+
+    private void removeOptionsMenu(){
+        ViewGroup menu = findViewById(R.id.servertcp);
+        RelativeLayout options = findViewById(R.id.menuOptions);
+        menu.removeView(options);
     }
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {

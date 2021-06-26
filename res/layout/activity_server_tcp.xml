@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
+    android:id="@+id/servertcp"
     tools:context="com.datafast.server.activity.ServerTCP">
 
     <RelativeLayout
@@ -31,11 +32,12 @@
 
         <ImageView
             android:id="@+id/iv_close"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="5dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="25dp"
             app:srcCompat="@drawable/home2_close_menu">
 
         </ImageView>
