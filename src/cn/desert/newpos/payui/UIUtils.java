@@ -670,7 +670,7 @@ public class UIUtils {
 
         alertDialog.setTitle(title);
         alertDialog.setMessage(msg);
-        alertDialog.setIcon(R.drawable.ic_launcher);
+        alertDialog.setIcon(R.drawable.ic_launcher_1);
         alertDialog.setCancelable(false);
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -698,7 +698,7 @@ public class UIUtils {
 
         alertDialog.setTitle(title);
         alertDialog.setMessage(msg);
-        alertDialog.setIcon(R.drawable.ic_launcher);
+        alertDialog.setIcon(R.drawable.ic_launcher_1);
         alertDialog.setCancelable(false);
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

@@ -388,13 +388,13 @@ public class MenuAction {
                                             "GATEWAY: " + datos[3]);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                            UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                             toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                         }
                     }
                 }else{
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
@@ -411,7 +411,7 @@ public class MenuAction {
                     Intent intentManager = context.getPackageManager().getLaunchIntentForPackage("com.newpos.appmanager");
                     context.startActivity(intentManager);
                 } else {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
@@ -555,7 +555,7 @@ public class MenuAction {
                                         idAcquirer = idLote;
                                         if (ToolsBatch.statusTrans(idAcquirer)) {
                                             AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                                            alertDialog.setIcon(R.drawable.ic_launcher);
+                                            alertDialog.setIcon(R.drawable.ic_launcher_1);
                                             alertDialog.setTitle("INFORMACIÓN");
                                             alertDialog.setMessage("¿IMPRIMIR RESUMEN DE VENTAS?");
                                             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Si",
@@ -660,7 +660,7 @@ public class MenuAction {
                                     } else {
 
                                         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                                        alertDialog.setIcon(R.drawable.ic_launcher);
+                                        alertDialog.setIcon(R.drawable.ic_launcher_1);
                                         alertDialog.setTitle("INFORMACIÓN");
                                         alertDialog.setMessage("¿DESEA BORRAR LOTE?");
                                         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Si",

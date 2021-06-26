@@ -48,7 +48,7 @@ public class MenuAcquirers {
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, android.R.layout.select_dialog_item, items);
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setTitle("SELECCIONE COMERCIO");
-            builder.setIcon(R.drawable.ic_launcher);
+            builder.setIcon(R.drawable.ic_launcher_1);
             builder.setCancelable(false);
             builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                 @Override

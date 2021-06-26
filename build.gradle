@@ -108,6 +108,7 @@ android {
         versionName "1.1.6_"+getShortDate()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId 'com.wposs.datafastpinpadL'
+        vectorDrawables.useSupportLibrary = true
         //multiDexEnabled true
     }
     packagingOptions {

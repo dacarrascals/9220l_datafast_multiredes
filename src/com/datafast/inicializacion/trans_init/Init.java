@@ -660,13 +660,13 @@ public class Init extends AppCompatActivity {
 
             if(!validateMK(MASTERKEYIDX)){
                 if(!decryptKey(masterKey, true)){
-                    UIUtils.toast(Init.this, R.drawable.ic_launcher, "INYECCION DE LLAVE FALLIDA - MASTER", Toast.LENGTH_SHORT);
+                    UIUtils.toast(Init.this, R.drawable.ic_launcher_1, "INYECCION DE LLAVE FALLIDA - MASTER", Toast.LENGTH_SHORT);
                     return false;
                 }
             }
 
             if(!decryptKey(workingKey, false)){
-                UIUtils.toast(Init.this, R.drawable.ic_launcher, "INYECCION DE LLAVE FALLIDA - WORKING", Toast.LENGTH_SHORT);
+                UIUtils.toast(Init.this, R.drawable.ic_launcher_1, "INYECCION DE LLAVE FALLIDA - WORKING", Toast.LENGTH_SHORT);
                 return false;
             }
         }
