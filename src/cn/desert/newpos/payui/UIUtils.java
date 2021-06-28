@@ -35,7 +35,9 @@ import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.tools.ConfigRed;
 import com.newpos.libpay.Logger;
+import com.pos.device.net.eth.EthernetManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -224,12 +226,19 @@ public class UIUtils {
 
         TextView txt = dialog.findViewById(R.id.tv_content);
         ImageView icono =dialog.findViewById(R.id.icono);
-        if(titulo.equals("RESUMEN DE TRX")){
+        if(titulo.equals("RESUMEN DE TRANSACCIONES")){
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   dialog.dismiss();
+                }
+            }, 30000);
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_resumentrans));
         }else if(titulo.equals("DATOS DE CONEXION")){
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_comunication_white));
 
-        }else if(titulo.equals("INFORMACION DEL COMERCIO")){
+        }else if(titulo.equals("INFORMACIÓN DEL COMERCIO")){
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_datoscomercio));
         }
         TextView tit = dialog.findViewById(R.id.tvTitulo);

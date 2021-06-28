@@ -44,6 +44,7 @@ import com.datafast.transactions.callbacks.waitPrintReport;
 import com.datafast.transactions.callbacks.waitSeatleReport;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.newpos.libpay.Logger;
+import com.newpos.libpay.device.printer.PrintManager;
 import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.trans.translog.TransLog;
@@ -402,6 +403,32 @@ public class MenuAction {
                 }
                 break;
             case DefinesDATAFAST.ITEM_RESUMEN_TRANS:
+                idAcquirer = idLote;
+                long amount_USD = 0;
+                int contTrans = 0;
+                long amountVoid_USD = 0;
+                int contTransVoid = 0;
+                if (ToolsBatch.statusTrans(idAcquirer)) {
+                    List<TransLogData> list = TransLog.getInstance(menus.idAcquirer).getData();
+                    for (TransLogData transLogData : list) {
+                        if (!transLogData.getIsVoided()) {
+                            if (!transLogData.isTarjetaCierre()) {
+                                amount_USD += transLogData.getAmount();
+                                contTrans++;
+                            }
+                        } else {
+                            if (!transLogData.isTarjetaCierre()) {
+                                amountVoid_USD += transLogData.getAmount();
+                                contTransVoid++;
+                            }
+                        }
+                    }
+                }
+                UIUtils.dialogInformativo(context, "RESUMEN DE TRANSACCIONES",
+                            "No. Transacciones:   " + contTrans + "\n" +
+                                      "Mnt. Transacciones:  $" + formatAmount(amount_USD)+ "\n" +
+                                      "No. Anulación:   " + contTransVoid + "\n" +
+                                      "Mnt. Anulación: $ " + formatAmount(amountVoid_USD));
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_WIFI:
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -490,6 +517,18 @@ public class MenuAction {
                 context.startActivity(intent);
                 break;
         }
+    }
+
+    private String formatAmount(long valor) {
+
+        String auxText;
+
+        if (String.valueOf(valor).length() == 1)
+            auxText = ISOUtil.decimalFormat("0" + String.valueOf(valor));
+        else
+            auxText = ISOUtil.decimalFormat(String.valueOf(valor));
+
+        return auxText;
     }
 
     private boolean isWifiConnected() {

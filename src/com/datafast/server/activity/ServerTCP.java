@@ -437,11 +437,18 @@ public class ServerTCP extends AppCompatActivity {
         btConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialog.dismiss();
                 MenuAction menuAction = new MenuAction(ServerTCP.this,DefinesDATAFAST.ITEM_INICIALIZACION);
                 menuAction.SelectAction();
             }
         });
-
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+            }
+        }, 30000);
         dialog.show();
     }
 
