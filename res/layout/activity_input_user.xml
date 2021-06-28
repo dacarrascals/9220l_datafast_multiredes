@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="41dp"
+                android:layout_marginBottom="31dp"
                 android:ems="10"
                 android:gravity="center"
                 android:inputType="none|number|numberSigned"
@@ -52,15 +52,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
             android:background="@drawable/setting_dialog_bg_bottom"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:backgroundTint="@color/white"
+            android:padding="5dp"
+            >
 
             <TextView
+                android:layout_marginRight="5dp"
                 android:id="@+id/last4_cancel"
-                android:layout_width="0dp"
+                android:layout_width="120dp"
                 android:layout_height="40dp"
-                android:layout_gravity="bottom"
                 android:layout_weight="1"
                 android:background="@drawable/setting_cancel_bg"
                 android:backgroundTint="@android:color/holo_red_light"
@@ -72,10 +74,9 @@
 
             <TextView
                 android:id="@+id/last4_confirm"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_gravity="bottom"
+                android:layout_width="120dp"
                 android:layout_weight="1"
+                android:layout_height="40dp"
                 android:background="@drawable/btn_blue_shape"
                 android:clickable="true"
                 android:focusable="true"

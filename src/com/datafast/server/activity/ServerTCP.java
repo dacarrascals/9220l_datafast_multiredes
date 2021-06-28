@@ -371,8 +371,8 @@ public class ServerTCP extends AppCompatActivity {
         conf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
                 removeOptionsMenu();
+                maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
             }
         });
         LinearLayout datosred = findViewById(R.id.datosdered);
