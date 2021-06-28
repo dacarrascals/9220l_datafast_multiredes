@@ -225,12 +225,12 @@ public class UIUtils {
         TextView txt = dialog.findViewById(R.id.tv_content);
         ImageView icono =dialog.findViewById(R.id.icono);
         if(titulo.equals("RESUMEN DE TRX")){
-
+            icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_resumentrans));
         }else if(titulo.equals("DATOS DE CONEXION")){
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_comunication_white));
 
         }else if(titulo.equals("INFORMACION DEL COMERCIO")){
-
+            icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_datoscomercio));
         }
         TextView tit = dialog.findViewById(R.id.tvTitulo);
         tit.setText(titulo);
@@ -266,15 +266,6 @@ public class UIUtils {
             }
         });
         dialog.show();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (dialog!=null){
-                    dialog.dismiss();
-                }
-            }
-        }, 30000);
     }
 
     public static String getInputTitle(Context c, int type) {

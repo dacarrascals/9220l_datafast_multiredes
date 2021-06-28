@@ -5,12 +5,14 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.android.newpos.pay.R;
+import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
 import cn.desert.newpos.payui.UIUtils;
 
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 public class UtilPP {
 
     /**
@@ -26,9 +28,13 @@ public class UtilPP {
             return false;
 
         TMConfig tmConfig = TMConfig.getInstance();
+        if (Server.cmd.equals(PP)){
+            tmConfig.setMerchID(MID);
+        }else {
+            tmConfig.setTermID(TID).setMerchID(MID);
+        }
 
-        tmConfig.setTermID(TID).
-                setMerchID(MID);
+
 
         if (!tmConfig.save())
             return false;
