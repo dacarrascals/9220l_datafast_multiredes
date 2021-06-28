@@ -378,6 +378,8 @@ public class ServerTCP extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 removeOptionsMenu();
+                MenuAction menuAction= new MenuAction(ServerTCP.this, DefinesDATAFAST.ITEM_CONEXION);
+                menuAction.SelectAction();
             }
         });
         LinearLayout resumentrans = findViewById(R.id.resumentrans);

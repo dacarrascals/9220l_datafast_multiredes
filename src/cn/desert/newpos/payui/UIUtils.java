@@ -227,6 +227,7 @@ public class UIUtils {
         if(titulo.equals("RESUMEN DE TRX")){
 
         }else if(titulo.equals("DATOS DE CONEXION")){
+            icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_comunication_white));
 
         }else if(titulo.equals("INFORMACION DEL COMERCIO")){
 
