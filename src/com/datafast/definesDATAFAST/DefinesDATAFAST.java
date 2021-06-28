@@ -81,6 +81,7 @@ public final class DefinesDATAFAST {
     public static final String ITEM_NETWORK_DISCONNET = "EL PINPAD NO ESTÁ CONECTADO A NINGUNA RED";
     public static final String ITEM_NETWORK_DISCONNET_LAN = "EL PINPAD NO ESTÁ CONECTADO A LA RED LAN";
     public static final String ITEM_AGENTE_POLARIS = "AGENTE POLARIS";
+    public static final String ITEM_RESUMEN_TRANS = "RESUMEN";
 
 
     public static final String NAME_FOLDER_CTL_FILES = "CTL_Files";

@@ -55,6 +55,8 @@ import com.pos.device.printer.Printer;
 
 import org.jpos.iso.IF_CHAR;
 
+import java.util.List;
+
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
 import cn.desert.newpos.payui.setting.ui.simple.CommunSettings;
@@ -398,6 +400,8 @@ public class MenuAction {
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
+                break;
+            case DefinesDATAFAST.ITEM_RESUMEN_TRANS:
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_WIFI:
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

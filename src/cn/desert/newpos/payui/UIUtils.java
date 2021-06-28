@@ -16,6 +16,7 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
@@ -222,6 +223,14 @@ public class UIUtils {
         dialog.setContentView(R.layout.dialog_autenticacion);
 
         TextView txt = dialog.findViewById(R.id.tv_content);
+        ImageView icono =dialog.findViewById(R.id.icono);
+        if(titulo.equals("RESUMEN DE TRX")){
+
+        }else if(titulo.equals("DATOS DE CONEXION")){
+
+        }else if(titulo.equals("INFORMACION DEL COMERCIO")){
+
+        }
         TextView tit = dialog.findViewById(R.id.tvTitulo);
         tit.setText(titulo);
         txt.setText(contenido);
@@ -256,6 +265,15 @@ public class UIUtils {
             }
         });
         dialog.show();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (dialog!=null){
+                    dialog.dismiss();
+                }
+            }
+        }, 30000);
     }
 
     public static String getInputTitle(Context c, int type) {

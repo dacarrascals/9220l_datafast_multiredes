@@ -43,6 +43,7 @@ import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
+import com.datafast.tools.ConfigRed;
 import com.datafast.tools.CounterTimer;
 import com.datafast.tools.Wifi;
 import com.datafast.tools_bacth.ToolsBatch;
@@ -51,6 +52,7 @@ import com.newpos.libpay.Logger;
 import com.pos.device.beeper.Beeper;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
+import com.pos.device.net.eth.EthernetManager;
 
 import java.io.IOException;
 
@@ -383,6 +385,8 @@ public class ServerTCP extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 removeOptionsMenu();
+                MenuAction menuAction = new MenuAction(ServerTCP.this, DefinesDATAFAST.ITEM_RESUMEN_TRANS);
+                menuAction.SelectAction();
             }
         });
         LinearLayout inicializacion = findViewById(R.id.inicializacion);
@@ -517,12 +521,16 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     private void counterTimer() {
-        if(counterTimer != null){
-            counterTimer.counterDownTimer();
-        }else {
-            counterTimer = new CounterTimer(this);
-            counterTimer.counterDownTimer();
-        }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mDialog!=null){
+                    mDialog.dismiss();
+                }
+            }
+        }, 30000);
+
     }
 
 
