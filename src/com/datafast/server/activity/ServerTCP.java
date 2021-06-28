@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -396,20 +398,7 @@ public class ServerTCP extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 removeOptionsMenu();
-                idAcquirer = idLote;
-                if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
-                    //if (!ToolsBatch.statusTrans(context)) {
-                    Intent intent = new Intent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setClass(ServerTCP.this, Init.class);
-                    intent.putExtra("PARCIAL", false);
-                    ServerTCP.this.startActivity(intent);
-                } else {
-                    UIUtils.toast((Activity) ServerTCP.this, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
-                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
-                }
+                alertDialogConfirm();
             }
         });
         RelativeLayout m = findViewById(R.id.menuOptions);
@@ -425,6 +414,35 @@ public class ServerTCP extends AppCompatActivity {
         ViewGroup menu = findViewById(R.id.servertcp);
         RelativeLayout options = findViewById(R.id.menuOptions);
         menu.removeView(options);
+    }
+
+    private void alertDialogConfirm(){
+
+        final Dialog dialog= new Dialog(this);
+        dialog.setContentView(R.layout.alertdialog_red_confirm);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+
+        Button btCancel= dialog.findViewById(R.id.btn_no);
+        Button btConfirm= dialog.findViewById(R.id.btn_si);
+
+        btCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        btConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MenuAction menuAction = new MenuAction(ServerTCP.this,DefinesDATAFAST.ITEM_INICIALIZACION);
+                menuAction.SelectAction();
+            }
+        });
+
+        dialog.show();
     }
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {
