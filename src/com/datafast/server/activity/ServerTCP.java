@@ -57,6 +57,7 @@ import com.pos.device.icc.SlotType;
 import com.pos.device.net.eth.EthernetManager;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
@@ -80,6 +81,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.TO;
+import static com.datafast.server.server_tcp.Server.cmd;
 import static com.newpos.libpay.trans.Trans.idLote;
 import static com.pos.device.sys.SystemManager.reboot;
 import static java.lang.Thread.sleep;
@@ -110,51 +112,11 @@ public class ServerTCP extends AppCompatActivity {
         setContentView(R.layout.activity_server_tcp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        isInEcho = false;
-
-        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest) {
-            Control.echoTest = false;
-            Actualizacion.echoTest = false;
-            Actualizacion.goEchoTest = false;
-            isInEcho = true;
-            MenuAction menuAction = new MenuAction(ServerTCP.this, "ECHO TEST");
-            menuAction.SelectAction();
-        }
-
-        if (installApp) {
-            installApp = false;
-            UpdateApk updateApk = new UpdateApk(ServerTCP.this);
-            updateApk.instalarApp(ServerTCP.this);
-        }
-
-        slide = new slide(ServerTCP.this, true);
-        slide.galeria(this, R.id.adcolumn);
-
-        toolbar();
-        MasterControl.setMcontext(ServerTCP.this);
-        if (isInit && inyecccionLLaves) {
-            if (!isInEcho) {
-                if (server == null)
-                    server = new Server(ServerTCP.this);
-                if (toneG == null)
-                    toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
-                wifi = new Wifi(ServerTCP.this);
-                control = new Control(ServerTCP.this);
-                actualizacion = new Actualizacion(ServerTCP.this);
-                configuracionBasica = new ConfiguracionBasica(ServerTCP.this);
-            }
-        } else {
-            settings();
-        }
+        Logger.information("ServerTCP.java -> onCreate");
+        validacionesInciales(true);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
-
-    public void validacionesInciales() {
+    public void validacionesInciales(boolean isOncreate) {
 
         isInEcho = false;
 
@@ -174,10 +136,20 @@ public class ServerTCP extends AppCompatActivity {
         }
 
         slide = new slide(ServerTCP.this, true);
-        slide.galeria(this, R.id.adcolumn);
+        com.datafast.slide.slide.galeria(this, R.id.adcolumn);
+
+        if (isOncreate)
+            toolbar();
+
         MasterControl.setMcontext(ServerTCP.this);
         if (isInit && inyecccionLLaves) {
             if (!isInEcho) {
+                if (isOncreate) {
+                    if (server == null)
+                        server = new Server(ServerTCP.this);
+                    if (toneG == null)
+                        toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 1000);
+                }
                 wifi = new Wifi(ServerTCP.this);
                 control = new Control(ServerTCP.this);
                 actualizacion = new Actualizacion(ServerTCP.this);
@@ -189,16 +161,6 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     private void stopServer() {
-        /*if (server != null) {
-            if (server.getServerSocket() != null && !server.getServerSocket().isClosed()) {
-                try {
-                    server.getServerSocket().close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }*/
         server = null;
     }
 
@@ -206,9 +168,9 @@ public class ServerTCP extends AppCompatActivity {
      * Enciende la pantalla cuando llega una transacción
      */
     public void unlockScreen(Context context) {
-        PowerManager.WakeLock powerManager = ((PowerManager) context.getSystemService(POWER_SERVICE)).newWakeLock(
+        PowerManager.WakeLock powerManager = ((PowerManager) Objects.requireNonNull(context.getSystemService(POWER_SERVICE))).newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tag:");
-        powerManager.acquire();
+        powerManager.acquire(10*60*1000L /*10 minutes*/);
         powerManager.release();
     }
 
@@ -321,6 +283,7 @@ public class ServerTCP extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Logger.information("ServerTCP.java -> onResume");
         if (mDialog!=null){
             mDialog.dismiss();
         }
@@ -342,9 +305,27 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Logger.information("ServerTCP.java -> onDestroy");
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        Logger.information("ServerTCP.java -> onPause");
         slide.stopSlide();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Logger.information("ServerTCP.java -> onRestart");
+        validacionesInciales(false);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
     public void toolbar() {
@@ -592,15 +573,5 @@ public class ServerTCP extends AppCompatActivity {
         } while (iccReader0.isCardPresent());
 
         return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        validacionesInciales();
     }
 }
