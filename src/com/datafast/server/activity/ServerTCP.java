@@ -1,8 +1,11 @@
 package com.datafast.server.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -14,7 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -40,13 +45,16 @@ import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
+import com.datafast.tools.ConfigRed;
 import com.datafast.tools.CounterTimer;
 import com.datafast.tools.Wifi;
+import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
 import com.pos.device.beeper.Beeper;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
+import com.pos.device.net.eth.EthernetManager;
 
 import java.io.IOException;
 
@@ -60,6 +68,8 @@ import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.android.newpos.pay.StartAppDATAFAST.toneG;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
+import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -70,6 +80,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.TO;
+import static com.newpos.libpay.trans.Trans.idLote;
 import static com.pos.device.sys.SystemManager.reboot;
 import static java.lang.Thread.sleep;
 
@@ -203,6 +214,7 @@ public class ServerTCP extends AppCompatActivity {
 
     public void startTrans(final String aCmd, final byte[] aDat, waitResponse l) {
 
+        removeOptionsMenu();
         unlockScreen(this);
 
         this.listenerServer = l;
@@ -338,15 +350,106 @@ public class ServerTCP extends AppCompatActivity {
     public void toolbar() {
         setting = (ImageView) findViewById(R.id.iv_close);
         setting.setVisibility(View.VISIBLE);
-        setting.setImageResource(R.drawable.ic_configuracion);
+        setting.setImageResource(R.drawable.ic_menu);
 
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
+                //maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
+                OptionsMenu();
             }
         });
 
+    }
+
+    private void OptionsMenu(){
+        RelativeLayout contenedor = (RelativeLayout) findViewById(R.id.servertcp);
+        final LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+        inflater.inflate(R.layout.menu_options,contenedor,true);
+
+        LinearLayout conf = findViewById(R.id.configuracion);
+        conf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+                maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_CONFIGURACION, 6);
+            }
+        });
+        LinearLayout datosred = findViewById(R.id.datosdered);
+        datosred.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+                MenuAction menuAction= new MenuAction(ServerTCP.this, DefinesDATAFAST.ITEM_CONEXION);
+                menuAction.SelectAction();
+            }
+        });
+        LinearLayout resumentrans = findViewById(R.id.resumentrans);
+        resumentrans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+                MenuAction menuAction = new MenuAction(ServerTCP.this, DefinesDATAFAST.ITEM_RESUMEN_TRANS);
+                menuAction.SelectAction();
+            }
+        });
+        LinearLayout inicializacion = findViewById(R.id.inicializacion);
+        inicializacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+                alertDialogConfirm();
+            }
+        });
+        RelativeLayout m = findViewById(R.id.menuOptions);
+        m.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+            }
+        });
+    }
+
+    private void removeOptionsMenu(){
+        ViewGroup menu = findViewById(R.id.servertcp);
+        RelativeLayout options = findViewById(R.id.menuOptions);
+        menu.removeView(options);
+    }
+
+    private void alertDialogConfirm(){
+
+        final Dialog dialog= new Dialog(this);
+        dialog.setContentView(R.layout.alertdialog_red_confirm);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+
+        Button btCancel= dialog.findViewById(R.id.btn_no);
+        Button btConfirm= dialog.findViewById(R.id.btn_si);
+
+        btCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        btConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                MenuAction menuAction = new MenuAction(ServerTCP.this,DefinesDATAFAST.ITEM_INICIALIZACION);
+                menuAction.SelectAction();
+            }
+        });
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+            }
+        }, 30000);
+        dialog.show();
     }
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {
@@ -445,12 +548,16 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     private void counterTimer() {
-        if(counterTimer != null){
-            counterTimer.counterDownTimer();
-        }else {
-            counterTimer = new CounterTimer(this);
-            counterTimer.counterDownTimer();
-        }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mDialog!=null){
+                    mDialog.dismiss();
+                }
+            }
+        }, 30000);
+
     }
 
 

@@ -64,9 +64,9 @@ public class EFTGCPinpad implements EventISOServer {
             ISOServerGC isoServerGC = new ISOServerGC(this);
             isoServerGC.setPort(port);
             isoServerGC.setTCPViolation(true);
-            isoServerGC.setMinThreadPool(10);
-            isoServerGC.setMaxThreadPool(50);
-            isoServerGC.setInactivityTimeout((150*1000) + 5000); //Le suma 5 seg mas por que el timeout de envio al autorizador es TMConfig.getInstance().getTimeoutData()
+            isoServerGC.setMinThreadPool(1);
+            isoServerGC.setMaxThreadPool(2);
+            isoServerGC.setInactivityTimeout((50000) + 5000); //Le suma 5 seg mas por que el timeout de envio al autorizador es TMConfig.getInstance().getTimeoutData()
             //isoServerGC.getInactivityTimeout();
             isoServerGC.setEnableLogXml(false);
             isoServerGC.start();

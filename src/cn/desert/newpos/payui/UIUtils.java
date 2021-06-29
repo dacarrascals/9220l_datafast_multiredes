@@ -16,6 +16,7 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
@@ -34,7 +35,9 @@ import android.widget.Toast;
 
 import com.android.newpos.pay.R;
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.tools.ConfigRed;
 import com.newpos.libpay.Logger;
+import com.pos.device.net.eth.EthernetManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -222,6 +225,22 @@ public class UIUtils {
         dialog.setContentView(R.layout.dialog_autenticacion);
 
         TextView txt = dialog.findViewById(R.id.tv_content);
+        ImageView icono =dialog.findViewById(R.id.icono);
+        if(titulo.equals("RESUMEN DE TRANSACCIONES")){
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   dialog.dismiss();
+                }
+            }, 30000);
+            icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_resumentrans));
+        }else if(titulo.equals("DATOS DE CONEXION")){
+            icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_comunication_white));
+
+        }else if(titulo.equals("INFORMACIÓN DEL COMERCIO")){
+            icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_datoscomercio));
+        }
         TextView tit = dialog.findViewById(R.id.tvTitulo);
         tit.setText(titulo);
         txt.setText(contenido);
@@ -670,7 +689,7 @@ public class UIUtils {
 
         alertDialog.setTitle(title);
         alertDialog.setMessage(msg);
-        alertDialog.setIcon(R.drawable.ic_launcher);
+        alertDialog.setIcon(R.drawable.ic_launcher_1);
         alertDialog.setCancelable(false);
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -698,7 +717,7 @@ public class UIUtils {
 
         alertDialog.setTitle(title);
         alertDialog.setMessage(msg);
-        alertDialog.setIcon(R.drawable.ic_launcher);
+        alertDialog.setIcon(R.drawable.ic_launcher_1);
         alertDialog.setCancelable(false);
 
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

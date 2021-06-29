@@ -351,7 +351,7 @@ public class WifiSettings extends AppCompatActivity {
     }
 
     private void redesError() {
-        UIUtils.toast((Activity) context, R.drawable.ic_launcher, "No hay redes disponibles", Toast.LENGTH_SHORT);
+        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "No hay redes disponibles", Toast.LENGTH_SHORT);
         switchWifi.setOn(false);
         estadoWifi(true);
         handler.removeCallbacks(r);
@@ -630,7 +630,7 @@ public class WifiSettings extends AppCompatActivity {
         if(conexionExitosa) {
             conectar(red, netId);
         } else {
-            UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Longitud inválida", Toast.LENGTH_SHORT);
+            UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "Longitud inválida", Toast.LENGTH_SHORT);
         }
     }
 
@@ -671,7 +671,7 @@ public class WifiSettings extends AppCompatActivity {
 
                 if (isConnected()) {
                     if (wifiManager.getConnectionInfo().getSSID().replace("\"", "").equals(ssid)) {
-                        UIUtils.toast((Activity) context, R.drawable.ic_launcher, "Conexión establecida", Toast.LENGTH_SHORT);
+                        UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "Conexión establecida", Toast.LENGTH_SHORT);
                         progressDialog.cancel();
                         wifiManager.reassociate();
                         mostrarLista();
@@ -683,7 +683,7 @@ public class WifiSettings extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher, "No es posible establecer conexión, reintente", Toast.LENGTH_SHORT);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "No es posible establecer conexión, reintente", Toast.LENGTH_SHORT);
                 progressDialog.cancel();
                 wifiManager.removeNetwork(netId);
                 wifiManager.reassociate();
@@ -734,7 +734,7 @@ public class WifiSettings extends AppCompatActivity {
                 }
             }, 2000);
         } else {
-            UIUtils.toast((Activity) context, R.drawable.ic_launcher, "No fué posible desconectar", Toast.LENGTH_SHORT);
+            UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "No fué posible desconectar", Toast.LENGTH_SHORT);
         }
 
         wifiManager.reassociate();

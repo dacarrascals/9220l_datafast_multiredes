@@ -268,13 +268,13 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                 }
             } else {
                 initDataEmpty();
-                UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                 ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                 toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
             }
         }else{
             initDataEmpty();
-            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
             toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
         }
@@ -293,7 +293,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                             switchConnection.setChecked(false);
                             switchConnection.setText(DESACTIVADO);
                             initDataEmpty();
-                            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher, "EL POS NO SE LOGRÓ CONECTAR A LA RED LAN", Toast.LENGTH_SHORT);
+                            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, "EL POS NO SE LOGRÓ CONECTAR A LA RED LAN", Toast.LENGTH_SHORT);
                             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                             toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                         }else{

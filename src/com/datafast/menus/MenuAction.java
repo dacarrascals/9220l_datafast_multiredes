@@ -44,6 +44,7 @@ import com.datafast.transactions.callbacks.waitPrintReport;
 import com.datafast.transactions.callbacks.waitSeatleReport;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.newpos.libpay.Logger;
+import com.newpos.libpay.device.printer.PrintManager;
 import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.trans.translog.TransLog;
@@ -54,6 +55,8 @@ import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.printer.Printer;
 
 import org.jpos.iso.IF_CHAR;
+
+import java.util.List;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
@@ -376,7 +379,7 @@ public class MenuAction {
                         datos = UtilNetwork.getWifi(context, false);
                         UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                                 "IP: " + ipAddress + "\n" +
-                                        "MASK: " + datos[0] + "\n" +
+                                        "MASCARA: " + datos[0] + "\n" +
                                         "GATEWAY: " + datos[3] + "\n" +
                                         "RED: " + datos[4]);
                     } else if (EthernetManager.getInstance().isEtherentEnabled()){
@@ -384,20 +387,48 @@ public class MenuAction {
                             datos = UtilNetwork.getWifi(context, true);
                             UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                                     "IP: " + datos[0] + "\n" +
-                                            "MASK: " + datos[1] + "\n" +
+                                            "MASCARA: " + datos[1] + "\n" +
                                             "GATEWAY: " + datos[3]);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                            UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                             toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                         }
                     }
                 }else{
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
+                break;
+            case DefinesDATAFAST.ITEM_RESUMEN_TRANS:
+                idAcquirer = idLote;
+                long amount_USD = 0;
+                int contTrans = 0;
+                long amountVoid_USD = 0;
+                int contTransVoid = 0;
+                if (ToolsBatch.statusTrans(idAcquirer)) {
+                    List<TransLogData> list = TransLog.getInstance(menus.idAcquirer).getData();
+                    for (TransLogData transLogData : list) {
+                        if (!transLogData.getIsVoided()) {
+                            if (!transLogData.isTarjetaCierre()) {
+                                amount_USD += transLogData.getAmount();
+                                contTrans++;
+                            }
+                        } else {
+                            if (!transLogData.isTarjetaCierre()) {
+                                amountVoid_USD += transLogData.getAmount();
+                                contTransVoid++;
+                            }
+                        }
+                    }
+                }
+                UIUtils.dialogInformativo(context, "RESUMEN DE TRANSACCIONES",
+                            "No. Transacciones:   " + contTrans + "\n" +
+                                      "Mnt. Transacciones:  $" + formatAmount(amount_USD)+ "\n" +
+                                      "No. Anulación:   " + contTransVoid + "\n" +
+                                      "Mnt. Anulación: $ " + formatAmount(amountVoid_USD));
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_WIFI:
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -411,7 +442,7 @@ public class MenuAction {
                     Intent intentManager = context.getPackageManager().getLaunchIntentForPackage("com.newpos.appmanager");
                     context.startActivity(intentManager);
                 } else {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
@@ -488,6 +519,18 @@ public class MenuAction {
         }
     }
 
+    private String formatAmount(long valor) {
+
+        String auxText;
+
+        if (String.valueOf(valor).length() == 1)
+            auxText = ISOUtil.decimalFormat("0" + String.valueOf(valor));
+        else
+            auxText = ISOUtil.decimalFormat(String.valueOf(valor));
+
+        return auxText;
+    }
+
     private boolean isWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm != null) && (cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().getType() == TYPE_WIFI);
@@ -555,7 +598,7 @@ public class MenuAction {
                                         idAcquirer = idLote;
                                         if (ToolsBatch.statusTrans(idAcquirer)) {
                                             AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                                            alertDialog.setIcon(R.drawable.ic_launcher);
+                                            alertDialog.setIcon(R.drawable.ic_launcher_1);
                                             alertDialog.setTitle("INFORMACIÓN");
                                             alertDialog.setMessage("¿IMPRIMIR RESUMEN DE VENTAS?");
                                             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Si",
@@ -660,7 +703,7 @@ public class MenuAction {
                                     } else {
 
                                         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                                        alertDialog.setIcon(R.drawable.ic_launcher);
+                                        alertDialog.setIcon(R.drawable.ic_launcher_1);
                                         alertDialog.setTitle("INFORMACIÓN");
                                         alertDialog.setMessage("¿DESEA BORRAR LOTE?");
                                         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Si",

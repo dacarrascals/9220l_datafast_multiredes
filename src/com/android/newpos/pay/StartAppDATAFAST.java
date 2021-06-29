@@ -110,7 +110,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
         if (!idiomaLocal.equals("es_US")){
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Theme_AppCompat_Light_Dialog));
 
-            builder.setIcon(R.drawable.ic_launcher);
+            builder.setIcon(R.drawable.ic_launcher_1);
             builder.setTitle("Advertencia");
             builder.setMessage("Por favor cambia el idioma del dispositivo.\nPreferencia: Español - Estados Unidos");
             builder.setCancelable(false);
