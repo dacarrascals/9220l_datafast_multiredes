@@ -331,7 +331,7 @@ public class ServerTCP extends AppCompatActivity {
     public void toolbar() {
         setting = (ImageView) findViewById(R.id.iv_close);
         setting.setVisibility(View.VISIBLE);
-        setting.setImageResource(R.drawable.ic_menu);
+        setting.setImageResource(R.drawable.ic_baseline_more_vert_24);
 
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
