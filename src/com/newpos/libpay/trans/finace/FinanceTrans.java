@@ -3609,7 +3609,7 @@ public class FinanceTrans extends Trans {
                 return false;
             } else if (emv.getPinBlock().equals("NULL")) {
                 isPinExist = false;
-                transUI.showError(timeout, Tcode.T_user_cancel_pin_err,processPPFail);
+                transUI.showError(timeout, Tcode.T_err_pin_null,processPPFail);
                 return false;
             }
             //debito
