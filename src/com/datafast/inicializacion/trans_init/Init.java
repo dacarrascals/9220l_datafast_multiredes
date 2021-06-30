@@ -213,7 +213,7 @@ public class Init extends AppCompatActivity {
 
     private void init(){
 
-        this.TID = ISOUtil.padright(TMConfig.getInstance().getTermID()+"", 8, '0');
+        this.TID = ISOUtil.padright(TMConfig.getInstance().getTIDPolaris()+"", 8, '0');
         this.gFileName=TID+".zip";
         this.gTID=TID;
         this.gOffset="0";
@@ -424,6 +424,7 @@ public class Init extends AppCompatActivity {
                                                 else
                                                     TMConfig.getInstance().setBatchNo(numLote).save();
 
+                                                TMConfig.getInstance().setTermID(tconf.getCARD_ACCP_TERM()).save();
                                                 TMConfig.getInstance().setMerchID(tconf.getCARD_ACCP_MERCH()).save();
 
                                                 saveDateSettle(Init.this);

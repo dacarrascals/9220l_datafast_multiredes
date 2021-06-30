@@ -201,8 +201,8 @@ public class CommunSettings extends BaseActivity implements View.OnClickListener
                 setIPText(config.getIp().split("\\."));
                 commun_pub_port.setText(config.getPort());
                 commun_pub_port.setSelection(config.getPort().length());
-                merchant_tid.setText(config.getTermID());
-                merchant_tid.setSelection(config.getTermID().length());
+                merchant_tid.setText(config.getTIDPolaris());
+                merchant_tid.setSelection(config.getTIDPolaris().length());
                 et_intentos.setText(String.valueOf(config.getIntentosConex()));
                 et_nii.setText(config.getNii());
                 et_nii.setSelection(config.getNii().length());
@@ -451,7 +451,7 @@ public class CommunSettings extends BaseActivity implements View.OnClickListener
                 .setPort(port)
                 .setTimeout(Integer.parseInt(timeout) * 1000)
                 .setPubCommun(isOpen)
-                .setTermID(tid)
+                .setTIDPolaris(tid)
                 .setIntentosConex(Integer.parseInt(intentConex))
                 .setNii(nii)
                 .save();

@@ -113,7 +113,7 @@ public class EFTGCPinpad implements EventISOServer {
                 Thread.sleep(500);
             }
 
-            countDown = new CountDownLatch(1);
+            //countDown = new CountDownLatch(1);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -127,7 +127,10 @@ public class EFTGCPinpad implements EventISOServer {
                                 byte[] resp = quitarTildes(result).getBytes();
 
                                 mLocal.set(0, resp);
-                                countDown.countDown();
+                                Logger.information("EFTGCPinpad.java -> " + result);
+
+                                listenNotify();
+                                //countDown.countDown();
 
                             } catch (ISOException e) {
                                 //System.out.println("Paso por el primer catch");
@@ -140,7 +143,9 @@ public class EFTGCPinpad implements EventISOServer {
                     });
                 }
             });
-            countDown.await();
+            //countDown.await();
+            funWait();
+            Logger.information("EFTGCPinpad.java -> Envia a respuesta a Caja");
             sourceLocal.send(mLocal);
 
         } catch (ISOException | InterruptedException | IOException e) {
@@ -175,5 +180,32 @@ public class EFTGCPinpad implements EventISOServer {
         }
 
     }*/
+
+    /**
+     * object lock
+     */
+    private Object o = new byte[0] ;
+
+    /**
+     * Notify
+     */
+    private void listenNotify(){
+        synchronized (o){
+            o.notify();
+        }
+    }
+
+    /**
+     * block
+     */
+    private void funWait(){
+        synchronized (o){
+            try {
+                o.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
