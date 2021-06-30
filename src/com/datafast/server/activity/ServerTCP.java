@@ -42,6 +42,7 @@ import com.datafast.pinpad.cmd.PA.Actualizacion;
 import com.datafast.pinpad.cmd.PC.Control;
 import com.datafast.pinpad.cmd.PP.PP_Request;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
+import com.datafast.server.callback.waitForContinue;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
@@ -101,6 +102,8 @@ public class ServerTCP extends AppCompatActivity {
     CounterTimer counterTimer;
 
     public static waitResponse listenerServer;
+    public static waitForContinue aContinue;
+    public static boolean isTheFirst = true;
 
     boolean isInEcho;
     public static boolean installApp = false;

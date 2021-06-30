@@ -9,11 +9,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.datafast.server.activity.ServerTCP;
+import com.datafast.server.callback.waitForContinue;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.unpack.dataReceived;
 import com.newpos.libpay.Logger;
-import com.newpos.libpay.global.TMConfig;
-import com.newpos.libpay.utils.ISOUtil;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -22,45 +21,38 @@ import org.jpos.iso.event.EventISOServer;
 import org.jpos.iso.server.ISOServerGC;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 import static com.datafast.server.server_tcp.Server.dat;
 import static com.datafast.server.server_tcp.Server.cmd;
-import static com.datafast.server.server_tcp.Server.setCmd;
-import static com.datafast.server.server_tcp.Server.setDat;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.datafast.server.server_tcp.Server.correctLength;
 
 
 /**
- *
  * @author francisco
  */
 public class EFTGCPinpad implements EventISOServer {
 
-    //static org.apache.log4j.Logger loggerReformateador
-    //        = org.apache.log4j.Logger.getLogger(EFTGC.class.getName());
     private ServerTCP activity;
     byte[] info;
     ISOSource sourceLocal;
     ISOMsg mLocal;
     private int port;
-    CountDownLatch countDown;
 
     public EFTGCPinpad(ServerTCP activity) {
         //Not implemented
         this.activity = activity;
     }
 
-    private int getListeningPort(){
+    private int getListeningPort() {
         SharedPreferences preferences = activity.getSharedPreferences("config_ip", Context.MODE_PRIVATE);
         return Integer.parseInt(preferences.getString("port", "9999"));
     }
 
     public void start() {
         try {
-            //loggerReformateador.info("EFTGC start at: " + "5020");
-            port = getListeningPort();;
+
+            port = getListeningPort();
             ISOServerGC isoServerGC = new ISOServerGC(this);
             isoServerGC.setPort(port);
             isoServerGC.setTCPViolation(true);
@@ -84,10 +76,10 @@ public class EFTGCPinpad implements EventISOServer {
             sourceLocal = source;
             mLocal = m;
             byte[] response = null;
-            byte[] requestByte = new byte[((byte[]) m.getValue(0)).length -2];
+            byte[] requestByte = new byte[((byte[]) m.getValue(0)).length - 2];
             StringBuilder sb = new StringBuilder();
             String request = new String((byte[]) m.getValue(0));  //Asi se lee como cadena
-            System.arraycopy(m.getValue(0),2,requestByte,0,((byte[]) m.getValue(0)).length -2);
+            System.arraycopy(m.getValue(0), 2, requestByte, 0, ((byte[]) m.getValue(0)).length - 2);
             sb.append("\nIncoming: \n");
             sb.append(org.jpos.iso.ISOUtil.hexdump((byte[]) m.getValue(0)));
             sb.append("\n");
@@ -97,9 +89,12 @@ public class EFTGCPinpad implements EventISOServer {
             sb.append("\n");
 
 
-            System.out.println("Trama---: "+sb.toString());
+            System.out.println("Trama---: " + sb.toString());
 
             Logger.information("Server.java -> Contenido de la trama que llega: " + sb.toString());
+
+            Logger.information("Server.java -> Puerto de escucha virtual: " + mLocal.getDirection());
+
 
             dataReceived.identifyCommand(requestByte);
             //setCmd(dataReceived.getCmd());
@@ -109,46 +104,25 @@ public class EFTGCPinpad implements EventISOServer {
             dat = dataReceived.getDataRaw();
             correctLength = dataReceived.isCorrectLength();
 
-            if(lastCmd.equals("CP") && cmd.equals("PC")){
+            if (lastCmd.equals("CP") && cmd.equals("PC")) {
                 Thread.sleep(500);
             }
 
-            //countDown = new CountDownLatch(1);
-            activity.runOnUiThread(new Runnable() {
+
+            if (ServerTCP.isTheFirst) {
+                ServerTCP.isTheFirst = false;
+                processCMD();
+            }
+
+            ServerTCP.aContinue = new waitForContinue() {
                 @Override
-                public void run() {
-                    activity.startTrans(cmd, dat, new waitResponse() {
-                        @Override
-                        public void waitRspHost(byte[] infoLocal) {
-                            info = infoLocal;
-                            try {
-                                lastCmd = cmd;
-                                String result = new String(info);
-                                byte[] resp = quitarTildes(result).getBytes();
-
-                                mLocal.set(0, resp);
-                                Logger.information("EFTGCPinpad.java -> " + result);
-
-                                listenNotify();
-                                //countDown.countDown();
-
-                            } catch (ISOException e) {
-                                //System.out.println("Paso por el primer catch");
-
-                                //socket=null;
-                            }
-                        }
-
-
-                    });
+                public void Continue(boolean isTheSecond) {
+                    if (isTheSecond)
+                        processCMD();
                 }
-            });
-            //countDown.await();
-            funWait();
-            Logger.information("EFTGCPinpad.java -> Envia a respuesta a Caja");
-            sourceLocal.send(mLocal);
+            };
 
-        } catch (ISOException | InterruptedException | IOException e) {
+        } catch (ISOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -167,30 +141,56 @@ public class EFTGCPinpad implements EventISOServer {
         return output;
     }
 
-    /*private static byte[] getTxn(String info) {
-        try {
-            if (info.equals("")) {
-                return null;
-            }
-            byte[] txn = new byte[info.length()];
-            System.arraycopy(info.getBytes(), 0, txn, 0, info.length());
-            return txn;
-        } catch (Exception ex) {
-            return null;
-        }
+    private void processCMD() {
 
-    }*/
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.startTrans(cmd, dat, new waitResponse() {
+                    @Override
+                    public void waitRspHost(byte[] infoLocal) {
+                        info = infoLocal;
+                        try {
+                            lastCmd = cmd;
+                            String result = new String(info);
+                            byte[] resp = quitarTildes(result).getBytes();
+
+                            mLocal.set(0, resp);
+                            Logger.information("EFTGCPinpad.java -> " + result);
+                            listenNotify();
+
+                        } catch (ISOException e) {
+                            Logger.information("EFTGCPinpad.java -> Excepcion" + e.getMessage());
+                        }
+                    }
+                });
+            }
+        });
+
+        funWait();
+        Logger.information("EFTGCPinpad.java -> Envia a respuesta a Caja");
+        try {
+            if (sourceLocal.isConnected())
+                sourceLocal.send(mLocal);
+            if (!ServerTCP.isTheFirst) {
+                ServerTCP.isTheFirst = true;
+                ServerTCP.aContinue.Continue(true);
+            }
+        } catch (IOException | ISOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * object lock
      */
-    private Object o = new byte[0] ;
+    private Object o = new byte[0];
 
     /**
      * Notify
      */
-    private void listenNotify(){
-        synchronized (o){
+    private void listenNotify() {
+        synchronized (o) {
             o.notify();
         }
     }
@@ -198,8 +198,8 @@ public class EFTGCPinpad implements EventISOServer {
     /**
      * block
      */
-    private void funWait(){
-        synchronized (o){
+    private void funWait() {
+        synchronized (o) {
             try {
                 o.wait();
             } catch (InterruptedException e) {
