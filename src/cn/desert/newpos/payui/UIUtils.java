@@ -217,7 +217,7 @@ public class UIUtils {
         return pd;
     }
 
-    public static void dialogInformativo(final Context context, final String titulo ,String contenido) {
+    public static Dialog dialogInformativo(final Context context, final String titulo ,String contenido) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -238,7 +238,7 @@ public class UIUtils {
         }else if(titulo.equals("DATOS DE CONEXION")){
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_comunication_white));
 
-        }else if(titulo.equals("INFORMACIÓN DEL COMERCIO")){
+        }else if(titulo.equals("INFORMACION DEL COMERCIO")){
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_datoscomercio));
         }
         TextView tit = dialog.findViewById(R.id.tvTitulo);
@@ -275,6 +275,7 @@ public class UIUtils {
             }
         });
         dialog.show();
+        return dialog;
     }
 
     public static String getInputTitle(Context c, int type) {
