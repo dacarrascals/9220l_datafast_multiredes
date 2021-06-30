@@ -89,7 +89,7 @@ import static java.lang.Thread.sleep;
 public class ServerTCP extends AppCompatActivity {
 
     private ImageView setting;
-    private Dialog mDialog;
+    public static Dialog mDialog;
     private Wifi wifi;
     private Control control = null;
     private Actualizacion actualizacion = null;
@@ -363,6 +363,7 @@ public class ServerTCP extends AppCompatActivity {
                 removeOptionsMenu();
                 MenuAction menuAction= new MenuAction(ServerTCP.this, DefinesDATAFAST.ITEM_CONEXION);
                 menuAction.SelectAction();
+                counterTimer();
             }
         });
         LinearLayout resumentrans = findViewById(R.id.resumentrans);
@@ -372,6 +373,7 @@ public class ServerTCP extends AppCompatActivity {
                 removeOptionsMenu();
                 MenuAction menuAction = new MenuAction(ServerTCP.this, DefinesDATAFAST.ITEM_RESUMEN_TRANS);
                 menuAction.SelectAction();
+                counterTimer();
             }
         });
         LinearLayout inicializacion = findViewById(R.id.inicializacion);
@@ -379,7 +381,8 @@ public class ServerTCP extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 removeOptionsMenu();
-                alertDialogConfirm();
+                mDialog = alertDialogConfirm();
+                counterTimer();
             }
         });
         RelativeLayout m = findViewById(R.id.menuOptions);
@@ -397,7 +400,7 @@ public class ServerTCP extends AppCompatActivity {
         menu.removeView(options);
     }
 
-    private void alertDialogConfirm(){
+    private Dialog alertDialogConfirm(){
 
         final Dialog dialog= new Dialog(this);
         dialog.setContentView(R.layout.alertdialog_red_confirm);
@@ -423,19 +426,12 @@ public class ServerTCP extends AppCompatActivity {
                 menuAction.SelectAction();
             }
         });
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dialog.dismiss();
-            }
-        }, 30000);
         dialog.show();
+        return dialog;
     }
 
     private void maintainPwd(String title, final String pwd, final String type_trans, int lenEdit) {
         final Intent intent = new Intent();
-        counterTimer();
         mDialog = UIUtils.centerDialog(ServerTCP.this, R.layout.setting_home_pass, R.id.setting_pass_layout);
         mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         LinearLayout reiniciar=mDialog.findViewById(R.id.setting_pass_layout);
@@ -513,6 +509,7 @@ public class ServerTCP extends AppCompatActivity {
                 mDialog.dismiss();
             }
         });
+        counterTimer();
     }
 
     private void settings() {
@@ -529,16 +526,8 @@ public class ServerTCP extends AppCompatActivity {
     }
 
     private void counterTimer() {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mDialog!=null){
-                    mDialog.dismiss();
-                }
-            }
-        }, 30000);
-
+        counterTimer = new CounterTimer(mDialog);
+        counterTimer.counterDownTimerDialog();
     }
 
 

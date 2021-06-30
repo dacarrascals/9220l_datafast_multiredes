@@ -34,6 +34,7 @@ import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.PwMasterKey;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.printer.PrintParameter;
+import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.ConfigRed;
 import com.datafast.tools.ConfigTransactional;
 import com.datafast.tools.UtilNetwork;
@@ -377,7 +378,7 @@ public class MenuAction {
                         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
                         String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
                         datos = UtilNetwork.getWifi(context, false);
-                        UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                        ServerTCP.mDialog = UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                                 "IP: " + ipAddress + "\n" +
                                         "MASCARA: " + datos[0] + "\n" +
                                         "GATEWAY: " + datos[3] + "\n" +
@@ -385,7 +386,7 @@ public class MenuAction {
                     } else if (EthernetManager.getInstance().isEtherentEnabled()){
                         try {
                             datos = UtilNetwork.getWifi(context, true);
-                            UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                            ServerTCP.mDialog =UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
                                     "IP: " + datos[0] + "\n" +
                                             "MASCARA: " + datos[1] + "\n" +
                                             "GATEWAY: " + datos[3]);
@@ -424,7 +425,7 @@ public class MenuAction {
                         }
                     }
                 }
-                UIUtils.dialogInformativo(context, "RESUMEN DE TRANSACCIONES",
+                ServerTCP.mDialog = UIUtils.dialogInformativo(context, "RESUMEN DE TRANSACCIONES",
                             "No. Transacciones:   " + contTrans + "\n" +
                                       "Mnt. Transacciones:  $" + formatAmount(amount_USD)+ "\n" +
                                       "No. Anulación:   " + contTransVoid + "\n" +
