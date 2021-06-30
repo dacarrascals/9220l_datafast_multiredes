@@ -70,7 +70,8 @@ public class Control {
                     TMConfig.getInstance().setCID(pc_request.getCID()).save();
                 }
 
-                TMConfig.getInstance().setMerchID(pc_request.getMID()).save();
+                TMConfig.getInstance().setMerchID(pc_request.getMID())
+                        .setTermID(pc_request.getTID()).save();
 
                 deleteBatch();
 

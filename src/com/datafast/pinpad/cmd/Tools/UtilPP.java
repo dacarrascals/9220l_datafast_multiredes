@@ -28,13 +28,9 @@ public class UtilPP {
             return false;
 
         TMConfig tmConfig = TMConfig.getInstance();
-        if (Server.cmd.equals(PP)){
-            tmConfig.setMerchID(MID);
-        }else {
-            tmConfig.setTermID(TID).setMerchID(MID);
-        }
 
-
+            tmConfig.setTermID(TID).
+                    setMerchID(MID);
 
         if (!tmConfig.save())
             return false;

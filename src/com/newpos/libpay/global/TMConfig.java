@@ -840,6 +840,18 @@ public class TMConfig implements Serializable {
         return mInstance;
     }
 
+    private String TIDPolaris;
+
+    public String getTIDPolaris(){
+        return TIDPolaris;
+    }
+
+    public TMConfig setTIDPolaris(String tidPolaris){
+        TIDPolaris = tidPolaris;
+        return mInstance;
+    }
+
+
     /*-----------------------------------------------------------*/
     private TMConfig() {
         try {
@@ -1053,6 +1065,9 @@ public class TMConfig implements Serializable {
                                 break;
                             case 55:
                                 setCID(prop);
+                                break;
+                            case 56:
+                                setTIDPolaris(prop);
                                 break;
                         }
                     } catch (Exception e) {
