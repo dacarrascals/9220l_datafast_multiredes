@@ -18,6 +18,7 @@ import java.util.Set;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
 
+import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.mymap;
 import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.newpos.libpay.trans.finace.FinanceTrans.ppResponse;
@@ -113,14 +114,9 @@ public class Server extends AppCompatActivity {
 
                             mymap.remove(key);
 
-
-                            /*runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(activity.getBaseContext(), tramaProcesar.getCmd(), Toast.LENGTH_LONG).show();
-
-                                }
-                            });*/
+                            if (lastCmd.equals("CP") && tramaProcesar.getCmd().equals("PC")) {
+                                Thread.sleep(500);
+                            }
                             eftgcPinpad.processCMD(tramaProcesar);
 
                         }

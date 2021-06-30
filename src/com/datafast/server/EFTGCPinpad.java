@@ -81,25 +81,21 @@ public class EFTGCPinpad implements EventISOServer {
             System.arraycopy(m.getValue(0), 2, requestByte, 0, ((byte[]) m.getValue(0)).length - 2);
 
             dataReceived.identifyCommand(requestByte);
-            cmd = dataReceived.getCmd();
-            dat = dataReceived.getDataRaw();
             correctLength = dataReceived.isCorrectLength();
 
             TramaProcesar tramaProcesar = new TramaProcesar();
             tramaProcesar.setSource(sourceLocal);
-            tramaProcesar.setCmd(cmd);
-            tramaProcesar.setDat(dat);
+            tramaProcesar.setCmd(dataReceived.getCmd());
+            tramaProcesar.setDat(dataReceived.getDataRaw());
             tramaProcesar.setIpClient(String.valueOf(((BaseChannel) m.getSource()).getSocket().getInetAddress().getHostAddress()));
             tramaProcesar.setPortClient(String.valueOf(((BaseChannel) m.getSource()).getSocket().getPort()));
-            Logger.information(tramaProcesar.ToString());
 
-            if (lastCmd.equals("CP") && cmd.equals("PC")) {
-                Thread.sleep(500);
-            }
+            tramaProcesar.setIpRsp(String.valueOf(((BaseChannel) m.getSource()).getSocket().getInetAddress().getHostAddress()));
+            tramaProcesar.setPortRsp(String.valueOf(((BaseChannel) m.getSource()).getSocket().getPort()));
 
             mymap.put(contador.getCount(), tramaProcesar);
 
-        } catch (ISOException | InterruptedException e) {
+        } catch (ISOException e) {
             e.printStackTrace();
         }
     }
@@ -117,8 +113,10 @@ public class EFTGCPinpad implements EventISOServer {
         }//for i
         return output;
     }
+    synchronized public void processCMD(final TramaProcesar tramaProcesar) {
 
-    public void processCMD(final TramaProcesar tramaProcesar) {
+        cmd = tramaProcesar.getCmd();
+        dat = tramaProcesar.getDat();
 
         activity.runOnUiThread(new Runnable() {
             @Override
@@ -128,12 +126,13 @@ public class EFTGCPinpad implements EventISOServer {
                     public void waitRspHost(byte[] infoLocal) {
                         info = infoLocal;
                         try {
-                            lastCmd = cmd;
+                            lastCmd = tramaProcesar.getCmd();
                             String result = new String(info);
                             byte[] resp = quitarTildes(result).getBytes();
 
                             mLocal.set(0, resp);
-                            Logger.information("EFTGCPinpad.java -> " + result);
+                            tramaProcesar.setDatRsp(resp);
+
                             listenNotify();
 
                         } catch (ISOException e) {
@@ -145,9 +144,9 @@ public class EFTGCPinpad implements EventISOServer {
         });
 
         funWait();
-        Logger.information("EFTGCPinpad.java -> Envia a respuesta a Caja");
         try {
             tramaProcesar.getSource().send(mLocal);
+            Logger.information(tramaProcesar.ToString());
             System.gc();
         } catch (IOException | ISOException e) {
             e.printStackTrace();
