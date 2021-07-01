@@ -40,7 +40,7 @@ public class Logger {
 
     public static void debug(String msg){
         if(TMConfig.getInstance().isDebug()){
-            Log.i(TAG, msg);
+            //Log.i(TAG, msg);
         }
     }
 

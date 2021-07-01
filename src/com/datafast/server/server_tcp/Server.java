@@ -3,26 +3,24 @@ package com.datafast.server.server_tcp;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.datafast.server.EFTGCPinpad;
+import com.datafast.server.TramaProcesar;
 import com.datafast.server.activity.ServerTCP;
-import com.datafast.server.callback.waitResponse;
-import com.datafast.server.unpack.dataReceived;
 import com.newpos.libpay.Logger;
-import com.newpos.libpay.utils.ISOUtil;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.CountDownLatch;
+import java.util.Set;
+
+import cn.desert.newpos.payui.UIUtils;
+import cn.desert.newpos.payui.master.MasterControl;
 
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
+import static com.android.newpos.pay.StartAppDATAFAST.mymap;
+import static com.datafast.server.activity.ServerTCP.listenerServer;
 import static com.newpos.libpay.trans.finace.FinanceTrans.ppResponse;
 
 public class Server extends AppCompatActivity {
@@ -45,6 +43,7 @@ public class Server extends AppCompatActivity {
         socketServerPORT = getListeningPort();
         Logger.information("Puerto escucha: -> " + socketServerPORT);
         eftgcPinpad = new EFTGCPinpad(this.activity);
+        readCurrentMap();
         eftgcPinpad.start();
     }
 
@@ -99,5 +98,35 @@ public class Server extends AppCompatActivity {
     public int bcdToInt(byte[] buffer) {
         int lenInt = ((buffer[1] & 0x0F) + (((buffer[1] & 0xF0) >> 4) * 16) + ((buffer[0] & 0x0F) * 16 * 16) + (((buffer[0] & 0xF0) >> 4) * 16 * 16 * 16));
         return lenInt;
+    }
+
+
+    private void readCurrentMap(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        Set<Integer> keys = mymap.keySet();
+                        for (Integer key : keys) {
+                            final TramaProcesar tramaProcesar = (TramaProcesar) mymap.get(key);
+
+                            mymap.remove(key);
+
+                            if (lastCmd.equals("CP") && tramaProcesar.getCmd().equals("PC")) {
+                                Thread.sleep(500);
+                            }
+                            eftgcPinpad.processCMD(tramaProcesar);
+
+                        }
+                        Thread.sleep(100);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 }

@@ -27,6 +27,8 @@ import com.datafast.inicializacion.prompts.Prompt;
 import com.datafast.inicializacion.tools.PolarisUtil;
 import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.PwMasterKey;
+import com.datafast.server.Contador;
+import com.datafast.server.TramaProcesar;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.tools.BatteryStatus;
@@ -40,6 +42,7 @@ import com.newpos.libpay.utils.PAYUtils;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.base.PayApplication;
@@ -71,6 +74,9 @@ public class StartAppDATAFAST extends AppCompatActivity {
     public static boolean resumePA = false;
     public static Server server;
     public static ToneGenerator toneG=null;
+
+    public static ConcurrentHashMap<Integer, TramaProcesar>  mymap = new ConcurrentHashMap<Integer,  TramaProcesar>();
+    public static Contador contador = new Contador();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
