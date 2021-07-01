@@ -105,7 +105,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "1.1.6_"+getShortDate()
+        versionName "1.1.7_"+getShortDate()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId 'com.wposs.datafastpinpadL'
         vectorDrawables.useSupportLibrary = true
