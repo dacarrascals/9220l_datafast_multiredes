@@ -3707,6 +3707,9 @@ public class FinanceTrans extends Trans {
                 }
 
                 if(!pintulac){
+                    if (tracks[0].length() > 0 && tracks[0].length() <= 80) {
+                        data1 = tracks[0];
+                    }
                     splitIndex = data2.indexOf("=");
 
                     if (ISOUtil.stringToBoolean(rango.getPIN_SERVICE_CODE())) {
