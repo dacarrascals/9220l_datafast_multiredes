@@ -186,7 +186,19 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         setRightClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                save();
+                if (isConnected()){
+                    if (!etPort.getText().toString().equals("")){
+                        save();
+                    }else{
+                        UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_SIN_DATOS, Toast.LENGTH_SHORT);
+                        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                        toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                    }
+                }else{
+                    UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                }
             }
         });
 
