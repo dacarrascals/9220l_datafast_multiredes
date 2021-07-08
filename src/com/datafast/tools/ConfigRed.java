@@ -169,16 +169,16 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     etPort.requestFocus();
                     inputMethodManager.showSoftInput(etPort,0);
                     containerDns.setVisibility(View.VISIBLE);
+                    infoStatic();
                     disableComponents(true, R.color.transparent);
                 } else {
                     switchConnectionType.setText(DHCP);
                     etPort.clearFocus();
                     etPort.setImeOptions(EditorInfo.IME_ACTION_DONE);
                     inputMethodManager.hideSoftInputFromWindow(etPort.getWindowToken(),0);
-                    etPort.requestFocus();
-                    inputMethodManager.showSoftInput(etPort,0);
                     containerDns.setVisibility(View.GONE);
                     disableComponents(false, R.color.des_color);
+                    infoDHCP();
                 }
             }
         });
@@ -186,16 +186,10 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         setRightClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isConnected()){
-                    if (!etPort.getText().toString().equals("")){
-                        save();
-                    }else{
-                        UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_SIN_DATOS, Toast.LENGTH_SHORT);
-                        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-                        toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
-                    }
+                if (!etPort.getText().toString().equals("")){
+                    save();
                 }else{
-                    UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
+                    UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_SIN_DATOS, Toast.LENGTH_SHORT);
                     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                     toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                 }
@@ -233,6 +227,40 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         counterTimer();
     }
 
+    private void infoStatic() {
+        if (switchConnection.isChecked()){
+            if (!isConnected()){
+                initDataStatic();
+
+            }
+        }
+    }
+
+    private void infoDHCP() {
+        if (switchConnection.isChecked()){
+            if (!isConnected()){
+                String red="0";
+                etPort.setText(String.valueOf(getListeningPort()));
+                etPort.setEnabled(true);
+
+                etIp1.setText(red);
+                etIp2.setText(red);
+                etIp3.setText(red);
+                etIp4.setText(red);
+
+                etMask1.setText(red);
+                etMask2.setText(red);
+                etMask3.setText(red);
+                etMask4.setText(red);
+
+                etGateway1.setText(red);
+                etGateway2.setText(red);
+                etGateway3.setText(red);
+                etGateway4.setText(red);
+            }
+        }
+    }
+
     private void redEthernet() {
         counterTimer();
         if (switchConnection.isChecked()) {
@@ -251,7 +279,6 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     }
 
     private void loadConnection() {
-        if(isConnected()) {
             String stateIp = null;
             if (isWifiConnected()) {
                 stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
@@ -264,12 +291,17 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             if (stateIp != null) {
                 switchConnectionType.setEnabled(true);
                 if (stateIp.equals(DHCP)) {
-                    initDataDHCP();
-                    etPort.setImeOptions(6);
-                    switchConnectionType.setChecked(false);
-                    switchConnectionType.setText(DHCP);
-                    containerDns.setVisibility(View.GONE);
-                    disableComponents(false, R.color.des_color);
+                    if(isConnected()){
+                        initDataDHCP();
+                        etPort.setImeOptions(6);
+                        switchConnectionType.setChecked(false);
+                        switchConnectionType.setText(DHCP);
+                        containerDns.setVisibility(View.GONE);
+                        disableComponents(false, R.color.des_color);
+                         }else{
+                        initDataEmpty();
+                    }
+
                 } else {
                     initDataStatic();
                     etPort.setImeOptions(5);
@@ -284,12 +316,6 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                 ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
                 toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
             }
-        }else{
-            initDataEmpty();
-            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_NETWORK_DISCONNET, Toast.LENGTH_SHORT);
-            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
-        }
     }
 
     public void checkConnection(){
@@ -301,13 +327,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     @Override
                     public void run() {
                         if (!isConnected()){
-                            EthernetManager.getInstance().setEtherentEnabled(false);
-                            switchConnection.setChecked(false);
-                            switchConnection.setText(DESACTIVADO);
                             initDataEmpty();
-                            UIUtils.toast((Activity) ConfigRed.this, R.drawable.ic_launcher_1, "EL POS NO SE LOGRÓ CONECTAR A LA RED LAN", Toast.LENGTH_SHORT);
-                            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-                            toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
                         }else{
                             loadConnection();
                         }
@@ -330,7 +350,6 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
                     progressDialog.dismiss();
                 }
             }).start();
-
     }
 
     public void counterTimer(){
@@ -479,26 +498,66 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
     }
 
     public void initDataEmpty(){
-        switchConnectionType.setEnabled(false);
-        etPort.setText("");
-        etPort.setEnabled(false);
+        String stateIp = null;
+        String red = null;
+        if (isWifiConnected()) {
+            stateIp = IpWifiConf.getConnectionTypeWifi(getApplicationContext());
+        }
 
-        etIp1.setText("");
-        etIp2.setText("");
-        etIp3.setText("");
-        etIp4.setText("");
+        if (EthernetManager.getInstance().isEtherentEnabled() && stateIp == null) {
+            stateIp = IpEthernetConf.getConnectionTypeEther();
+        }
+        if (stateIp != null) {
+            if (stateIp.equals(DHCP)) {
+                switchConnectionType.setChecked(false);
+                switchConnectionType.setText(DHCP);
+                red="0";
 
-        etMask1.setText("");
-        etMask2.setText("");
-        etMask3.setText("");
-        etMask4.setText("");
+            } else {
+                loadConnection();
+                return;
+            }
+            switchConnectionType.setEnabled(true);
+            etPort.setText(String.valueOf(getListeningPort()));
+            etPort.setEnabled(true);
 
-        etGateway1.setText("");
-        etGateway2.setText("");
-        etGateway3.setText("");
-        etGateway4.setText("");
+            etIp1.setText(red);
+            etIp2.setText(red);
+            etIp3.setText(red);
+            etIp4.setText(red);
 
-        disableComponents(false, R.color.des_color);
+            etMask1.setText(red);
+            etMask2.setText(red);
+            etMask3.setText(red);
+            etMask4.setText(red);
+
+            etGateway1.setText(red);
+            etGateway2.setText(red);
+            etGateway3.setText(red);
+            etGateway4.setText(red);
+            disableComponents(false, R.color.des_color);
+        }else {
+            red="";
+            switchConnectionType.setEnabled(false);
+            etPort.setText(String.valueOf(getListeningPort()));
+            etPort.setEnabled(false);
+
+            etIp1.setText(red);
+            etIp2.setText(red);
+            etIp3.setText(red);
+            etIp4.setText(red);
+
+            etMask1.setText(red);
+            etMask2.setText(red);
+            etMask3.setText(red);
+            etMask4.setText(red);
+
+            etGateway1.setText(red);
+            etGateway2.setText(red);
+            etGateway3.setText(red);
+            etGateway4.setText(red);
+            disableComponents(false, R.color.des_color);
+        }
     }
     public void initDataDHCP() {
         String[] datos, mask, gateway, ip;
@@ -572,9 +631,14 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
         } else {
             Logger.information("ConfigRed.java -> Ingreso por ethernet");
             datos = UtilNetwork.getNetInformation(getApplicationContext(), true);
+            if (datos==null){
+                infoDHCP();
+                return;
+            }
             for (int i = 0; i < datos.length ; i++) {
                 Logger.information("Datos ConfigRed ethernet "+i+" :"+datos[i]);
             }
+
             ip = datos[0].split("\\.");
             dns = datos[1].split("\\.");
             gateway = datos[2].split("\\.");
@@ -676,7 +740,7 @@ public class ConfigRed extends BaseActivity implements View.OnClickListener {
             if (dataConnection != null) {
                 change = setConnection(dataConnection, true);
             } else {
-                UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher_1, "Debe Llenar todos los datos", Toast.LENGTH_SHORT);
+                UIUtils.toast(ConfigRed.this, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_SIN_DATOS, Toast.LENGTH_SHORT);
                 invalidDataConnection = true;
             }
         }else {

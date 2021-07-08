@@ -178,6 +178,9 @@ public class UtilNetwork {
             EthernetManager ether = EthernetManager.getInstance();
             EthernetInfo etherinfo = ether.getEtherentConfigs();
             EthernetInfo.StaticIP staticIP = etherinfo.getStaticIpConfigs();
+            if (staticIP.ipAddr==null){
+                return null;
+            }
             datos[0] = staticIP.ipAddr;
             datos[1] = staticIP.dnsAddr;
             datos[2] = staticIP.gatewayAddr;
