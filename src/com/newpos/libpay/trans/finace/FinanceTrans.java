@@ -16,6 +16,7 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
+import com.datafast.inicializacion.configuracioncomercio.Rango;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -82,6 +83,7 @@ import static com.datafast.transactions.common.CommonFunctionalities.Fld58Prompt
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
 import static com.datafast.transactions.common.GetAmount.PIDE_CONFIRMACION;
+import static com.datafast.transactions.common.GetAmount.RECIBIDO;
 import static com.datafast.transactions.common.GetAmount.getBase0;
 import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
@@ -2871,17 +2873,30 @@ public class FinanceTrans extends Trans {
         }
 
 
+        if (montoFijo > 0){
+            pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));
+        }else {
+            pp_response.setFixedAmount(ISOUtil.padleft( "", 12, ' '));
+        }
         String fld57 = iso8583.getfield(57);
         if (fld57 != null){
             String id = fld57.substring(0,3);
             String msg = fld57.substring(3);
             String interes = financiacion(id,msg);
-            if (interes.equals("")){
-                pp_response.setInterestFinancingValue(ISOUtil.spacepadRight(interes, 12));
-            }else {
-                pp_response.setInterestFinancingValue(ISOUtil.padleft(interes, 12, '0'));
+            if(!id.equals("014") && !id.equals("023") ) {
+                if (interes.equals("")){
+                    pp_response.setInterestFinancingValue(ISOUtil.spacepadRight(interes, 12));
+                }else {
+                    pp_response.setInterestFinancingValue(ISOUtil.padleft(interes, 12, '0'));
+                }
+            }else{
+                pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
+                if (interes.equals("")){
+                    pp_response.setFixedAmount(ISOUtil.padleft( interes, 12, ' '));
+                }else {
+                    pp_response.setFixedAmount(ISOUtil.padleft(interes + "", 12, '0'));
+                }
             }
-
             pp_response.setMsgPrintAwards(ISOUtil.spacepadRight(publicVoucher(id, msg), 80));
         }else {
             pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
@@ -2904,12 +2919,6 @@ public class FinanceTrans extends Trans {
 
         pp_response.setNameGroupCard(ISOUtil.spacepadRight(rango.getNOMBRE_RANGO(),25));
         pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack, validateNFC));
-
-        if (montoFijo > 0){
-            pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));
-        }else {
-            pp_response.setFixedAmount(ISOUtil.padleft( "", 12, ' '));
-        }
 
         if (inputMode == ENTRY_MODE_NFC) {
             pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvl2.getHolderName()), 40));
