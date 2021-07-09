@@ -66,8 +66,8 @@ public class ScriptTrans extends Trans {
 			iso8583.setField(60, Field60);
 		}
 		// 61.1 原交易批次号 61.2 原pos流水号 61.3 原交易日期
-		/*Field61 = data.getTraceNo() + data.getBatchNo() + data.getLocalDate();
-		iso8583.setField(61, Field61);*/
+		Field61 = data.getTraceNo() + data.getBatchNo() + data.getLocalDate();
+		iso8583.setField(61, Field61);
 	}
 
 	public int sendScriptResult(TransLogData data, TransUI transUI) {

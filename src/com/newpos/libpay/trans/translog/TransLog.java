@@ -291,7 +291,7 @@ public class TransLog implements Serializable {
 	 * @return
 	 */
 	public static boolean saveScriptResult(TransLogData data) {
-		try {
+		/*try {
 			PAYUtils.object2File(data, TMConfig.getRootFilePath()+ ScriptPath);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -301,7 +301,7 @@ public class TransLog implements Serializable {
 			// TODO Auto-generated catch block
 			Logger.error("Exception" + e.toString());
 			return false;
-		}
+		}*/
 		return true;
 	}
 
@@ -357,7 +357,7 @@ public class TransLog implements Serializable {
 	 * @return
 	 */
 	public static TransLogData getScriptResult() {
-		try {
+		/*try {
 			return (TransLogData) PAYUtils.file2Object(TMConfig.getRootFilePath()+ ScriptPath);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -368,7 +368,7 @@ public class TransLog implements Serializable {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			Logger.error("Exception" + e.toString());
-		}
+		}*/
 		return null;
 	}
 
@@ -397,12 +397,13 @@ public class TransLog implements Serializable {
 	 * @return
 	 */
 	public static boolean clearScriptResult() {
-		File file = new File(TMConfig.getRootFilePath()+ ScriptPath);
+		/*File file = new File(TMConfig.getRootFilePath()+ ScriptPath);
 		if (file.exists() && file.isFile()) {
 			file.delete();
 			return false;
 		} else {
 			return true;
-		}
+		}*/
+		return true;
 	}
 }
