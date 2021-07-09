@@ -460,6 +460,8 @@ public class WifiSettings extends AppCompatActivity {
                     final Dialog dialog = UIUtils.centerDialog(context, R.layout.setting_home_pass, R.id.setting_pass_layout);
                     final EditText newEdit = dialog.findViewById(R.id.setting_pass_new);
                     final TextView title_pass = dialog.findViewById(R.id.title_pass);
+                    ImageView icono=dialog.findViewById(R.id.icono);
+                    icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_wifi2));
                     Button confirm = dialog.findViewById(R.id.setting_pass_confirm);
                     final ToggleButton ivShowHidePass= dialog.findViewById(R.id.ivShowHidePass);
                     ivShowHidePass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

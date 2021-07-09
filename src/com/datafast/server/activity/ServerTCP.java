@@ -363,7 +363,8 @@ public class ServerTCP extends AppCompatActivity {
                 removeOptionsMenu();
                 MenuAction menuAction= new MenuAction(ServerTCP.this, DefinesDATAFAST.ITEM_CONEXION);
                 menuAction.SelectAction();
-                counterTimer();
+                if (mDialog!=null)
+                     counterTimer();
             }
         });
         LinearLayout resumentrans = findViewById(R.id.resumentrans);

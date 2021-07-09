@@ -152,7 +152,7 @@ public class PC_Request {
             offset += 15;
             this.MID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
             if (!MID.isEmpty()){
-                if (MID.length() != 10){
+                if (MID.length() > 15){
                     countValid ++;
                 }
             }else {
