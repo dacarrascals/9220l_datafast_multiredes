@@ -16,6 +16,7 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
+import com.datafast.inicializacion.configuracioncomercio.Rango;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -82,6 +83,7 @@ import static com.datafast.transactions.common.CommonFunctionalities.Fld58Prompt
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
 import static com.datafast.transactions.common.GetAmount.PIDE_CONFIRMACION;
+import static com.datafast.transactions.common.GetAmount.RECIBIDO;
 import static com.datafast.transactions.common.GetAmount.getBase0;
 import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
@@ -2870,18 +2872,30 @@ public class FinanceTrans extends Trans {
             pp_response.setMID(ISOUtil.spacepadRight(MerchID, 15));
         }
 
-
+        if (montoFijo > 0 && !transEname.equals(Type.ANULACION)){
+            pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));
+        }else {
+            pp_response.setFixedAmount(ISOUtil.padleft( "", 12, ' '));
+        }
         String fld57 = iso8583.getfield(57);
         if (fld57 != null){
             String id = fld57.substring(0,3);
             String msg = fld57.substring(3);
             String interes = financiacion(id,msg);
-            if (interes.equals("")){
-                pp_response.setInterestFinancingValue(ISOUtil.spacepadRight(interes, 12));
-            }else {
-                pp_response.setInterestFinancingValue(ISOUtil.padleft(interes, 12, '0'));
+            if(!id.equals("014") && !id.equals("023") ) {
+                if (interes.equals("")){
+                    pp_response.setInterestFinancingValue(ISOUtil.spacepadRight(interes, 12));
+                }else {
+                    pp_response.setInterestFinancingValue(ISOUtil.padleft(interes, 12, '0'));
+                }
+            }else{
+                pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
+                if (!interes.equals("") && !transEname.equals(Type.ANULACION)){
+                    pp_response.setFixedAmount(ISOUtil.padleft(interes + "", 12, '0'));
+                }else {
+                    pp_response.setFixedAmount(ISOUtil.padleft( "", 12, ' '));
+                }
             }
-
             pp_response.setMsgPrintAwards(ISOUtil.spacepadRight(publicVoucher(id, msg), 80));
         }else {
             pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
@@ -2904,12 +2918,6 @@ public class FinanceTrans extends Trans {
 
         pp_response.setNameGroupCard(ISOUtil.spacepadRight(rango.getNOMBRE_RANGO(),25));
         pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack, validateNFC));
-
-        if (montoFijo > 0){
-            pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));
-        }else {
-            pp_response.setFixedAmount(ISOUtil.padleft( "", 12, ' '));
-        }
 
         if (inputMode == ENTRY_MODE_NFC) {
             pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvl2.getHolderName()), 40));
@@ -2947,9 +2955,7 @@ public class FinanceTrans extends Trans {
             pp_response.setExpDateCard(ISOUtil.spacepadRight(expDate,4));
         }
 
-        if (transEname.equals("REVERSAL")){
-            pp_response.setExpDateCard(ISOUtil.spacepad("0000",4));
-        }else if(transEname.equals(ANULACION)){
+        if (transEname.equals(Trans.Type.ANULACION) || transEname.equals("REVERSAL")){
             pp_response.setExpDateCard(ISOUtil.spacepad("",4));
         }
 
@@ -3105,6 +3111,9 @@ public class FinanceTrans extends Trans {
                         msg = id;
                     }
                     ret = msg;
+                    break;
+                case "023":
+                    ret = msg.substring(22);
                     break;
 
             }
