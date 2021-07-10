@@ -2872,8 +2872,7 @@ public class FinanceTrans extends Trans {
             pp_response.setMID(ISOUtil.spacepadRight(MerchID, 15));
         }
 
-
-        if (montoFijo > 0){
+        if (montoFijo > 0 && !transEname.equals(Type.ANULACION)){
             pp_response.setFixedAmount(ISOUtil.padleft(montoFijo + "", 12, '0'));
         }else {
             pp_response.setFixedAmount(ISOUtil.padleft( "", 12, ' '));
@@ -2891,10 +2890,10 @@ public class FinanceTrans extends Trans {
                 }
             }else{
                 pp_response.setInterestFinancingValue(ISOUtil.spacepadRight("", 12));
-                if (interes.equals("")){
-                    pp_response.setFixedAmount(ISOUtil.padleft( interes, 12, ' '));
-                }else {
+                if (!interes.equals("") && !transEname.equals(Type.ANULACION)){
                     pp_response.setFixedAmount(ISOUtil.padleft(interes + "", 12, '0'));
+                }else {
+                    pp_response.setFixedAmount(ISOUtil.padleft( "", 12, ' '));
                 }
             }
             pp_response.setMsgPrintAwards(ISOUtil.spacepadRight(publicVoucher(id, msg), 80));
@@ -2956,9 +2955,7 @@ public class FinanceTrans extends Trans {
             pp_response.setExpDateCard(ISOUtil.spacepadRight(expDate,4));
         }
 
-        if (transEname.equals("REVERSAL")){
-            pp_response.setExpDateCard(ISOUtil.spacepad("0000",4));
-        }else if(transEname.equals(ANULACION)){
+        if (transEname.equals(Trans.Type.ANULACION) || transEname.equals("REVERSAL")){
             pp_response.setExpDateCard(ISOUtil.spacepad("",4));
         }
 
@@ -3114,6 +3111,9 @@ public class FinanceTrans extends Trans {
                         msg = id;
                     }
                     ret = msg;
+                    break;
+                case "023":
+                    ret = msg.substring(22);
                     break;
 
             }
