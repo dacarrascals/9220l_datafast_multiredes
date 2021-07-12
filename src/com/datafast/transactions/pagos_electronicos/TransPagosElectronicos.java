@@ -526,6 +526,12 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         }*/
 
         if (retVal == 0) {
+            if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
+                GetAmount.sumarMontoFijo();
+                montoFijo = GetAmount.getmontoFijo();
+                montos[6] = montoFijo;
+                tipoMontoFijo = GetAmount.getTipoMontoFijo();
+            }
 
             transUI.handling(timeout, Tcode.Status.connecting_center);
             setDatas(INMODE_HAND);
