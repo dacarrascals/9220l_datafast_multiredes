@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EEEEEE"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar_id"
+        layout="@layout/toolbar_cancel" />
+
+    <RelativeLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_weight="1"
+        android:padding="15dp">
+
+        <EditText
+            android:id="@+id/monto_display_area"
+            android:layout_width="match_parent"
+            android:layout_height="310dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/edit_white_shape"
+            android:enabled="false"
+            android:focusable="false"
+            android:fontFamily="sans-serif"
+            android:gravity="start"
+            android:lineSpacingExtra="8sp"
+            android:padding="15dp"
+            android:textAlignment="viewStart"
+            android:textColor="#000000"
+            android:textSize="26sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_margin="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel_mon"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:background="@drawable/btn_red_shape"
+            android:onClick="onClick"
+            android:text="@string/cancel"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btn_conf_mon"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="72px"
+            android:layout_weight="1"
+            android:background="@drawable/btn_blue_shape"
+            android:onClick="onClick"
+            android:text="@string/confirm"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/trans_cardno_iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+</LinearLayout>

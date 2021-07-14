@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#00BC70</color>
+    <color name="colorPrimaryDark">#00A98F</color>
+    <color name="colorAccent">#004D71</color>
+    <color name="colorDark">#3D4543</color>
+
+    <color name="white">#FFFFFF</color><!--白色 -->
+    <color name="red">#FF0000</color><!--红色 -->
+    <color name="gray">#E0DFDE</color><!--灰色 -->
+    <color name="darker_gray">#aaaaaa</color><!--深灰色 -->
+    <color name="black">#000000</color><!--黑色 -->
+    <color name="yellow">#ffff00</color><!--黄色 -->
+    <color name="yellowDark">#FFCC00</color>
+    <color name="aquamarine">#7fffd4</color><!--碧绿色 -->
+    <color name="light_orange">#fcb75c</color><!--亮橙色 -->
+    <color name="turquoise">#40e0d0</color><!--青绿色 -->
+    <color name="accent">#61b3dd</color>
+    <color name="base_blue">#557BCD</color>
+    <color name="color_light_blue">#00DDB6</color>
+    <color name="txt_color">#48495F</color>
+    <color name="item_bg">#FFFFFF</color>
+    <color name="bg">#F0F0F0</color>
+    <color name="spinner_bg">#333244</color>
+    <color name="new_text_color">#555771</color>
+    <color name="white_text_color">#F0F0F0</color>
+    <color name="gray_color">#4b4b58</color>
+    <color name="des_color">#dfe4ea</color>
+
+    <color name="hard_color">#48495f</color>
+    <color name="clickspan_color">#00ddb6</color>
+    <color name="dull_blue">#3B4BBF</color>
+    <color name="transparent">#00000000</color><!--  -->
+</resources>

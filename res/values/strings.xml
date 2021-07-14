@@ -1,0 +1,229 @@
+<resources>
+    <string name="amount">Monto:</string>
+    <string name="confirm">Aceptar</string>
+    <string name="please_input_traceno_hint">NUMERO DE REFERENCIA</string>
+    <string name="re_print">REIMPRESION</string>
+    <string name="not_any_record">La referencia indicada no pertenece a este comercio</string>
+    <string name="label_init_stis">INICIALIZANDO</string>
+    <string name="title_mk">INYECCION MASTER KEY</string>
+    <string name="label_mk">INSERTE LA TARJETA</string>
+    <string name="cancel">Cancelar</string>
+    <string name="moneda_bs">AHORROS</string>
+    <string name="moneda_usd">CORRIENTE</string>
+    <string name="regresar">REGRESAR</string>
+    <string name="hint_pw_mk">Clave MasterKey</string>
+    <string name="title_operario">MENU OPERARIO</string>
+    <string name="hint_pw_operario">Contraseña:</string>
+    <string name="remove_card">RETIRE SU TARJETA</string>
+    <string name="firme_su_voucher">Firme su Voucher</string>
+    <string name="cedula">CEDULA:</string>
+    <string name="telefono">TELEFONO:</string>
+    <string name="clear_pad">Limpiar firma</string>
+    <string name="save_signature">Confirmar Firma</string>
+    <string name="save">Guardar</string>
+    <string name="android_setting">Android System Settings</string>
+    <string name="app_exit">Click again to exit app</string>
+    <string name="app_init">App is initializing</string>
+    <string name="app_name">Datafast</string>
+    <string name="app_setting">Configuración</string>
+    <string name="appstore_not_install">Please install Rong Appstore</string>
+    <string name="auth_code">Codigo Autorizacion:</string>
+    <string name="back_camera">Back Camera</string>
+    <string name="batch_no">BatchNO</string>
+    <string name="batch_num">Lote:</string>
+    <string name="btn_pw_mk">Ingresar</string>
+    <string name="camera_location_choice">Camera choice</string>
+    <string name="card_num">Tarjeta:</string>
+    <string name="cash">Sales</string>
+    <string name="cell">DIGITE No. CELULAR</string>
+    <string name="classical_launcher">Classical</string>
+    <string name="clear_data">Clear data</string>
+    <string name="close_app_debug_output">Log output Off</string>
+    <string name="conf_msg_pwoperario">ACCESO PERMITIDO</string>
+    <string name="confirm_card_no">CONFIRME NUMERO DE TARJETA</string>
+    <string name="customers_or_logo">Customers or LOGOs</string>
+    <string name="data_null">Debe llenar todos los datos</string>
+    <string name="des">DES</string>
+    <string name="dialog_title_listapp">SELECCIONE APLICACION</string>
+    <string name="err_msg_pwmk">Debe ingresar una clave</string>
+    <string name="err_msg_pwoperario">CODIGO DE ACCESO NO COINCIDE</string>
+    <string name="err_msg_password">INGRESE CONTRASEÑA</string>
+    <string name="errlog_list">Errlog list</string>
+    <string name="exit">Exit</string>
+    <string name="feedback_advice">Feedback and advice</string>
+    <string name="find_result">¿ ANULAR TRANSACCION ?</string>
+    <string name="firm_no">FirmCode</string>
+    <string name="front_camera">Front camera</string>
+    <string name="gm">GM</string>
+    <string name="ingrese_dato">Ingrese Datos</string>
+    <string name="input_err_reinput">Enter error,please enter again</string>
+    <string name="insert_card_bootom">Insert card form POS bottom</string>
+    <string name="intentos_de_conex">INTENTOS DE CONEXION</string>
+    <string name="intranet_network_ip">Intranet IP</string>
+    <string name="intranet_network_port">Intranet Port</string>
+    <string name="ip_invalid">Invalid ip</string>
+    <string name="is_completed">Completed</string>
+    <string name="is_revocation">Anulada</string>
+    <string name="label_card">DESLICE/INSERTE TARJETA</string>
+    <string name="label_init">INICIALICE</string>
+    <string name="label_init_process">PROCESANDO INICIALIZACION</string>
+    <string name="launcher_style">Launcher Styles</string>
+    <string name="len_err">Len is error</string>
+    <string name="local_present">Local Presentation</string>
+    <string name="longitud_invalida">Longitud minima invalida</string>
+    <string name="management">Management</string>
+    <string name="merchant_id">MERCHANT ID</string>
+    <string name="merchant_name">Merchant Name</string>
+    <string name="modify_maintain_pass">Modify maintain pwd</string>
+    <string name="msg_re_print">Reimprimiendo...</string>
+    <string name="multimoneda">MULTIMONEDA</string>
+    <string name="new_pass">NewPwd</string>
+    <string name="next">Next</string>
+    <string name="no_any_data">No existe en este lote</string>
+    <string name="old_pass">OldPwd</string>
+    <string name="online_or_local">OnlineTrans or LocalPresentation</string>
+    <string name="online_trans">Online Trans</string>
+    <string name="op_fail">Operation fail</string>
+    <string name="open_app_debug_output">Log output On</string>
+    <string name="open_encrypt_track">Track encrypted On</string>
+    <string name="open_public_network">Public network On</string>
+    <string name="open_scan_beep">Beep prompt On</string>
+    <string name="open_shine_light">Light On</string>
+    <string name="original_pass_err">Original pwd is error</string>
+    <string name="others">Others</string>
+    <string name="pat_card_above">Tap card above POS top</string>
+    <string name="pay_code">PayCode:</string>
+    <string name="please_chose_key_type">Please chose key system</string>
+    <string name="please_input_amount">"INGRESE MONTO "</string>
+    <string name="please_input_auth_code">Please enter original AuthCode</string>
+    <string name="please_input_data_time">Please enter original TransDate</string>
+    <string name="please_input_master_pass">Please enter master pwd</string>
+    <string name="please_input_masterkey_data">Please enter master key data</string>
+    <string name="please_input_masterkey_index">Please enter master key index</string>
+    <string name="please_input_reference">Plesae enter original Reference</string>
+    <string name="please_input_trace_no">INGRESE NUMERO DE REFERENCIA</string>
+    <string name="preauth">Pre-auths</string>
+    <string name="pref_key">APPINFO</string>
+    <string name="print_num_choice">Print counts choice</string>
+    <string name="printing">IMPRIMIENDO..</string>
+    <string name="prompt">Prompt</string>
+    <string name="public_network_ip">"IP HOST "</string>
+    <string name="public_network_port">PUERTO HOST</string>
+    <string name="pw_operario">028510</string>
+    <string name="qr_bar_code">Put the QR or NAR code into scan box</string>
+    <string name="query">QueryPrint</string>
+    <string name="restore">Restore</string>
+    <string name="reversal_counts_choice">Reversal counts choice</string>
+    <string name="salevoid">Void</string>
+    <string name="save_success">Configuracion almacenada exitosamente</string>
+    <string name="scan">Scan</string>
+    <string name="select">Seleccione</string>
+    <string name="send_email">Send email</string>
+    <string name="send_email_hint">Please enter your valuable advice</string>
+    <string name="send_fail">Send fail and try later</string>
+    <string name="send_success">We have received your valuable advice and we will work harder</string>
+    <string name="sending_content">Sending feedback and advice</string>
+    <string name="simple_launcher">Simple</string>
+    <string name="stay_tuned">Stay tuned</string>
+    <string name="submit">Submit</string>
+    <string name="swipe_card_right">Swipe card from POS right</string>
+    <string name="terminal_id">TERMINAL ID</string>
+    <string name="timeout_resp">TIEMPO DE RESPUESTA</string>
+    <string name="tip">Propina:</string>
+    <string name="title_conf_param_ini">CONFIGURACIÓN</string>
+    <string name="title_cuotas">DIGITE CUOTAS</string>
+    <string name="title_last4">ULTIMOS 4 DIGITOS</string>
+    <string name="title_menu_tipo_moneda">TIPO DE MONEDA</string>
+    <string name="title_nii">NII</string>
+    <string name="title_pw_mk">Por favor, Ingrese Clave MasterKey</string>
+    <string name="tittle_dato_actual">ACTUAL</string>
+    <string name="tittle_dato_nuevo">NUEVO</string>
+    <string name="total_amount">TOTAL</string>
+    <string name="tpdu_no">TPDU</string>
+    <string name="trace_no">TraceNo</string>
+    <string name="trans_contactless_pboc">Whether force contactless PBOC</string>
+    <string name="trans_date">Fecha y Hora:</string>
+    <string name="trans_master_pass_para">Modify master pwd</string>
+    <string name="trans_merchant_para">Informacion Comercio</string>
+    <string name="trans_result">INFORMACIÓN</string>
+    <string name="trans_scan_para">ScanParas</string>
+    <string name="trans_sys_para">Parametros Batch</string>
+    <string name="trans_type">Transaccion:</string>
+    <string name="trans_void_card">Whether Sale-Void needs card</string>
+    <string name="trans_void_pass">Whether Sale-Void needs pwd</string>
+    <string name="tv_dato_actual">Dato actual</string>
+    <string name="unknown_err">Unknown error</string>
+    <string name="void_amount">Monto:</string>
+    <string name="void_auth_code">Codigo Autorizacion:</string>
+    <string name="void_batch_no">Lote:</string>
+    <string name="void_card_no">Tarjeta:</string>
+    <string name="void_original_trans">Transaccion: Anulación</string>
+    <string name="void_pay_code">Pay Code:</string>
+    <string name="void_time">Fecha y Hora:</string>
+    <string name="void_tip">Propina:</string>
+    <string name="void_trace_no">Referencia:</string>
+    <string name="voucher_num">Referencia:</string>
+    <string name="wait_connect_time">"TIEMPO DE ESPERA "</string>
+    <string name="wait_user_time">Waiting user to response(s)</string>
+    <item name="tag_item_history_trans" type="id" />
+
+    <string-array name="commun_timeout">
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="onoff">
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+
+    <string-array name="print_num">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="exit_time">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
+
+    <string-array name="wait_time">
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="scanner_back">
+        <item>Back camera</item>
+        <item>Front camera</item>
+    </string-array>
+
+    <string-array name="setting_items">
+        <item>Communication paras</item>
+        <item>Transaction paras</item>
+        <item>Keys paras</item>
+        <item>Change maintain pwd</item>
+        <item>Errlog list</item>
+        <item>Private paras</item>
+        <item>Feedback and Advice</item>
+    </string-array>
+
+    <string-array name="setting_items2">
+        <item>Comunicación</item>
+        <item>Parametros Iniciales</item>
+        <!--<item>Keys paras</item>-->
+        <!--<item>Private paras</item>-->
+        <item>Android System Settings</item>
+    </string-array>
+
+    <string-array name="reversal_counts">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+</resources>

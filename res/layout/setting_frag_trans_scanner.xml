@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="扫码蜂鸣提示"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/setting_trans_scanner_beep"
+                android:background="@drawable/edittext_selector"
+                android:paddingLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="350dp"
+                android:layout_height="35dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="扫码优先选用视像头位置"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/setting_trans_scanner_front_behind"
+                android:background="@drawable/edittext_selector"
+                android:paddingLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="350dp"
+                android:layout_height="35dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="扫码开启闪光"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/setting_trans_scanner_torchon"
+                android:background="@drawable/edittext_selector"
+                android:paddingLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="350dp"
+                android:layout_height="35dp" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:layout_height="wrap_content">
+            <include
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                layout="@layout/setting_frag_bottom"/>
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 简约桌面 -->
+    <string-array name="trans2">
+        <item>收款</item>
+        <item>扫码</item>
+        <item>预授权</item>
+        <item>电子现金</item>
+        <item>查询打印</item>
+        <item>管理功能</item>
+        <item>其他</item>
+    </string-array>
+
+    <string-array name="scan_">
+        <item>扫码消费</item>
+        <item>扫码撤销</item>
+        <item>扫码退货</item>
+    </string-array>
+
+    <string-array name="preauth_">
+        <item>预授权</item>
+        <item>预授权撤销</item>
+        <item>预授权完成</item>
+        <item>预授权完成撤销</item>
+    </string-array>
+
+    <string-array name="print_">
+        <item>查询交易明细</item>
+        <item>重打最后一笔</item>
+        <item>打印交易明细</item>
+    </string-array>
+
+    <string-array name="mana_">
+        <item>签到</item>
+        <item>参数公钥下载</item>
+        <item>程序设置</item>
+    </string-array>
+
+    <string-array name="others_">
+        <item>余额查询</item>
+        <item>电子现金余额查询</item>
+        <item>退货</item>
+    </string-array>
+
+    <!-- 经典桌面 -->
+    <string-array name="trans">
+        <item>消费撤销</item>
+        <item>查询</item>
+        <item>预授权交易</item>
+        <item>管理</item>
+        <item>融商店</item>
+        <item>程序设置</item>
+        <item>系统设置</item>
+    </string-array>
+
+    <string-array name="enquiry_son">
+        <item>电子现金余额查询</item>
+        <item>余额查询</item>
+    </string-array>
+
+    <string-array name="preauth_son">
+        <item>预授权</item>
+        <item>预授权撤销</item>
+        <item>预授权完成</item>
+        <item>预授权完成撤销</item>
+    </string-array>
+
+    <string-array name="manager_son">
+        <item>签到</item>
+        <item>签退</item>
+        <item>结算</item>
+        <item>参数公钥下载</item>
+        <item>历史交易查询</item>
+    </string-array>
+
+    <string-array name="setting_items">
+        <item>通讯参数设置</item>
+        <item>交易参数设置</item>
+        <item>密钥参数设置</item>
+        <item>维护密码修改</item>
+        <item>错误日志列表</item>
+        <item>私有参数设置</item>
+        <item>反馈和建议</item>
+    </string-array>
+
+    <string-array name="setting_items2">
+        <item>通讯参数设置</item>
+        <item>交易参数设置</item>
+        <item>密钥参数设置</item>
+        <item>私有参数设置</item>
+    </string-array>
+
+    <string-array name="onoff">
+        <item>开</item>
+        <item>关</item>
+    </string-array>
+
+    <string-array name="scanner_back">
+        <item>后置摄像头</item>
+        <item>前置摄像头</item>
+    </string-array>
+
+    <string-array name="print_num">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="reversal_counts">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="exit_time">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
+
+
+    <string-array name="wait_time">
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="commun_timeout">
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="privacy_online">
+        <item>联网交易</item>
+        <item>脱机演示</item>
+    </string-array>
+
+    <string-array name="privacy_debug">
+        <item>开启debug</item>
+        <item>关闭debug</item>
+    </string-array>
+</resources>
