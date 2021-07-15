@@ -51,6 +51,7 @@ import com.datafast.tools.Wifi;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
+import com.newpos.libpay.utils.ISOUtil;
 import com.pos.device.beeper.Beeper;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
@@ -120,7 +121,7 @@ public class ServerTCP extends AppCompatActivity {
 
         isInEcho = false;
 
-        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest) {
+        if ((Control.echoTest && !Control.failEchoTest && ISOUtil.stringToBoolean(tconf.getHABILITA_PLC())) || Actualizacion.goEchoTest) {
             Control.echoTest = false;
             Actualizacion.echoTest = false;
             Actualizacion.goEchoTest = false;
