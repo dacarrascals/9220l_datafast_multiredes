@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.text.InputFilter;
@@ -29,7 +28,6 @@ import android.widget.ToggleButton;
 
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
-import com.datafast.inicializacion.configuracioncomercio.TCONF;
 import com.datafast.inicializacion.trans_init.Init;
 import com.datafast.keys.PwMasterKey;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
@@ -44,8 +42,6 @@ import com.datafast.transactions.callbacks.makeInitCallback;
 import com.datafast.transactions.callbacks.waitPrintReport;
 import com.datafast.transactions.callbacks.waitSeatleReport;
 import com.datafast.transactions.common.CommonFunctionalities;
-import com.newpos.libpay.Logger;
-import com.newpos.libpay.device.printer.PrintManager;
 import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.trans.translog.TransLog;
@@ -54,8 +50,6 @@ import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
 import com.pos.device.net.eth.EthernetManager;
 import com.pos.device.printer.Printer;
-
-import org.jpos.iso.IF_CHAR;
 
 import java.util.List;
 
@@ -78,6 +72,7 @@ import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PREAUTO_PANTALLA
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PRE_VOUCHER;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_REPORTE_DETALLADO;
 import static com.datafast.menus.menus.idAcquirer;
+import static com.datafast.pinpad.cmd.PA.Actualizacion.actualizacionMenu;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.newpos.libpay.trans.Trans.idLote;
 
@@ -512,6 +507,9 @@ public class MenuAction {
                 context.startActivity(intent);
                 break;
 
+            case DefinesDATAFAST.ITEM_ACTUALIZACION_REMOTA:
+                actualizacionMenu();
+                break;
             default:
                 intent.setClass(context, menus.class);
                 intent.putExtra(DefinesDATAFAST.DATO_MENU, tipoDeMenu);

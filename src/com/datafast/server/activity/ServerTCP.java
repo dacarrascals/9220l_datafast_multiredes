@@ -92,7 +92,7 @@ public class ServerTCP extends AppCompatActivity {
     public static Dialog mDialog;
     private Wifi wifi;
     private Control control = null;
-    private Actualizacion actualizacion = null;
+    public static Actualizacion actualizacion = null;
     private ConfiguracionBasica configuracionBasica = null;
     private slide slide;
     private boolean ret;
@@ -101,7 +101,6 @@ public class ServerTCP extends AppCompatActivity {
     CounterTimer counterTimer;
 
     public static waitResponse listenerServer;
-    public static boolean isTheFirst = true;
 
     boolean isInEcho;
     public static boolean installApp = false;
@@ -295,7 +294,7 @@ public class ServerTCP extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClass(ServerTCP.this, Init.class);
-            intent.putExtra("PARCIAL", false);
+            intent.putExtra("PARCIAL", true);
             try {
                 sleep(1000);
             } catch (InterruptedException e) {

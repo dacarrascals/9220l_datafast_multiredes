@@ -221,9 +221,6 @@ public class menus extends AppCompatActivity {
                     itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_WIFI, R.drawable.ic_wifi));
                 }
                 break;
-            case DefinesDATAFAST.ITEM_ACTUALIZACION_REMOTA:
-
-                break;
         }
 
         return itemMenu;

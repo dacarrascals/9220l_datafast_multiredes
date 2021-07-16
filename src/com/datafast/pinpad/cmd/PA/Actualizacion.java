@@ -1,15 +1,18 @@
 package com.datafast.pinpad.cmd.PA;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
+import cn.desert.newpos.payui.UIUtils;
+
+import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
@@ -17,6 +20,7 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_TRAMA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.INICIO_DIA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
+import static com.datafast.server.activity.ServerTCP.actualizacion;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 import static com.newpos.libpay.trans.Trans.idLote;
 
@@ -24,10 +28,10 @@ public class Actualizacion{
 
     PA_Request pa_request;
     PA_Response pa_response;
-    Context ctx;
-    public boolean intentOK = false;
+    public static Context ctx;
+    public static boolean intentOK = false;
     public int tramaValida;
-    public String msgfail = "ERROR EN PROCESO ACTUALIZACION";
+    public static  String msgfail = "ERROR EN PROCESO ACTUALIZACION";
     public static boolean echoTest;
     public static boolean goEchoTest;
 
@@ -102,6 +106,30 @@ public class Actualizacion{
         pa_response.setMsgRsp(ISOUtil.padright(codRet + "", 20, ' '));
         pa_response.setTypeMsg(PA);
         pa_response.setHash(pa_request.getHash());
+    }
+
+    public  static void actualizacionMenu(){
+        if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
+            try{
+                Intent intentPack = ctx.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
+                intentPack.putExtra("ipConnection",TMConfig.getInstance().getIp());
+                ctx.startActivity(intentPack);
+                intentOK = true;
+                echoTest = true;
+                resumePA = true;
+            } catch(Exception e) {
+                intentOK = false;
+                echoTest = false;
+                msgfail = getStatusInfo(String.valueOf(61));
+            }
+        } else {
+            intentOK = false;
+            echoTest = false;
+            msgfail = "REALICE PROCESO DE CONTROL";
+        }
+        if (!actualizacion.intentOK) {
+            UIUtils.startResult((Activity) ctx, false,msgfail, false);
+        }
     }
 
 }
