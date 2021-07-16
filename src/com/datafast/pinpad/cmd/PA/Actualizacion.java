@@ -109,10 +109,11 @@ public class Actualizacion{
     }
 
     public  static void actualizacionMenu(){
+        String ipPort =TMConfig.getInstance().getIp()+":3700";
         if (!ToolsBatch.statusTrans(idAcquirer) && !ToolsBatch.statusTrans(idAcquirer + FILE_NAME_PREAUTO)) {
             try{
                 Intent intentPack = ctx.getPackageManager().getLaunchIntentForPackage("com.downloadmanager");
-                intentPack.putExtra("ipConnection",TMConfig.getInstance().getIp());
+                intentPack.putExtra("ipConnection",ipPort);
                 ctx.startActivity(intentPack);
                 intentOK = true;
                 echoTest = true;
