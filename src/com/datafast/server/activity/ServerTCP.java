@@ -295,7 +295,7 @@ public class ServerTCP extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClass(ServerTCP.this, Init.class);
-            intent.putExtra("PARCIAL", true);
+            intent.putExtra("PARCIAL", false);
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
