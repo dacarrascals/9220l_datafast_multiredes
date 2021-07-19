@@ -148,6 +148,7 @@ public class menus extends AppCompatActivity {
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_APPMANAGER, R.drawable.ic_appmanager));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_RED, R.drawable.ic_configuracion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_AGENTE_POLARIS, R.drawable.cloud));
+                //itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_ACTUALIZACION_REMOTA, R.drawable.ic_actualizacion_remota));
                 break;
 
             case DefinesDATAFAST.ITEM_TRANSACCIONES:
@@ -210,11 +211,12 @@ public class menus extends AppCompatActivity {
                 break;
 
             case DefinesDATAFAST.ITEM_COMUNICACION:
-                if (isInit && inyecccionLLaves){
-                    counterDownTimerMenus();
-                }
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_INICIALIZACION, R.drawable.ic_inicializacion));
                 itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_INICIAL, R.drawable.ic_configuracion));
+                if (isInit && inyecccionLLaves){
+                    counterDownTimerMenus();
+                    itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_ACTUALIZACION_REMOTA, R.drawable.ic_actualizacion_remota));
+                }
                 if (!isInit || !inyecccionLLaves){
                     itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_RED, R.drawable.ic_configuracion));
                     itemMenu.add(new menuItemsModelo(DefinesDATAFAST.ITEM_CONFIG_WIFI, R.drawable.ic_wifi));

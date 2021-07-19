@@ -68,12 +68,10 @@ public class Init extends AppCompatActivity {
     private static String nii;
     private int espera;
     private String TID;
-    public static String gHashTotal;
     public boolean isParcial = false;
     public static final int InitTotal = 1;
     public static final int InitParcial = 2;
     public int tipoInit;
-    private TransView transView;
 
     public static ProgressDialog pd;
     public static waitInitCallback callBackInit;
@@ -351,8 +349,16 @@ public class Init extends AppCompatActivity {
                         Actualizacion.goEchoTest = true;
                     }
                     resumePA = false;
+                    if (resultOk.trim().equals("El POS se encuentra actualizado")){
+                        if (Actualizacion.echoTest) {
+                            Actualizacion.goEchoTest = true;
+                        }
+                        UIUtils.startResult(Init.this, true, resultOk, true);
+                    }else {
+                        UIUtils.startResult(Init.this, false, resultOk, true);
+                    }
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, resultOk, Toast.LENGTH_SHORT);
-                    UIUtils.startResult(Init.this,false,resultOk,true);
+                    //UIUtils.startResult(Init.this,false,resultOk,true);
                     //finish();
                     return;
                 }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
+import android.media.Image;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,6 +52,7 @@ import com.datafast.tools.Wifi;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
+import com.newpos.libpay.utils.ISOUtil;
 import com.pos.device.beeper.Beeper;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
@@ -91,7 +93,7 @@ public class ServerTCP extends AppCompatActivity {
     public static Dialog mDialog;
     private Wifi wifi;
     private Control control = null;
-    private Actualizacion actualizacion = null;
+    public static Actualizacion actualizacion = null;
     private ConfiguracionBasica configuracionBasica = null;
     private slide slide;
     private boolean ret;
@@ -100,7 +102,6 @@ public class ServerTCP extends AppCompatActivity {
     CounterTimer counterTimer;
 
     public static waitResponse listenerServer;
-    public static boolean isTheFirst = true;
 
     boolean isInEcho;
     public static boolean installApp = false;
@@ -120,7 +121,7 @@ public class ServerTCP extends AppCompatActivity {
 
         isInEcho = false;
 
-        if ((Control.echoTest && !Control.failEchoTest) || Actualizacion.goEchoTest) {
+        if ((Control.echoTest && !Control.failEchoTest && ISOUtil.stringToBoolean(tconf.getHABILITA_PLC())) || Actualizacion.goEchoTest) {
             Control.echoTest = false;
             Actualizacion.echoTest = false;
             Actualizacion.goEchoTest = false;
@@ -382,7 +383,16 @@ public class ServerTCP extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 removeOptionsMenu();
-                mDialog = alertDialogConfirm();
+                mDialog = alertDialogConfirm(true);
+                counterTimer();
+            }
+        });
+        LinearLayout actualizacionremota = findViewById(R.id.actualizacionremota);
+        actualizacionremota.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeOptionsMenu();
+                mDialog = alertDialogConfirm(false);
                 counterTimer();
             }
         });
@@ -401,7 +411,7 @@ public class ServerTCP extends AppCompatActivity {
         menu.removeView(options);
     }
 
-    private Dialog alertDialogConfirm(){
+    private Dialog alertDialogConfirm(boolean isIni){
 
         final Dialog dialog= new Dialog(this);
         dialog.setContentView(R.layout.alertdialog_red_confirm);
@@ -411,6 +421,8 @@ public class ServerTCP extends AppCompatActivity {
 
         Button btCancel= dialog.findViewById(R.id.btn_no);
         Button btConfirm= dialog.findViewById(R.id.btn_si);
+        TextView textConfirm = dialog.findViewById(R.id.textconfirm);
+        ImageView imgconfirm = dialog.findViewById(R.id.imgconfirm);
 
         btCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -419,14 +431,27 @@ public class ServerTCP extends AppCompatActivity {
             }
         });
 
-        btConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                MenuAction menuAction = new MenuAction(ServerTCP.this,DefinesDATAFAST.ITEM_INICIALIZACION);
-                menuAction.SelectAction();
-            }
-        });
+        if(isIni){
+            btConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    MenuAction menuAction = new MenuAction(ServerTCP.this,DefinesDATAFAST.ITEM_INICIALIZACION);
+                    menuAction.SelectAction();
+                }
+            });
+        }else{
+            imgconfirm.setImageDrawable(getResources().getDrawable(R.drawable.ic_actualizacionremota_confirm));
+            textConfirm.setText("¿Desea realizar una \nactualización remota?");
+            btConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    Actualizacion.actualizacionMenu();
+                }
+            });
+        }
+
         dialog.show();
         return dialog;
     }
