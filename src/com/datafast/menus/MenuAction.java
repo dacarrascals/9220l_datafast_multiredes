@@ -279,9 +279,7 @@ public class MenuAction {
                     intent.putExtra("PARCIAL", false);
                     context.startActivity(intent);
                 } else {
-                    UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.MSG_SETTLE, Toast.LENGTH_SHORT);
-                    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-                    toneG.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
+                    UIUtils.startResult((Activity) context, false,DefinesDATAFAST.MSG_SETTLE, false);
                 }
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_INICIAL:
