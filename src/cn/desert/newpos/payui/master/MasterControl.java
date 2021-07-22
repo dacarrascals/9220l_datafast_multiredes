@@ -467,6 +467,8 @@ public class MasterControl extends AppCompatActivity implements TransView, View.
                 close.setOnClickListener(MasterControl.this);
 
                 etNumToken.requestFocus();
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.showSoftInput(etNumToken, InputMethodManager.SHOW_IMPLICIT);
 
                 etNumToken.setOnKeyListener(new View.OnKeyListener() {
                     @Override
