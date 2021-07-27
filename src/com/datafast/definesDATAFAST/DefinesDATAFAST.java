@@ -19,8 +19,8 @@ public final class DefinesDATAFAST {
     public static final String ITEM_PAGOS_ELECTRONICOS = "PAGOS CON CODIGO";
     public static final String ITEM_PAGOS_CON_CODIGO = "PAGOS CON\nCODIGO";
     public static final String ITEM_TIPO_COMUNICACION = "TIPO DE COMUNICACION";
-    public static final String ITEM_INICIALIZACION = "INICIALIZACION \n POLARIS";
-    public static final String ITEM_CONFIG_INICIAL = "CONFIGURACION \n POLARIS";
+    public static final String ITEM_INICIALIZACION = "INICIALIZACIÓN \n POLARIS";
+    public static final String ITEM_CONFIG_INICIAL = "CONFIGURACIÓN \n POLARIS";
     public static final String GERCARD_MSG_SWIPE_ICC_CTL = "DESLICE/INSERTE O\nACERQUE  LA TARJETA";
     public static final String GERCARD_MSG_FALLBACK = "PASE LA TARJETA";
     public static final String GERCARD_MSG_ICC_CTL = "INSERTE O ACERQUE   TARJETA";
@@ -49,7 +49,7 @@ public final class DefinesDATAFAST {
     public static final String ITEM_REIMPRESION_PRE_AUT = "REIMPRESION";
     public static final String MSG_BATTERY = "BATERIA BAJA \n CONECTE CARGADOR";
     public static final String MSG_PAPER = "INSERTE PAPEL \n PARA CONTINUAR";
-    public static final String LOTE_VACIO = "LOTE VACIO";
+    public static final String LOTE_VACIO = "LOTE VACÍO";
     public static final String LOTE_VACIO_PREAUTO = "SIN PREAUTORIZACIONES";
     public static final String MSG_SETTLE = "REALICE PROCESO DE CONTROL";
     public static final String ERROR_AGENTE = "AGENTE POLARIS NO INSTALADO";
@@ -69,20 +69,24 @@ public final class DefinesDATAFAST {
     public static final String MSG_INIT = "DEBE INICIALIZAR PINPAD!";
     public static final String ITEM_MASTER_KEY = "INYECTAR MASTER KEY";
     public static final String ITEM_POLARIS = "POLARIS";
-    public static final String ITEM_CONEXION = "DATOS CONEXION";
+    public static final String ITEM_CONEXION = "DATOS CONEXIÓN";
+    public static final String ITEM_DE_CONEXION = "DATOS DE CONEXIÓN";
     public static final String ITEM_DATOS_COMERCIO = "DATOS COMERCIO";
     public static final String ITEM_SETTINGS= "CONFIGURACION RED";
     public static final String FILE_NAME_REVERSE = "_reverse_";
     public static final String NN = "NN";
-    public static final String ITEM_CONFIG_WIFI = "CONFIGURACION WIFI";
+    public static final String ITEM_CONFIG_WIFI = "CONFIGURACIÓN WIFI";
     public static final String ITEM_APPMANAGER = "APPMANAGER";
-    public static final String ITEM_CONFIG_RED = "CONFIGURACION DE RED";
+    public static final String ITEM_CONFIG_RED = "CONFIGURACIÓN DE RED";
     public static final String ITEM_CONFIG_COMERCIO = "DATOS TRANSACCIONALES";
     public static final String ITEM_NETWORK_DISCONNET = "EL PINPAD NO ESTÁ CONECTADO A NINGUNA RED";
     public static final String ITEM_SIN_DATOS= "DEBE LLENAR TODOS LOS DATOS";
     public static final String ITEM_AGENTE_POLARIS = "AGENTE POLARIS";
     public static final String ITEM_RESUMEN_TRANS = "RESUMEN";
     public static final String ITEM_ACTUALIZACION_REMOTA = "ACTUALIZACIÓN REMOTA";
+    public static final String ITEM_INICIALIZACION_FALLIDA = "ERROR, INICIALIZACIÓN FALLIDA";
+    public static final String ITEM_INICIALIZACION_EXITOSA = "INICIALIZACIÓN EXITOSA";
+    public static final String ITEM_INICIALIZACION_FALL = "INICIALIZACIÓN FALLIDA";
 
 
     public static final String NAME_FOLDER_CTL_FILES = "CTL_Files";

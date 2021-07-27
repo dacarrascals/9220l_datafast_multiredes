@@ -46,7 +46,7 @@
     <string name="des">DES</string>
     <string name="dialog_title_listapp">SELECCIONE APLICACION</string>
     <string name="err_msg_pwmk">Debe ingresar una clave</string>
-    <string name="err_msg_pwoperario">CODIGO DE ACCESO NO COINCIDE</string>
+    <string name="err_msg_pwoperario">CÓDIGO DE ACCESO NO COINCIDE</string>
     <string name="err_msg_password">INGRESE CONTRASEÑA</string>
     <string name="errlog_list">Errlog list</string>
     <string name="exit">Exit</string>
@@ -66,7 +66,7 @@
     <string name="is_revocation">Anulada</string>
     <string name="label_card">DESLICE/INSERTE TARJETA</string>
     <string name="label_init">INICIALICE</string>
-    <string name="label_init_process">PROCESANDO INICIALIZACION</string>
+    <string name="label_init_process">PROCESANDO INICIALIZACIÓN</string>
     <string name="launcher_style">Launcher Styles</string>
     <string name="len_err">Len is error</string>
     <string name="local_present">Local Presentation</string>

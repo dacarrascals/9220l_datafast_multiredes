@@ -147,7 +147,7 @@
     <string name="label_init">INICIALICE</string>
     <string name="label_card">DESLICE/INSERTE TARJETA</string>
     <string name="label_init_stis">INICIALIZANDO</string>
-    <string name="label_init_process">PROCESANDO INICIALIZACION</string>
+    <string name="label_init_process">PROCESANDO INICIALIZACIÓN</string>
 
     <string name="title_cuotas">DIGITE CUOTAS</string>
     <string name="title_nii">NII</string>

@@ -201,9 +201,9 @@ public class MenuAction {
                 break;
             case DefinesDATAFAST.ITEM_POLARIS:
                 if (isInit)
-                    maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_POLARIS, 6);
+                    maintainPwd("CLAVE TÉCNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_POLARIS, 6);
                 else
-                    maintainPwd("CLAVE TECNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_POLARIS, 6);
+                    maintainPwd("CLAVE TÉCNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_POLARIS, 6);
 
                 break;
             case DefinesDATAFAST.ITEM_TEST:
@@ -258,16 +258,16 @@ public class MenuAction {
                 break;
             case DefinesDATAFAST.ITEM_BORRAR_LOTE:
                 if (isInit)
-                    maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_BORRAR_LOTE, 6);
+                    maintainPwd("CLAVE TÉCNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_BORRAR_LOTE, 6);
                 else
-                    maintainPwd("CLAVE TECNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_BORRAR_LOTE, 6);
+                    maintainPwd("CLAVE TÉCNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_BORRAR_LOTE, 6);
 
                 break;
             case DefinesDATAFAST.ITEM_BORRAR_REVERSO:
                 if (isInit)
-                    maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_BORRAR_REVERSO, 6);
+                    maintainPwd("CLAVE TÉCNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_BORRAR_REVERSO, 6);
                 else
-                    maintainPwd("CLAVE TECNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_BORRAR_REVERSO, 6);
+                    maintainPwd("CLAVE TÉCNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_BORRAR_REVERSO, 6);
                 break;
             case DefinesDATAFAST.ITEM_INICIALIZACION:
                 idAcquirer = idLote;
@@ -344,9 +344,9 @@ public class MenuAction {
 
             case DefinesDATAFAST.ITEM_MASTER_KEY:
                 if (isInit)
-                    maintainPwd("CLAVE TECNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_MASTER_KEY, 6);
+                    maintainPwd("CLAVE TÉCNICO", tconf.getCLAVE_TECNICO(), DefinesDATAFAST.ITEM_MASTER_KEY, 6);
                 else
-                    maintainPwd("CLAVE TECNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_MASTER_KEY, 6);
+                    maintainPwd("CLAVE TÉCNICO", TERMINAL_PWD, DefinesDATAFAST.ITEM_MASTER_KEY, 6);
                 break;
             case DefinesDATAFAST.ITEM_DATOS_COMERCIO:
                 String mid = "000000000000000";
@@ -356,7 +356,7 @@ public class MenuAction {
                     mid = TMConfig.getInstance().getMerchID();
                 }
 
-                UIUtils.dialogInformativo(context,"INFORMACION DEL COMERCIO",
+                UIUtils.dialogInformativo(context,"INFORMACIÓN DEL COMERCIO",
                         "Comercio: " + mid + "\n" +
                         "Terminal: " + TMConfig.getInstance().getTermID());
                 break;
@@ -371,17 +371,17 @@ public class MenuAction {
                         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
                         String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
                         datos = UtilNetwork.getWifi(context, false);
-                        ServerTCP.mDialog = UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                        ServerTCP.mDialog = UIUtils.dialogInformativo(context,DefinesDATAFAST.ITEM_DE_CONEXION,
                                 "IP: " + ipAddress + "\n" +
-                                        "MASCARA: " + datos[0] + "\n" +
+                                        "MÁSCARA: " + datos[0] + "\n" +
                                         "GATEWAY: " + datos[3] + "\n" +
                                         "RED: " + datos[4]);
                     } else if (EthernetManager.getInstance().isEtherentEnabled()){
                         try {
                             datos = UtilNetwork.getWifi(context, true);
-                            ServerTCP.mDialog =UIUtils.dialogInformativo(context,"DATOS DE CONEXION",
+                            ServerTCP.mDialog =UIUtils.dialogInformativo(context,DefinesDATAFAST.ITEM_DE_CONEXION,
                                     "IP: " + datos[0] + "\n" +
-                                            "MASCARA: " + datos[1] + "\n" +
+                                            "MÁSCARA: " + datos[1] + "\n" +
                                             "GATEWAY: " + datos[3]);
                         } catch (Exception e) {
                             e.printStackTrace();

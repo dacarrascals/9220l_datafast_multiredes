@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.newpos.pay.R;
+import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.trans_init.Init;
 import com.google.common.base.Strings;
 import com.newpos.libpay.Logger;
@@ -182,7 +183,7 @@ public class SendRcvd extends AsyncTask<Void, Integer, byte[]> {
         pd.setCancelable(false);
         pd.setIcon(R.drawable.ic_polariscloud);
         pd.setTitle(Html.fromHtml("<h4> Polaris Cloud </h4>"));
-        pd.setMessage("Descargando Inicializacion por favor espere...");
+        pd.setMessage("Descargando Inicialización por favor espere...");
         pd.setIndeterminate(false);
         pd.setMax(100);
         pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -436,7 +437,7 @@ public class SendRcvd extends AsyncTask<Void, Integer, byte[]> {
                 break;
             case HOST_OFF:
                 //Toast.makeText(Tools.getCurrentContext(), "ERROR, NO HAY CONEXIÓN CON EL SERVIDOR", Toast.LENGTH_LONG).show();
-                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "ERROR, INICIALIZACION FALLIDA", Toast.LENGTH_LONG);
+                UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, DefinesDATAFAST.ITEM_INICIALIZACION_FALLIDA, Toast.LENGTH_LONG);
                 break;
         }
     }

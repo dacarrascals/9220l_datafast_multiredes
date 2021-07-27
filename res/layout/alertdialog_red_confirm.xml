@@ -58,6 +58,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:enabled="false"
+                        android:gravity="center"
                         android:text="¿Desea realizar inicialización?"
                         android:textColor="#ff333333"
                         android:textSize="16sp"

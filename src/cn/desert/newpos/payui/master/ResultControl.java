@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.newpos.pay.R;
+import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.Logger;
@@ -191,7 +192,7 @@ public class ResultControl extends BaseActivity {
                     });
 
                     if (checkCard()) {
-                        if (info.equals("INICIALIZACION EXITOSA") || info.equals("INICIALIZACION FALLIDA")
+                        if (info.equals(DefinesDATAFAST.ITEM_INICIALIZACION_EXITOSA) || info.equals(DefinesDATAFAST.ITEM_INICIALIZACION_FALL)
                                 || info.equals("ECHO TEST OK") || info.equals("NO HUBO RESPUESTA")) {
                             startActivity(new Intent(ResultControl.this, ServerTCP.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
