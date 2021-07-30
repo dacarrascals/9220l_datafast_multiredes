@@ -18,6 +18,9 @@ import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 
+import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
+import static com.android.newpos.pay.StartAppDATAFAST.lastInputMode;
+import static com.android.newpos.pay.StartAppDATAFAST.oneTap;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -432,13 +435,25 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
                 } else {
                     if (inputModeFail == ENTRY_MODE_NFC) {
-                        pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvL2Process.getHolderName()), 40));
-                        pp_response.setARQC(ISOUtil.spacepadRight(emvL2Process.GetARQC(), 16));
-                        pp_response.setTVR(ISOUtil.spacepadRight(emvL2Process.GetTVR(), 10));
-                        pp_response.setTSI(ISOUtil.spacepadRight(emvL2Process.GetTSI(), 4));
-                        pp_response.setAppEMV(ISOUtil.spacepadRight(emvL2Process.GetLable(), 20));
-                        pp_response.setAIDEMV(ISOUtil.spacepadRight(emvL2Process.GetAid(), 20));
-                        pp_response.setCriptEMV(ISOUtil.spacepad(emvL2Process.GetCID(), 22));
+                        if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC){
+                            pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(oneTap.getHolderNameCTL()), 40));
+                            pp_response.setARQC(ISOUtil.spacepadRight(oneTap.getARQCCTL(),16));
+                            pp_response.setTVR(ISOUtil.spacepadRight(oneTap.getTVRCTL(),10));
+                            pp_response.setTSI(ISOUtil.spacepadRight(oneTap.getTSICTL(),4));
+                            pp_response.setAppEMV(ISOUtil.spacepadRight(oneTap.getLableCTL(), 20));
+                            pp_response.setAIDEMV(ISOUtil.spacepadRight(oneTap.getAIDCTL(), 20));
+                            pp_response.setCriptEMV(ISOUtil.spacepadRight(oneTap.getCIDCTL(), 22));
+                            oneTap=null;
+                        }else{
+                            pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvL2Process.getHolderName()), 40));
+                            pp_response.setARQC(ISOUtil.spacepadRight(emvL2Process.GetARQC(), 16));
+                            pp_response.setTVR(ISOUtil.spacepadRight(emvL2Process.GetTVR(), 10));
+                            pp_response.setTSI(ISOUtil.spacepadRight(emvL2Process.GetTSI(), 4));
+                            pp_response.setAppEMV(ISOUtil.spacepadRight(emvL2Process.GetLable(), 20));
+                            pp_response.setAIDEMV(ISOUtil.spacepadRight(emvL2Process.GetAid(), 20));
+                            pp_response.setCriptEMV(ISOUtil.spacepad(emvL2Process.GetCID(), 22));
+                        }
+
                     } else if (inputModeFail == ENTRY_MODE_ICC) {
                         pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCard(), 40));
                         pp_response.setARQC(ISOUtil.spacepadRight(ARQCFail, 16));

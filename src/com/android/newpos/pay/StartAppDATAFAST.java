@@ -36,6 +36,7 @@ import com.datafast.tools.PaperStatus;
 import com.datafast.tools_card.GetCard;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.PaySdk;
+import com.newpos.libpay.device.contactless.SaveCtl;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.PAYUtils;
 
@@ -74,6 +75,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
     public static boolean resumePA = false;
     public static Server server;
     public static ToneGenerator toneG=null;
+    public static SaveCtl oneTap = null;
 
     public static ConcurrentHashMap<Integer, TramaProcesar>  mymap = new ConcurrentHashMap<Integer,  TramaProcesar>();
     public static Contador contador = new Contador();
