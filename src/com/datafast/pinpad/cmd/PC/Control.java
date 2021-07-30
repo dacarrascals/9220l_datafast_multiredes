@@ -2,6 +2,7 @@ package com.datafast.pinpad.cmd.PC;
 
 import android.content.Context;
 
+import com.datafast.server.activity.ServerTCP;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.transactions.common.CommonFunctionalities;
@@ -10,6 +11,7 @@ import com.newpos.libpay.trans.translog.TransLog;
 import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
+import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
@@ -81,6 +83,9 @@ public class Control {
                 ret = 1;
                 echoTest = true;
                 failEchoTest = false;
+                if (!ISOUtil.stringToBoolean(tconf.getHABILITA_PLC())) {
+                    ServerTCP.installApp = true;
+                }
 
             } else {
                 processFail();

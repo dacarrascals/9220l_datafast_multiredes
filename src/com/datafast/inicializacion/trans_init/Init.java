@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.newpos.pay.R;
+import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.inicializacion.configuracioncomercio.ChequeoIPs;
 import com.datafast.inicializacion.tools.PolarisUtil;
 import com.datafast.inicializacion.trans_init.trans.ISO;
@@ -197,7 +198,7 @@ public class Init extends AppCompatActivity {
         tipoInit = isParcial ? InitParcial : InitTotal;
 
         tv_title = (TextView) findViewById(R.id.textView_titleToolbar);
-        tv_title.setText(Html.fromHtml("INICIALIZACION POLARIS"));
+        tv_title.setText(Html.fromHtml("INICIALIZACIÓN POLARIS"));
         callBackSeatle = null;
         init();
         download(null, tipoInit);
@@ -339,7 +340,7 @@ public class Init extends AppCompatActivity {
                     }
                     Logger.information("Init.java -> Inicialización Fallida RspHost");
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, "ERROR, INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
-                    UIUtils.startResult(Init.this,false,"ERROR, INICIALIZACION FALLIDA",true);
+                    UIUtils.startResult(Init.this,false, DefinesDATAFAST.ITEM_INICIALIZACION_FALLIDA,true);
                     //finish();
                     return;
                 }
@@ -390,7 +391,7 @@ public class Init extends AppCompatActivity {
                                         saveInyeccionLlaves(Init.this, false);
                                         Logger.information("Init.java -> Inyección de llaves Fallida");
                                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
-                                        UIUtils.startResult(Init.this,false,"INYECCION DE LLAVE FALLIDA",true);
+                                        UIUtils.startResult(Init.this,false,"INYECCIÓN DE LLAVE FALLIDA",true);
                                         //finish();
                                     }else {
 
@@ -440,7 +441,7 @@ public class Init extends AppCompatActivity {
 
                                                 Logger.information("Init.java -> Inicialización exitosa");
                                                 //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION EXITOSA", Toast.LENGTH_SHORT);
-                                                UIUtils.startResult(Init.this, true, "INICIALIZACION EXITOSA", true);
+                                                UIUtils.startResult(Init.this, true, DefinesDATAFAST.ITEM_INICIALIZACION_EXITOSA, true);
                                                 //finish();
                                                 //startActivity( new Intent(Init.this, ServerTCP.class) );
                                             }
@@ -448,7 +449,7 @@ public class Init extends AppCompatActivity {
                                             resumePA = false;
                                             Logger.information("Init.java -> Inicialización fallida");
                                             //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
-                                            UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
+                                            UIUtils.startResult(Init.this,false,DefinesDATAFAST.ITEM_INICIALIZACION_FALL,true);
                                             //finish();
                                         }
                                     }
@@ -465,7 +466,7 @@ public class Init extends AppCompatActivity {
                         resumePA = false;
                         Logger.information("Init.java -> Inicialización fallida processFile -> False");
                         //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
-                        UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
+                        UIUtils.startResult(Init.this,false,DefinesDATAFAST.ITEM_INICIALIZACION_FALL,true);
 
                         //finish();
                     }
@@ -546,7 +547,7 @@ public class Init extends AppCompatActivity {
                 } catch (Exception e) {
                     Logger.information("Init.java -> Inicialización fallida, error en ProcessFile");
                     //UIUtils.toast(Init.this, R.drawable.ic_launcher, "INICIALIZACION FALLIDA", Toast.LENGTH_SHORT);
-                    UIUtils.startResult(Init.this,false,"INICIALIZACION FALLIDA",true);
+                    UIUtils.startResult(Init.this,false,DefinesDATAFAST.ITEM_INICIALIZACION_FALL,true);
                     //Tools.toast("Inicializacion Fallo");
                     e.printStackTrace();
                     new File(DEFAULT_DOWNLOAD_PATH +  File.separator+ gFileName).delete();

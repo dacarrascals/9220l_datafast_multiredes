@@ -90,7 +90,7 @@ public class NetworkHelper {
 				sf.setClientAuthNeeded(false);
 				socket = sf.createSocket(ip, port);
 
-				socket.setSoTimeout(timeoutCon);
+				socket.setSoTimeout(timeoutRsp);
 
 				is = socket.getInputStream();
 				os = socket.getOutputStream();

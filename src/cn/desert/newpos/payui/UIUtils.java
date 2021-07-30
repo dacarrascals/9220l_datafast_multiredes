@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.newpos.pay.R;
+import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.server.activity.ServerTCP;
 import com.datafast.tools.ConfigRed;
 import com.newpos.libpay.Logger;
@@ -235,10 +236,10 @@ public class UIUtils {
                 }
             }, 30000);
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_resumentrans));
-        }else if(titulo.equals("DATOS DE CONEXION")){
+        }else if(titulo.equals(DefinesDATAFAST.ITEM_DE_CONEXION)){
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_comunication_white));
 
-        }else if(titulo.equals("INFORMACION DEL COMERCIO")){
+        }else if(titulo.equals("INFORMACIÓN DEL COMERCIO")){
             icono.setImageDrawable(icono.getResources().getDrawable(R.drawable.ic_datoscomercio));
         }
         TextView tit = dialog.findViewById(R.id.tvTitulo);
