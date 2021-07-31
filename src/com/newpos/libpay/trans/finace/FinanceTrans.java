@@ -1414,9 +1414,6 @@ public class FinanceTrans extends Trans {
 
         switch (Server.cmd) {
             case LT:
-                if ( Server.cmd.equals(LT) && inputMode == ENTRY_MODE_NFC){
-                    saveCtlProcess();
-                }
                 responseLT();
                 return retVal;
 
@@ -1691,7 +1688,7 @@ public class FinanceTrans extends Trans {
         return retVal;
     }
 
-    private void saveCtlProcess() {
+    protected void saveCtlProcess() {
         Logger.information("FinanceTrans.java -> Se ingresa al saveCtlProcess()");
         oneTap=new SaveCtl();
         oneTap.setExpDateCTL(emvl2.getExpdate());

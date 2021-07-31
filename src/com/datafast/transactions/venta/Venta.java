@@ -175,6 +175,9 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
                             return true;
                         }else {
+                            if ( Server.cmd.equals(LT) && inputMode == ENTRY_MODE_NFC){
+                                saveCtlProcess();
+                            }
                             transUI.trannSuccess(timeout, Tcode.Status.read_card_ok);
                            /* UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);*/
                             return true;
