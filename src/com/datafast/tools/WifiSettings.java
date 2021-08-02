@@ -185,6 +185,7 @@ public class WifiSettings extends AppCompatActivity {
 
         } else {
             if ( wifiManager.isWifiEnabled() ){
+                wifiManager.disconnect();
                 wifiManager.setWifiEnabled(false);
                 timer.cancel();
             }
@@ -529,6 +530,7 @@ public class WifiSettings extends AppCompatActivity {
         }
         wifiManager.disableNetwork(netId);
         wifiManager.removeNetwork(netId);
+        wifiManager.saveConfiguration();
         wifiManager.reassociate();
         mostrarLista();
     }
