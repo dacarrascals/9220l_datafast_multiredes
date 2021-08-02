@@ -286,6 +286,17 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 2);
             offset += 2;
             this.typeTrans = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+            switch (typeTrans){
+                case "01":
+                case "02":
+                case "03":
+                case "04":
+                case "06":
+                case "07":
+                    break;
+                default:
+                    countValid++;
+            }
 
             //idCodNetAcq
             tmp = new byte[1];
@@ -404,7 +415,7 @@ public class PP_Request {
             offset += 15;
             this.MID = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
             if (!MID.isEmpty()){
-                if (MID.length()  > 15 || MID.length()  < 15 ){
+                if (MID.length()  > 15 || MID.length()  < 10 ){
                     countValid ++;
                 }
             }else {
