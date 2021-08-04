@@ -3357,7 +3357,26 @@ public class FinanceTrans extends Trans {
 
             case PP:
 
-                if (pp_request.getAmountTotal()!=null) {
+                if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals("") ) {
+
+                    if(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
+                        long montoMinimo;
+                        montoMinimo=Long.parseLong(tconf.getVALOR_MONTO_FIJO()) +Long.parseLong(tconf.getMONTO_MINIMO_TRANSACCION());
+                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=montoMinimo)){
+                            retVal = Tcode.T_user_cancel_input;
+                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                            return false;
+                        }
+
+                    } else {
+                        System.out.println("NIKOL"+pp_request.getAmountTotal()+"  "+tconf.getMONTO_MINIMO_TRANSACCION());
+
+                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
+                            retVal = Tcode.T_user_cancel_input;
+                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                            return false;
+                        }
+                    }
                     if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals("")&& GetAmount.getBase0())
                         AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
 
@@ -3794,7 +3813,7 @@ public class FinanceTrans extends Trans {
         }
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
-            transUI.showError(timeout, Tcode.T_msg_err_gas,processPPFail);
+            transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
         }
 
@@ -3876,7 +3895,7 @@ public class FinanceTrans extends Trans {
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
             //retVal = Tcode.T_msg_err_gas;
-            transUI.showError(timeout, Tcode.T_msg_err_gas,processPPFail);
+            transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
         }
 
@@ -3950,7 +3969,7 @@ public class FinanceTrans extends Trans {
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
             //retVal = Tcode.T_msg_err_gas;
-            transUI.showError(timeout, Tcode.T_msg_err_gas,processPPFail);
+            transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
         }
 

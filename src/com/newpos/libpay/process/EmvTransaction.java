@@ -281,7 +281,7 @@ public class EmvTransaction {
         if (!CommonFunctionalities.permitirTransGasolinera(getCardNo())){
             if (!typeTrans.equals(Trans.Type.ANULACION)) {
                 ret = Tcode.T_msg_err_gas;
-                transUI.showError(timeout, Tcode.T_msg_err_gas);
+                transUI.showError(timeout, Tcode.T_trans_done);
                 return ret;
             }
         }
