@@ -280,7 +280,7 @@ public class EmvTransaction {
 
         if (!CommonFunctionalities.permitirTransGasolinera(getCardNo())){
             if (!typeTrans.equals(Trans.Type.ANULACION)) {
-                ret = Tcode.T_msg_err_gas;
+                ret = Tcode.T_trans_done;
                 transUI.showError(timeout, Tcode.T_trans_done);
                 return ret;
             }

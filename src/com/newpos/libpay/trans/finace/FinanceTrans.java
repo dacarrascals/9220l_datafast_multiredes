@@ -3369,11 +3369,9 @@ public class FinanceTrans extends Trans {
                         }
 
                     } else {
-                        System.out.println("NIKOL"+pp_request.getAmountTotal()+"  "+tconf.getMONTO_MINIMO_TRANSACCION());
-
                         if(!(Integer.parseInt(pp_request.getAmountTotal())>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
                             retVal = Tcode.T_user_cancel_input;
-                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                              transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
                             return false;
                         }
                     }
@@ -3894,7 +3892,7 @@ public class FinanceTrans extends Trans {
         Logger.error("PAN =" + Pan);
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
-            //retVal = Tcode.T_msg_err_gas;
+           //retVal = Tcode.T_trans_done;
             transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
         }
