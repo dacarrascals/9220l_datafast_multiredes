@@ -1974,9 +1974,7 @@ public class FinanceTrans extends Trans {
             LogData.setAmmountCashOver(CashOverAmount);
         }
 
-        if (Amount != 0) {
-            LogData.setAmount(Amount);
-        }
+        LogData.setAmount(Amount);
 
         if (ExtAmount != null) {
             LogData.setField54(ExtAmount);

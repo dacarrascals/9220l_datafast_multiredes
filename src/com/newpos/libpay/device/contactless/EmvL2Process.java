@@ -267,7 +267,7 @@ public class EmvL2Process {
     }
     public int start(){
         param.amount = Cl2amount;
-        if (param.amount<=0) {
+        if (param.amount<0) {
             emvL2.EmvL2TransactionClose();
             return -1;
         }
