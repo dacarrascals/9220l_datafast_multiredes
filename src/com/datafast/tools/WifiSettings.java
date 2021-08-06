@@ -19,6 +19,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.HideReturnsTransformationMethod;
@@ -51,13 +52,14 @@ import java.util.Set;
 import cn.desert.newpos.payui.UIUtils;
 
 public class WifiSettings extends AppCompatActivity {
-    private LabeledSwitch switchWifi;
+    private SwitchCompat switchWifi;
     private WifiManager wifiManager;
     private WebView webView;
     private ListView listaWifi;
     private TextView txtToolbarText, txtBuscandoRedes;
     private RelativeLayout relativeLayout;
     private int count;
+    private boolean switchIsOn;
     Context context = this;
     CountDownTimer timer;
 
@@ -103,7 +105,7 @@ public class WifiSettings extends AppCompatActivity {
 
     private void showWifiSettings(){
         EthernetManager.getInstance().setEtherentEnabled(false);
-        switchWifi = (LabeledSwitch) findViewById(R.id.swt);
+        switchWifi = (SwitchCompat) findViewById(R.id.swt);
         webView = (WebView) findViewById(R.id.webViewProgress);
         listaWifi = (ListView) findViewById(R.id.listWifi);
         txtToolbarText = (TextView) findViewById(R.id.txtToolbarText);
@@ -118,13 +120,16 @@ public class WifiSettings extends AppCompatActivity {
             wifiManager.setWifiEnabled(true);
         }
         txtToolbarText.setText("Apagar WiFi");
-        switchWifi.setOn(true);
+        switchWifi.setChecked(true);
+        switchWifi.setEnabled(false);
+        setSwitchIsOn(true);
         obtenerLista();
 
         switchWifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                estadoWifi(switchWifi.isOn());
+                switchWifi.setEnabled(false);
+                estadoWifi(isSwitchIsOn());
             }
         });
 
@@ -167,9 +172,10 @@ public class WifiSettings extends AppCompatActivity {
             }
             public void onFinish() {
                 wifiManager.reassociate();
-                mostrarLista();
                 timer.cancel();
                 timer.start();
+                mostrarLista();
+
             }
 
         };
@@ -177,6 +183,8 @@ public class WifiSettings extends AppCompatActivity {
 
     private void estadoWifi(boolean estado) {
         if (!estado){
+            switchWifi.setChecked(true);
+            setSwitchIsOn(true);
             if ( !wifiManager.isWifiEnabled() ) {
                 wifiManager.setWifiEnabled(true);
             }
@@ -189,12 +197,15 @@ public class WifiSettings extends AppCompatActivity {
                 wifiManager.setWifiEnabled(false);
                 timer.cancel();
             }
+            switchWifi.setChecked(false);
+            setSwitchIsOn(false);
             webView.setVisibility(View.GONE);
             listaWifi.setVisibility(View.GONE);
             relativeLayout.setVisibility(View.GONE);
             txtToolbarText.setText("Encender WiFi");
             txtBuscandoRedes.setVisibility(View.GONE);
             handler.removeCallbacks(r);
+            handler.postDelayed(r2, 1200);
         }
     }
 
@@ -202,11 +213,16 @@ public class WifiSettings extends AppCompatActivity {
     Runnable r = new Runnable() {
         @Override
         public void run() {
-            switchWifi.setEnabled(true);
             txtBuscandoRedes.setVisibility(View.GONE);
             webView.setVisibility(View.GONE);
             timer.start();
             mostrarLista();
+        }
+    };
+    Runnable r2 = new Runnable() {
+        @Override
+        public void run() {
+            switchWifi.setEnabled(true);
         }
     };
 
@@ -233,6 +249,7 @@ public class WifiSettings extends AppCompatActivity {
             if ( redFormateada.get(0).equals("NULL") ){
                 redesError();
             } else {
+                switchWifi.setEnabled(true);
                 listaWifi.setVisibility(View.VISIBLE);
                 relativeLayout.setVisibility(View.VISIBLE);
 
@@ -353,10 +370,10 @@ public class WifiSettings extends AppCompatActivity {
 
     private void redesError() {
         UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "No hay redes disponibles", Toast.LENGTH_SHORT);
-        switchWifi.setOn(false);
-        estadoWifi(true);
+        wifiManager.setWifiEnabled(false);
         handler.removeCallbacks(r);
         timer.cancel();
+        estadoWifi(true);
     }
 
     private List<String> eliminarVacios(List<ScanResult> scanResults) {
@@ -751,5 +768,13 @@ public class WifiSettings extends AppCompatActivity {
         final NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
         return  wifi.isConnected();
+
+    }
+
+    public boolean isSwitchIsOn() {
+        return switchIsOn;
+    }
+    public void setSwitchIsOn(boolean switchIsOn) {
+        this.switchIsOn = switchIsOn;
     }
 }

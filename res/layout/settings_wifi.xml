@@ -41,8 +41,9 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <com.github.angads25.toggle.LabeledSwitch
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/swt"
+                    android:theme="@style/SCBSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
