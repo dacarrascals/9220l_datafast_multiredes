@@ -132,7 +132,7 @@ public class SaveCtl {
         this.ICCDataCTL2 = ICCDataCTL;
     }
 
-    public byte[] changeIccdata(long amount){
+/*    public byte[] changeIccdata(long amount){
         String monto =  ISOUtil.padleft(amount + "", 12, '0');
         String data=ISOUtil.byte2hex(ICCDataCTL2);
         String[] parts = data.split("9F0206");
@@ -140,5 +140,5 @@ public class SaveCtl {
         String part2 = parts[1];
         String sSubCadena = part2.substring(12,part2.length());
         return  ISOUtil.hex2byte(part1+"9F0206"+monto+sSubCadena);
-    }
+    }*/
 }

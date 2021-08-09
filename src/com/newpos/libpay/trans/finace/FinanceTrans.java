@@ -3382,7 +3382,7 @@ public class FinanceTrans extends Trans {
                 ServiceAmount = 0;
                 TipAmount = 0;
                 ExtAmount = ISOUtil.padleft(TipAmount + "", 12, '0');
-                Amount = 1;
+                Amount = 5000;
                 retVal = 0;
 
                 para.setAmountBase0(AmountBase0);
@@ -3592,7 +3592,7 @@ public class FinanceTrans extends Trans {
         processPPFail.setPAN(Pan);//en caso de fallo
         PanSeqNo = oneTap.getPanSeqNoCTL();
         Track2 = oneTap.getTrack2CTL();
-        ICCData =  oneTap.changeIccdata(Amount);
+        ICCData =  oneTap.getICCDataCTL2();
         return  true;
     }
     private boolean fallback(CardInfo cardInfo){
