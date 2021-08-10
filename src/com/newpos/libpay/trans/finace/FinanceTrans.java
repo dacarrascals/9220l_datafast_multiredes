@@ -2264,7 +2264,7 @@ public class FinanceTrans extends Trans {
                 if (!MasterControl.HOLDER_NAME.equals("---"))
                     LogData.setNameCard(MasterControl.HOLDER_NAME);
 
-                if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC){
+                if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC && oneTap!=null){
                     if (oneTap.getLableCTL() != null) {
                         LogData.setAIDName(oneTap.getLableCTL());
                     }
@@ -2947,7 +2947,7 @@ public class FinanceTrans extends Trans {
         pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack, validateNFC));
 
         if (inputMode == ENTRY_MODE_NFC) {
-            if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC){
+            if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC  && oneTap!=null){
                 Logger.information("FinanceTrans.java -> Respuesta de PP por OneTap");
                 pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(oneTap.getHolderNameCTL()), 40));
                 pp_response.setARQC(ISOUtil.spacepadRight(oneTap.getARQCCTL(),16));

@@ -435,7 +435,7 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
                 } else {
                     if (inputModeFail == ENTRY_MODE_NFC) {
-                        if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC){
+                        if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC && oneTap!=null){
                             pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(oneTap.getHolderNameCTL()), 40));
                             pp_response.setARQC(ISOUtil.spacepadRight(oneTap.getARQCCTL(),16));
                             pp_response.setTVR(ISOUtil.spacepadRight(oneTap.getTVRCTL(),10));
