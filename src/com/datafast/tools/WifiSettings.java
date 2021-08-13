@@ -17,6 +17,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -25,6 +26,7 @@ import android.text.InputType;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import java.util.TreeSet;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -62,6 +64,7 @@ public class WifiSettings extends AppCompatActivity {
     private boolean switchIsOn;
     Context context = this;
     CountDownTimer timer;
+    private Parcelable state;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -173,6 +176,7 @@ public class WifiSettings extends AppCompatActivity {
             public void onFinish() {
                 wifiManager.reassociate();
                 timer.cancel();
+                state = listaWifi.onSaveInstanceState();
                 timer.start();
                 mostrarLista();
 
@@ -197,6 +201,7 @@ public class WifiSettings extends AppCompatActivity {
                 wifiManager.setWifiEnabled(false);
                 timer.cancel();
             }
+            state = null;
             switchWifi.setChecked(false);
             setSwitchIsOn(false);
             webView.setVisibility(View.GONE);
@@ -240,7 +245,7 @@ public class WifiSettings extends AppCompatActivity {
     private void mostrarLista() {
         final String redConectada = wifiManager.getConnectionInfo().getSSID();
 
-        final List<String> redFormateada = eliminarVacios(wifiManager.getScanResults());
+        final List<String> redFormateada = eliminarVacios(wifiManager.getScanResults(), redConectada.replace("\"", ""));
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(context, R.layout.setting_list_item);
         listaWifi.setAdapter(arrayAdapter);
@@ -256,6 +261,8 @@ public class WifiSettings extends AppCompatActivity {
                 WifiAdapter wifiAdapter = new WifiAdapter(context,redFormateada, redConectada );
 
                 listaWifi.setAdapter(wifiAdapter);
+                if (state != null)
+                    listaWifi.onRestoreInstanceState(state);
 
                 listaWifi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -376,17 +383,21 @@ public class WifiSettings extends AppCompatActivity {
         estadoWifi(true);
     }
 
-    private List<String> eliminarVacios(List<ScanResult> scanResults) {
+
+    private List<String> eliminarVacios(List<ScanResult> scanResults, String firstNetwork) {
         ArrayList<String> resultados = new ArrayList<>();
 
         if (scanResults != null) {
             for (int i = 0; i < scanResults.size(); i++) {
                 if (scanResults.get(i).SSID.length() > 0) {
-                    resultados.add(scanResults.get(i).SSID);
+                    if (!scanResults.get(i).SSID.equals(firstNetwork))
+                        resultados.add(scanResults.get(i).SSID);
                 }
             }
             if (resultados.size() > 0) {
                 resultados = eliminarRepetidos(resultados);
+                if (!firstNetwork.equals("<unknown ssid>"))
+                    resultados.add(0, firstNetwork);
             }
         } else {
             resultados.add("NULL");
@@ -397,9 +408,9 @@ public class WifiSettings extends AppCompatActivity {
 
     private ArrayList<String> eliminarRepetidos(ArrayList<String> resultados) {
 
-        Set<String> hashSet = new HashSet<String>(resultados);
+        Set<String> TreeSet = new TreeSet<String>(resultados);
         resultados.clear();
-        resultados.addAll(hashSet);
+        resultados.addAll(TreeSet);
 
         return resultados;
     }
@@ -706,7 +717,9 @@ public class WifiSettings extends AppCompatActivity {
             public void onFinish() {
                 UIUtils.toast((Activity) context, R.drawable.ic_launcher_1, "No es posible establecer conexión, reintente", Toast.LENGTH_SHORT);
                 progressDialog.cancel();
+                wifiManager.disableNetwork(netId);
                 wifiManager.removeNetwork(netId);
+                wifiManager.saveConfiguration();
                 wifiManager.reassociate();
                 mostrarLista();
                 timer.start();
