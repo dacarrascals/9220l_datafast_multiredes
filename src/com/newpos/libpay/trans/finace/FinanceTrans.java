@@ -686,7 +686,7 @@ public class FinanceTrans extends Trans {
             Amount = AmountBase0 + AmountXX;
         }else {
             if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()) && tipoMontoFijo != null) {
-                Amount = AmountXX + IvaAmount + montoFijo;
+                Amount = AmountXX + IvaAmount + montoFijo + AmountBase0;
             } else {
 
                 if (!para.getTransType().equals(Type.ANULACION)) {
@@ -3373,7 +3373,7 @@ public class FinanceTrans extends Trans {
                             return false;
                         }
                     }
-                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals("")&& GetAmount.getBase0())
+                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals(""))
                         AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
 
                     if (pp_request.getAmountIVA()!=null && !pp_request.getAmountIVA().equals(""))
@@ -3391,7 +3391,7 @@ public class FinanceTrans extends Trans {
                     }
 
                     if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals(""))
-                        Amount = Long.parseLong(pp_request.getAmountTotal());
+                        Amount = AmountBase0+AmountXX+IvaAmount+ServiceAmount+TipAmount;
 
                     montos = new long[7];
                     montos[0] = IvaAmount;

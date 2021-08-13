@@ -4,6 +4,7 @@ import android.os.SystemClock;
 
 import com.android.desert.keyboard.InputInfo;
 import com.android.desert.keyboard.InputManager;
+import com.datafast.pinpad.cmd.PP.PP_Request;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.datafast.transactions.common.GetAmount;
@@ -38,6 +39,7 @@ import com.pos.device.picc.PiccReader;
 
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
+import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
@@ -318,6 +320,10 @@ public class EmvTransaction {
                 return ret;
             }
         }
+
+        PP_Request pp_request= new PP_Request();
+        pp_request.UnPackData(server.dat);
+        System.out.println("EDWIN"+pp_request.getFiller1());
 
         /*if (CommonFunctionalities.checkExpDate(getCardNo(), ISOUtil.stringToBoolean(rango.getFECHA_EXP()))) {
             ret = Tcode.T_exp_date_card;
