@@ -941,8 +941,8 @@ public class Anulacion extends FinanceTrans implements TransPresenter {
         if (retVal == 0) {
             TransLog.clearReveral(true);
             data.setVoided(true);
-            data.setLocalDate(PAYUtils.getYear() + LocalDate);
-            data.setLocalTime(LocalTime);
+            data.setLocalDate(data.getLocalDate());
+            data.setLocalTime(data.getLocalTime());
             data.setProcCode(ProcCode);
             int index = TransLog.getInstance(menus.idAcquirer).getCurrentIndex(data);
             TransLog.getInstance(menus.idAcquirer).deleteTransLog(index);

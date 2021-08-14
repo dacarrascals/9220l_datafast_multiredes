@@ -179,6 +179,7 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_err_amounts,
             Tcode.T_err_detect_card_failed,
             Tcode.T_no_answer,
+            Tcode.T_not_reverse,
             Tcode.T_err_void_not_allow,
             Tcode.T_insert_card,
             Tcode.T_err_not_allow,
@@ -341,18 +342,8 @@ public class ProcessPPFail extends FinanceTrans {
                 pp_response.setMsgRsp(ISOUtil.padright(mensaje, 20, ' '));
                 pp_response.setSecuencialTrans(ISOUtil.spacepadRight(iso8583.getfield(11), 6));
 
-                if (pp_request.getTypeTrans().equals("04") && codRet == Tcode.T_trans_rejected
-                         || pp_request.getTypeTrans().equals("04") && codRet == 3002){
-                    pp_response.setHourTrans(ISOUtil.spacepadRight(PAYUtils.getLocalTime(), 6));
-                    pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getLocalDate2(), 8));
-                }else {
-                    pp_response.setHourTrans(ISOUtil.spacepadRight(iso8583.getfield(12), 6));
-                    if (iso8583.getfield(13) != null) {
-                        pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getYear() + iso8583.getfield(13), 8));
-                    } else {
-                        pp_response.setDateTrans(ISOUtil.spacepadRight(iso8583.getfield(13), 8));
-                    }
-                }
+                pp_response.setHourTrans(ISOUtil.spacepadRight(pp_request.getHourTrans(), 6));
+                pp_response.setDateTrans(ISOUtil.spacepadRight(pp_request.getDateTrans(), 8));
 
                 if ((pp_request.getTypeTrans().equals("01") && codRet == Tcode.T_trans_rejected) ||
                         (pp_request.getTypeTrans().equals("06") || codRet == Tcode.T_trans_rejected) ||

@@ -16,14 +16,12 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
-import com.datafast.inicializacion.configuracioncomercio.Rango;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
 import com.datafast.pinpad.cmd.LT.LT_Response;
 import com.datafast.pinpad.cmd.PP.PP_Request;
 import com.datafast.pinpad.cmd.PP.PP_Response;
-import com.datafast.pinpad.cmd.Tools.encryption;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.pinpad.cmd.rules.RulesPinPad;
 import com.datafast.server.server_tcp.Server;
@@ -43,6 +41,7 @@ import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.Trans;
 import com.newpos.libpay.trans.manager.RevesalTrans;
 import com.newpos.libpay.trans.manager.ScriptTrans;
+import com.newpos.libpay.trans.translog.SaveTransLogReverse;
 import com.newpos.libpay.trans.translog.TransLog;
 import com.newpos.libpay.trans.translog.TransLogData;
 import com.newpos.libpay.trans.translog.TransLogReverse;
@@ -67,6 +66,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.lastTrack;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE_SAVE;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_FALLBACK;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_ICC_SWIPE;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.GERCARD_MSG_SWIPE_ICC_CTL;
@@ -85,8 +85,6 @@ import static com.datafast.transactions.common.CommonFunctionalities.Fld58Prompt
 import static com.datafast.transactions.common.CommonFunctionalities.Fld58PromptsPrinter;
 import static com.datafast.transactions.common.GetAmount.NO_OPERA;
 import static com.datafast.transactions.common.GetAmount.PIDE_CONFIRMACION;
-import static com.datafast.transactions.common.GetAmount.RECIBIDO;
-import static com.datafast.transactions.common.GetAmount.getBase0;
 import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.presenter.TransUIImpl.getStatusInfo;
 import static com.newpos.libpay.trans.Trans.Type.ANULACION;
@@ -520,8 +518,8 @@ public class FinanceTrans extends Trans {
             setFieldAnulacion();
         }
 
-        LocalTime = PAYUtils.getLocalTime();
-        LocalDate = PAYUtils.getLocalDate();
+        LocalTime = pp_request.getHourTrans();
+        LocalDate = pp_request.getDateTrans().substring(4,8);
 
         switch (transEname) {
             case Type.VENTA:
@@ -1009,6 +1007,8 @@ public class FinanceTrans extends Trans {
     }
 
     public void setFieldAnulacion() {
+        LocalTime = pp_request.getHourTrans();
+        LocalDate = pp_request.getDateTrans().substring(4,8);
 
         Logger.debug("==FinanceTrans->setFieldAnulacion==");
         iso8583.clearData();
@@ -1041,11 +1041,11 @@ public class FinanceTrans extends Trans {
         }
 
         if (LocalTime != null) {
-            iso8583.setField(12, PAYUtils.getLocalTime());
+            iso8583.setField(12, LocalTime);
         }
 
         if (LocalDate != null) {
-            iso8583.setField(13, PAYUtils.getLocalDate().substring(0, 4));
+            iso8583.setField(13, LocalDate);
         }
 
         ExpDate = setField14();
@@ -1298,6 +1298,86 @@ public class FinanceTrans extends Trans {
         }
     }
 
+    protected int ReverseCash(){
+        retVal = Tcode.T_not_reverse;
+        if (isProcPreTrans) {
+            TransLogData revesalData = null;
+
+            if (pp_request.getTypeTrans().equals("04")){
+
+                revesalData = TransLog.getReversal(true);
+                //Se valida si se han realizado transacciones
+                //esto porque casi siempre el reverso de caja se hace a la ultima tranx
+                if (revesalData != null ){
+                    //Se valida la data de la ultima tranx para enviar reverso
+                    if (validar(revesalData)) {
+                        //Se procede a enviar el reverso
+                        return  SendReverse(revesalData);
+                    }
+                }
+
+                //Archivo donde estan todas las tranx 200
+                List<TransLogData> listSave = SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).getData();
+                if (listSave.size() > 0){
+                    for (int x = 0; x < listSave.size(); x++) {
+                        revesalData = listSave.get(x);
+                        //Se valida la data de laa tranx para enviar reverso
+                        if (validar(revesalData)) {
+                            //Se procede a enviar el reverso
+                            return  SendReverse(revesalData);
+
+                        }
+                    }
+                }
+
+            }
+        }
+        return retVal;
+    }
+
+
+    protected int SendReverse( TransLogData revesalData ) {
+        retVal = Tcode.T_not_reverse;
+
+
+        if (revesalData != null) {
+            //SE INSTANCIA CLASE QUE SE ENCARGA
+            //DEL ENVIO DE LOS REVERSOS EXISTENTES
+            RevesalTrans revesal = new RevesalTrans(context, "REVERSAL", transUI);
+            for (int i = 0; i < 1; i++) {
+
+                if (revesalData != null){
+                    retVal = revesal.sendRevesal(revesalData);
+                    if (retVal == 0) {
+                        TransLog.clearReveral(true);
+                        transUI.toasTransReverse(Tcode.Status.rev_receive_ok, true, false);
+                        break;
+                    } else {
+                        if (retVal != Tcode.T_socket_err && retVal != Tcode.T_send_err) {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            //SE VALIDA RETVAL CON EL VALOR RECIBIDO
+            if (retVal == Tcode.T_socket_err || retVal == Tcode.T_send_err) {
+                //transUI.toasTrans(Tcode.T_err_send_rev, true, false);
+                return retVal;
+            } else {
+                if (retVal != 0) {
+                    return retVal;
+                }
+            }
+        }
+        if (pp_request.getTypeTrans().equals("04")){
+            transEname = "REVERSAL";
+            responsePP();
+        }
+
+        return retVal;
+    }
+
     protected int Reverse(){
         int value=retVal;
         retVal = Tcode.T_not_reverse;
@@ -1306,9 +1386,9 @@ public class FinanceTrans extends Trans {
             TransLogData revesalData = null;
 
             //REVISO SI ES REVERSO AUTOMATICO (CAJA)
-            if (pp_request.getTypeTrans().equals("04")){
+/*            if (pp_request.getTypeTrans().equals("04")){
                 revesalData = TransLog.getReversal(true);
-            }
+            }*/
 
             //VALIDO SI EXISTEN REVERSOS
             if (revesalData != null || list.size() > 0) {
@@ -1323,7 +1403,7 @@ public class FinanceTrans extends Trans {
 
                     //SE VALIDA LA DATA DE LA ULTIMA TRANSACCION PARA ENVIAR EL REVERSO
                     //EN CASO DE LLEGAR EL COMANDO 04 VALIDADO ANTERIORMENTE
-                    if (revesalData != null){
+                   /* if (revesalData != null){
                         //SE ENVIA EL REVERSO
                         retVal = revesal.sendRevesal(revesalData);
                         if (retVal == 0) {
@@ -1335,7 +1415,7 @@ public class FinanceTrans extends Trans {
                                 continue;
                             }
                         }
-                    }
+                    }*/
 
                     //SE RECORRE EL BATCH DE REVERSOS PARA HACER EL RESPECTIVO ENVIO Y ELIMINACION
                     //CADA REVERSO CUENTA CON 3 INTENTOS PARA ENVIARSE EN CASO CONTRARIO SE ELIMINA
@@ -1391,12 +1471,75 @@ public class FinanceTrans extends Trans {
             }
         }
 
-        if (pp_request.getTypeTrans().equals("04")){
+/*        if (pp_request.getTypeTrans().equals("04")){
             transEname = "REVERSAL";
             responsePP();
-        }
+        }*/
 
         return retVal;
+    }
+
+    private boolean validar( TransLogData reversalData ) {
+        //Se valida la data recivida en el 04
+        // Si PP04 != PP01/PP02 es porque no es esa tranx O no existe en el archivo
+        if (PAYUtils.isNullWithTrim(pp_request.getHourTrans())
+                || PAYUtils.isNullWithTrim(pp_request.getDateTrans())
+                || PAYUtils.isNullWithTrim(pp_request.getAmountTotal())
+                || PAYUtils.isNullWithTrim(pp_request.getMID())
+                || PAYUtils.isNullWithTrim(pp_request.getTID())) {
+            return false;
+        }
+        if (!pp_request.getHourTrans().equals(reversalData.getLocalTime())) {
+            return false;
+        }
+        
+        String newdate=pp_request.getDateTrans().substring(4,8);
+        if (!newdate.equals(reversalData.getLocalDate())) {
+            return false;
+        }
+        if (!(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()))) {
+            validarMonto();
+            if ( Amount != reversalData.getAmount()) {
+                return false;
+            }
+        }
+
+        if (!pp_request.getMID().equals(reversalData.getMerchID().trim())) {
+            return false;
+        }
+
+        if (!pp_request.getTID().equals(reversalData.getTermID())) {
+            return false;
+        }
+
+        // Si PP04 == PP01/PP02 es porque  existe la tranx en el archivo
+        return true;
+    }
+
+    private void validarMonto( ) {
+        //El monto total que se recibe de la caja no siempre es el mismo
+        //con el que se debe procesar la tranx, ya que se valida con lo recibido desde polaris
+        //y si estos capos estan desactivados no se debe tomar en cuenta el monto que recibe de la caja
+
+        if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals(""))
+            AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
+
+        if (pp_request.getAmountIVA()!=null && !pp_request.getAmountIVA().equals(""))
+            AmountXX = Long.parseLong(pp_request.getAmountIVA());
+
+        if (pp_request.getIVA()!=null && !pp_request.getIVA().equals(""))
+            IvaAmount = Long.parseLong(pp_request.getIVA());
+
+        if (pp_request.getService()!=null && !pp_request.getService().equals("") && GetAmount.checkService())
+            ServiceAmount = Long.parseLong(pp_request.getService());
+
+        if (pp_request.getTips()!=null && !pp_request.getTips().equals("")&& GetAmount.checkTip()) {
+            TipAmount = Long.parseLong(pp_request.getTips());
+            ExtAmount = ISOUtil.padleft(TipAmount + "", 12, '0');
+        }
+
+        if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals(""))
+            Amount = AmountBase0+AmountXX+IvaAmount+ServiceAmount+TipAmount;
     }
 
     private boolean deleteReverse_Save(TransLogData data, boolean update){
@@ -1485,10 +1628,13 @@ public class FinanceTrans extends Trans {
             Reveral = setReveralData();
             TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).saveLog(Reveral, idAcquirer + FILE_NAME_REVERSE);
             indexRev = TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).getCurrentIndex(Reveral);
-
+            //EN ESTE ARCHIVO SE GUARDAN TODAS LAS TRANS 200
+            //PARA QUE CUANDO SE ENVIE UN REVERSO DE CAJA SE PUEDAN PROCESAR N VECES
+            SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).saveLog(Reveral, idAcquirer + FILE_NAME_REVERSE_SAVE);
             TransLog.clearReveral(true);
 
             TransLog.saveReversal(Reveral, true);
+            Logger.information("FinanceTrans.java -> Se Guarda reverso");
         }
 
         transUI.handling(timeout, Tcode.Status.send_data_2_server);
@@ -1687,6 +1833,7 @@ public class FinanceTrans extends Trans {
         }
 
         if (indexRev >= 0){
+            Logger.information("FinanceTrans.java -> Se libera del reverso");
             TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).deleteTransLog(indexRev);
         }
 
@@ -2011,7 +2158,7 @@ public class FinanceTrans extends Trans {
             LogData.setLocalTime(LocalTime);
         }
 
-        LogData.setLocalDate(PAYUtils.getYear() + LocalDate);
+        LogData.setLocalDate(pp_request.getDateTrans());
 
         LogData.setDatePrint(PAYUtils.getMonth() + " " + PAYUtils.getDay() + "," + PAYUtils.getYear());
 
@@ -2849,17 +2996,9 @@ public class FinanceTrans extends Trans {
             pp_response.setNumberBatch(ISOUtil.spacepadRight(BatchNo,6));
         }
 
-        if (iso8583.getfield(12) != null && !iso8583.getfield(12).isEmpty()){
-            pp_response.setHourTrans(ISOUtil.spacepadRight(iso8583.getfield(12), 6));
-        }else {
-            pp_response.setHourTrans(ISOUtil.spacepadRight(PAYUtils.getLocalTime(), 6));
-        }
+        pp_response.setHourTrans(ISOUtil.spacepadRight(pp_request.getHourTrans(), 6));
+        pp_response.setDateTrans(ISOUtil.spacepadRight(pp_request.getDateTrans(), 8));
 
-        if (iso8583.getfield(13) != null){
-            pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getYear() + iso8583.getfield(13), 8));
-        }else {
-            pp_response.setDateTrans(ISOUtil.spacepadRight(PAYUtils.getLocalDate2(), 8));
-        }
 
         if (transEname.equals(Type.ANULACION)){
             AuthCode = "";
@@ -3172,7 +3311,7 @@ public class FinanceTrans extends Trans {
             }
             if (pp_request.getTypeTrans().equals("04")){
                 keySecurity = pp_request.getHash();
-                retVal = Reverse();
+                retVal = ReverseCash();
                 if (retVal == 0){
                     Server.cmd = "PP_REVERSE";
                     transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
@@ -3365,22 +3504,11 @@ public class FinanceTrans extends Trans {
 
                 if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals("") ) {
 
-                    if(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
-                        long montoMinimo;
-                        montoMinimo=Long.parseLong(tconf.getVALOR_MONTO_FIJO()) +Long.parseLong(tconf.getMONTO_MINIMO_TRANSACCION());
-                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=montoMinimo)){
-                            retVal = Tcode.T_user_cancel_input;
-                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
-                            return false;
-                        }
 
-                    } else {
-                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
-                            retVal = Tcode.T_user_cancel_input;
-                              transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
-                            return false;
-                        }
-                    }
+                    //El monto total que se recibe de la caja no siempre es el mismo
+                    //con el que se debe procesar la tranx, ya que se valida con lo recibido desde polaris
+                    //y si estos capos estan desactivados no se debe tomar en cuenta el monto que recibe de la caja
+
                     if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals(""))
                         AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
 
@@ -3400,6 +3528,26 @@ public class FinanceTrans extends Trans {
 
                     if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals(""))
                         Amount = AmountBase0+AmountXX+IvaAmount+ServiceAmount+TipAmount;
+
+                    if(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
+                        long montoMinimo;
+                        //Cuando es Giro Gasolinera se le debe sumar al monto minimo el monto fijo
+                        //independientemente de la tarjeta
+                        montoMinimo=Long.parseLong(tconf.getVALOR_MONTO_FIJO()) +Long.parseLong(tconf.getMONTO_MINIMO_TRANSACCION());
+                        if(!(Amount>=montoMinimo)){
+                            retVal = Tcode.T_user_cancel_input;
+                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                            return false;
+                        }
+
+                    } else {
+                        //para General y Restaurante el monto minimo es el recibido en la inicializacion
+                        if(!(Amount>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
+                            retVal = Tcode.T_user_cancel_input;
+                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                            return false;
+                        }
+                    }
 
                     montos = new long[7];
                     montos[0] = IvaAmount;

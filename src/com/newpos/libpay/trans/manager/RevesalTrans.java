@@ -55,8 +55,12 @@ public class RevesalTrans extends Trans {
         if (data.getLocalTime() != null) {
             iso8583.setField(12, data.getLocalTime());
         }
-        if (data.getLocalDate() != null) {
-            iso8583.setField(13, data.getLocalDate());
+        String date =data.getLocalDate();
+        if (date.length()>4) {
+            date =date.substring(4,8);
+        }
+        if (date != null) {
+            iso8583.setField(13, date);
         }
         if (data.getExpDate() != null) {
             iso8583.setField(14, data.getExpDate());

@@ -7,6 +7,7 @@ import com.datafast.server.server_tcp.Server;
 import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.newpos.libpay.global.TMConfig;
+import com.newpos.libpay.trans.translog.SaveTransLogReverse;
 import com.newpos.libpay.trans.translog.TransLog;
 import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
@@ -135,6 +136,10 @@ public class Control {
 
             if (TransLogReverse.getInstance().getSize() > 0){
                 TransLogReverse.getInstance().clearAll();
+            }
+            // SE LIMPIA EL ARCHIVO QUE GUARDA TODAS LAS TRANSACCIONES
+            if (SaveTransLogReverse.getInstance().getSize() > 0){
+                SaveTransLogReverse.getInstance().clearAll();
             }
 
     }

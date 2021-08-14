@@ -329,6 +329,12 @@ public class ServerTCP extends AppCompatActivity {
     public void onBackPressed() {
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Logger.information("ServerTCP.java -> onStop");
+    }
+
     public void toolbar() {
         setting = (ImageView) findViewById(R.id.iv_close);
         setting.setVisibility(View.VISIBLE);

@@ -57,69 +57,83 @@ public class Deferred extends FinanceTrans implements TransPresenter {
     @Override
     public void start() {
 
-        if (!ISOUtil.stringToBoolean(tconf.getTRANSACCION_DIFERIDO())){
-            transUI.showError(timeout, Tcode.T_err_deferred, processPPFail);
-            return;
-        }
+        try{
+            Logger.information("Deferred.java -> start()");
 
-        if (!checkBatchAndSettle(true,true)){
-            return;
-        }
+            if (!ISOUtil.stringToBoolean(tconf.getTRANSACCION_DIFERIDO())){
+                transUI.showError(timeout, Tcode.T_err_deferred, processPPFail);
+                return;
+            }
 
-        if (procesarDiferido() == 0) {
-            //transUI.handling(timeout, Tcode.Status.diferido_exitoso);
-            UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
-        } else {
-            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-        }
-        Logger.debug("DiferidoTrans>>finish");
+            if (!checkBatchAndSettle(true,true)){
+                return;
+            }
 
-        if (retVal == Tcode.T_err_trm){
-            return;
-        }
+            if (procesarDiferido() == 0) {
+                //transUI.handling(timeout, Tcode.Status.diferido_exitoso);
+                UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
+            } else {
+                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+            }
+            Logger.debug("DiferidoTrans>>finish");
 
-        if (retVal != 106 && retVal != 104 && retVal != 189) {
-            if (aCmd.equals(PP)){
-                callbackRsp = new waitRspReverse() {
-                    @Override
-                    public void getWaitRspReverse(int status) {
-                        retVal = status;
-                        if (Reverse() != 0){
-                            if (retVal != Tcode.T_not_reverse){
-                                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-                                transUI.showError(timeout,retVal);
+            if (retVal == Tcode.T_err_trm){
+                return;
+            }
+
+            if (retVal != 106 && retVal != 104 && retVal != 189) {
+                if (aCmd.equals(PP)){
+                    callbackRsp = new waitRspReverse() {
+                        @Override
+                        public void getWaitRspReverse(int status) {
+                            retVal = status;
+                            if (Reverse() != 0){
+                                if (retVal != Tcode.T_not_reverse){
+                                    UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                                    transUI.showError(timeout,retVal);
+                                }else {
+                                    transUI.showfinish();
+                                }
                             }else {
-                                transUI.showfinish();
+                                transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
                             }
-                        }else {
-                            transUI.trannSuccess(timeout,Tcode.Status.rev_receive_ok);
                         }
-                    }
-                };
+                    };
+                }
             }
+
+            if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (callbackRsp != null){
+                    callbackRsp.getWaitRspReverse(retVal);
+                }
+            } else {
+                transUI.showfinish();
+            }
+
+            if (Control.failEchoTest) {
+                Control.failEchoTest = false;
+                Control.echoTest = true;
+            }
+        } catch (Exception e){
+            Logger.information("Deferred.java -> Se ingresa al catch    " + e.toString());
+            retVal = Tcode.T_err_trm;
+            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+            transUI.showError(timeout, retVal, processPPFail);
+            return;
         }
 
-        if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (callbackRsp != null){
-                callbackRsp.getWaitRspReverse(retVal);
-            }
-        } else {
-            transUI.showfinish();
-        }
 
-        if (Control.failEchoTest) {
-            Control.failEchoTest = false;
-            Control.echoTest = true;
-        }
+
 
     }
 
     private int procesarDiferido() {
+        Logger.information("Deferred.java -> Se ingresa al procesarDiferido()");
         if (setAmountPP()){
 
             if (!PAYUtils.isNullWithTrim(pp_request.getIdCodDef())){
@@ -171,6 +185,7 @@ public class Deferred extends FinanceTrans implements TransPresenter {
      * 准备联机
      */
     private boolean prepareOnline() {
+        Logger.information("Deferred.java -> Se ingresa al  prepareOnline()");
 
         if ((retVal = CommonFunctionalities.setTipoCuenta(timeout, ProcCode, transUI, ISOUtil.stringToBoolean(rango.getTIPO_DE_CUENTA()))) != 0) {
             return false;

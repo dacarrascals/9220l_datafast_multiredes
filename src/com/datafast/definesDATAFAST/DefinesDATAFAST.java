@@ -74,6 +74,7 @@ public final class DefinesDATAFAST {
     public static final String ITEM_DATOS_COMERCIO = "DATOS COMERCIO";
     public static final String ITEM_SETTINGS= "CONFIGURACION RED";
     public static final String FILE_NAME_REVERSE = "_reverse_";
+    public static final String FILE_NAME_REVERSE_SAVE = "_reverse_save_";
     public static final String NN = "NN";
     public static final String ITEM_CONFIG_WIFI = "CONFIGURACIÓN WIFI";
     public static final String ITEM_APPMANAGER = "APPMANAGER";

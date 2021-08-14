@@ -147,6 +147,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
             }
             Logger.debug("SaleTrans>>finish");
         } catch (Exception e){
+            Logger.information("Venta.java -> Se ingresa al catch  " + e.toString());
             retVal = Tcode.T_err_trm;
             UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
             transUI.showError(timeout, retVal, processPPFail);
