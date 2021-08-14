@@ -324,6 +324,9 @@ public class ProcessPPFail extends FinanceTrans {
                 if (finErr) {
                     break;
                 }
+                if (codRet==Tcode.T_err_incorrect){
+                    mensaje = "ERROR EN TARJETA";
+                }
 
                 keySecurity = pp_request.getHash();
 

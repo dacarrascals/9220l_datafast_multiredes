@@ -21,6 +21,7 @@ import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
 import com.datafast.pinpad.cmd.LT.LT_Response;
+import com.datafast.pinpad.cmd.PP.PP_Request;
 import com.datafast.pinpad.cmd.PP.PP_Response;
 import com.datafast.pinpad.cmd.Tools.encryption;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
@@ -61,6 +62,7 @@ import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.lastInputMode;
+import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.lastTrack;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -1297,6 +1299,7 @@ public class FinanceTrans extends Trans {
     }
 
     protected int Reverse(){
+        int value=retVal;
         retVal = Tcode.T_not_reverse;
         if (isProcPreTrans) {
             List<TransLogData> list = TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).getData();
@@ -1338,6 +1341,11 @@ public class FinanceTrans extends Trans {
                     //CADA REVERSO CUENTA CON 3 INTENTOS PARA ENVIARSE EN CASO CONTRARIO SE ELIMINA
                     for (int x = 0; x < list.size(); x++) {
                         revesalData = list.get(x);
+
+                        if (value==Tcode.T_gen_2_ac_fail && revesalData != null) {
+                            if (!(x == list.size()-1))
+                                continue;
+                        }
 
                         //SE VALIDA LA DATA Y SE PROCEDE A ENVIAR EL REVERSO
                         if (revesalData != null){
@@ -3616,7 +3624,7 @@ public class FinanceTrans extends Trans {
         para.setAmount(Amount);
         para.setOtherAmount(0);
         transUI.handling(timeout, Tcode.Status.handling);
-        emv = new EmvTransaction(para, Type.VENTA);
+        emv = new EmvTransaction(para, Type.VENTA,pp_request);
         emv.setTraceNo(TraceNo);
         retVal = emv.start();
         Pan = emv.getCardNo();
@@ -3808,6 +3816,16 @@ public class FinanceTrans extends Trans {
             }
         }
 
+/*        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())
+                && ISOUtil.stringToBoolean(pp_request.getFiller1())
+                && (pp_request.getTypeTrans().equals("01")
+                || pp_request.getTypeTrans().equals("02"))){
+            if (!(lastPan.equals(Pan))){
+                retVal=Tcode.T_err_incorrect;
+                return false;
+            }
+        }*/
+
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
             transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
@@ -3888,6 +3906,13 @@ public class FinanceTrans extends Trans {
         ICCData = emvl2.GetEmvOnlineData();
         MasterControl.HOLDER_NAME = emvl2.getHolderName();
         Logger.error("PAN =" + Pan);
+
+/*        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()) && ISOUtil.stringToBoolean(pp_request.getFiller1())){
+            if (!(lastPan.equals(Pan))){
+                transUI.showError(timeout, Tcode.T_err_incorrect,processPPFail);
+                return false;
+            }
+        }*/
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
            //retVal = Tcode.T_trans_done;

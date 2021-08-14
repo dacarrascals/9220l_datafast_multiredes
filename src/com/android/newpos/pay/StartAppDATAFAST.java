@@ -70,6 +70,7 @@ public class StartAppDATAFAST extends AppCompatActivity {
     public static boolean MODE_KIOSK = false;
     public static String lastCmd = "";
     public static int lastInputMode = 0x00;
+    public static String lastPan ="";
     public static String[] lastTrack = null;
     public static boolean resumePA = false;
     public static Server server;

@@ -32,12 +32,12 @@ import com.pos.device.icc.IccReader;
 import com.pos.device.icc.OperatorMode;
 import com.pos.device.icc.SlotType;
 import com.pos.device.icc.VCC;
-//import com.pos.device.ped.RsaPinKey;
 import com.pos.device.ped.RsaPinKey;
 import com.pos.device.picc.EmvContactlessCard;
 import com.pos.device.picc.PiccReader;
 
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
+import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -91,6 +91,7 @@ public class EmvTransaction {
     private String ECAmount = null;
     private int retExpApp;
     private int ret;
+    protected PP_Request pp_request;
 
     public void setTraceNo(String traceNo) {
         this.traceNo = traceNo;
@@ -209,6 +210,53 @@ public class EmvTransaction {
 
     }
 
+    public EmvTransaction(TransInputPara p, String typeTrans,PP_Request pp_request) {
+        this.pp_request=pp_request;
+        this.emvHandler = EMVHandler.getInstance();
+        this.para = p;
+        this.transUI = para.getTransUI();
+        this.typeTrans = typeTrans;
+        this.retExpApp = -1;
+        Logger.debug("amount = " + para.isNeedAmount());
+        Logger.debug("online = " + para.isNeedOnline());
+        Logger.debug("pass = " + para.isNeedPass());
+        Logger.debug("eccash = " + para.isECTrans());
+        Logger.debug("print = " + para.isNeedPrint());
+        //if (para.isNeedAmount()) {
+        this.Amount = para.getAmount();
+        this.otherAmount = para.getOtherAmount();
+
+            /*this.AmountBase0 = para.getAmountBase0();
+            this.AmountXX = para.getAmountXX();
+            this.IvaAmount = para.getIvaAmount();
+            this.TipAmount = para.getTipAmount();
+            this.ServiceAmount = para.getServiceAmount();
+
+            this.tips = para.getTips();
+            this.currency_name = para.getCurrency_name();
+            this.typeCoin = para.getTypeCoin();*/
+        //}
+        this.inputMode = para.getInputMode();
+        if (inputMode == Trans.ENTRY_MODE_NFC) {
+            try {
+                nfcCard = PiccReader.getInstance();
+                emvContactlessCard = EmvContactlessCard.connect();
+            } catch (SDKException e) {
+                Logger.error("Exception" + e.toString());
+            }
+        }
+        if (inputMode == Trans.ENTRY_MODE_ICC) {
+            try {
+                icCard = IccReader.getInstance(SlotType.USER_CARD);
+                contactCard = icCard.connectCard(VCC.VOLT_5, OperatorMode.EMV_MODE);
+            } catch (SDKException e) {
+                Logger.error("Exception" + e.toString());
+            }
+        }
+
+
+    }
+
     /**
      * Inyectar monto y tipo de moneda al kernel emv
      */
@@ -280,6 +328,15 @@ public class EmvTransaction {
             }
         }
 
+        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())
+                && ISOUtil.stringToBoolean(pp_request.getFiller1())
+                && (pp_request.getTypeTrans().equals("01")
+                || pp_request.getTypeTrans().equals("02"))){
+            if (!(lastPan.equals(getCardNo()))){
+                return Tcode.T_err_incorrect;
+            }
+        }
+
         if (!CommonFunctionalities.permitirTransGasolinera(getCardNo())){
             if (!typeTrans.equals(Trans.Type.ANULACION)) {
                 ret = Tcode.T_trans_done;
@@ -320,10 +377,6 @@ public class EmvTransaction {
                 return ret;
             }
         }
-
-        PP_Request pp_request= new PP_Request();
-        pp_request.UnPackData(server.dat);
-        System.out.println("EDWIN"+pp_request.getFiller1());
 
         /*if (CommonFunctionalities.checkExpDate(getCardNo(), ISOUtil.stringToBoolean(rango.getFECHA_EXP()))) {
             ret = Tcode.T_exp_date_card;
