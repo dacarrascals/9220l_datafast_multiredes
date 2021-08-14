@@ -18,8 +18,11 @@ import com.newpos.libpay.trans.TransInputPara;
 import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 
+import java.sql.SQLOutput;
+
 import cn.desert.newpos.payui.UIUtils;
 
+import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.idAcquirer;
@@ -84,9 +87,13 @@ public class Venta extends FinanceTrans implements TransPresenter {
             if (setAmountPP()) {
                 if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)) {
                     if (!prepareOnline()) {
-                        UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-                        transUI.showError(timeout, retVal, processPPFail);
-                        return;
+                        if (retVal==Tcode.T_gen_2_ac_fail) {
+                            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                        }else {
+                            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                            transUI.showError(timeout, retVal, processPPFail);
+                            return;
+                        }
                     }
 
                     if (aCmd.equals(PP)) {
@@ -101,17 +108,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             callbackRsp = new waitRspReverse() {
                                 @Override
                                 public void getWaitRspReverse(int status) {
-                                    retVal = status;
-                                    if (Reverse() != 0) {
-                                        if (retVal != Tcode.T_not_reverse) {
-                                            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-                                            transUI.showError(timeout, retVal);
-                                        } else {
-                                            transUI.showfinish();
-                                        }
-                                    } else {
-                                        transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
-                                    }
+                                    reversePinpad(status);
                                 }
                             };
                         }
@@ -175,6 +172,7 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
                             return true;
                         }else {
+                            lastPan=Pan;
                             transUI.trannSuccess(timeout, Tcode.Status.read_card_ok);
                            /* UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);*/
                             return true;
@@ -240,5 +238,20 @@ public class Venta extends FinanceTrans implements TransPresenter {
             return false;
         }
         return false;
+    }
+
+    public void  reversePinpad(int status){
+        retVal = status;
+        if (Reverse() != 0) {
+            if (retVal != Tcode.T_not_reverse) {
+                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                transUI.showError(timeout, retVal);
+            } else {
+                transUI.showfinish();
+            }
+        } else {
+            transUI.trannSuccess(timeout, Tcode.Status.rev_receive_ok);
+        }
+
     }
 }

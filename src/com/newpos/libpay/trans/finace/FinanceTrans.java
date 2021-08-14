@@ -21,6 +21,7 @@ import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
 import com.datafast.pinpad.cmd.LT.LT_Response;
+import com.datafast.pinpad.cmd.PP.PP_Request;
 import com.datafast.pinpad.cmd.PP.PP_Response;
 import com.datafast.pinpad.cmd.Tools.encryption;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
@@ -61,6 +62,7 @@ import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.lastInputMode;
+import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.lastTrack;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
@@ -686,7 +688,7 @@ public class FinanceTrans extends Trans {
             Amount = AmountBase0 + AmountXX;
         }else {
             if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()) && tipoMontoFijo != null) {
-                Amount = AmountXX + IvaAmount + montoFijo;
+                Amount = AmountXX + IvaAmount + montoFijo + AmountBase0;
             } else {
 
                 if (!para.getTransType().equals(Type.ANULACION)) {
@@ -1297,6 +1299,7 @@ public class FinanceTrans extends Trans {
     }
 
     protected int Reverse(){
+        int value=retVal;
         retVal = Tcode.T_not_reverse;
         if (isProcPreTrans) {
             List<TransLogData> list = TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).getData();
@@ -1338,6 +1341,11 @@ public class FinanceTrans extends Trans {
                     //CADA REVERSO CUENTA CON 3 INTENTOS PARA ENVIARSE EN CASO CONTRARIO SE ELIMINA
                     for (int x = 0; x < list.size(); x++) {
                         revesalData = list.get(x);
+
+                        if (value==Tcode.T_gen_2_ac_fail && revesalData != null) {
+                            if (!(x == list.size()-1))
+                                continue;
+                        }
 
                         //SE VALIDA LA DATA Y SE PROCEDE A ENVIAR EL REVERSO
                         if (revesalData != null){
@@ -1974,9 +1982,7 @@ public class FinanceTrans extends Trans {
             LogData.setAmmountCashOver(CashOverAmount);
         }
 
-        if (Amount != 0) {
-            LogData.setAmount(Amount);
-        }
+        LogData.setAmount(Amount);
 
         if (ExtAmount != null) {
             LogData.setField54(ExtAmount);
@@ -3357,8 +3363,25 @@ public class FinanceTrans extends Trans {
 
             case PP:
 
-                if (pp_request.getAmountTotal()!=null) {
-                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals("")&& GetAmount.getBase0())
+                if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals("") ) {
+
+                    if(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
+                        long montoMinimo;
+                        montoMinimo=Long.parseLong(tconf.getVALOR_MONTO_FIJO()) +Long.parseLong(tconf.getMONTO_MINIMO_TRANSACCION());
+                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=montoMinimo)){
+                            retVal = Tcode.T_user_cancel_input;
+                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                            return false;
+                        }
+
+                    } else {
+                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
+                            retVal = Tcode.T_user_cancel_input;
+                              transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                            return false;
+                        }
+                    }
+                    if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals(""))
                         AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
 
                     if (pp_request.getAmountIVA()!=null && !pp_request.getAmountIVA().equals(""))
@@ -3376,7 +3399,7 @@ public class FinanceTrans extends Trans {
                     }
 
                     if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals(""))
-                        Amount = Long.parseLong(pp_request.getAmountTotal());
+                        Amount = AmountBase0+AmountXX+IvaAmount+ServiceAmount+TipAmount;
 
                     montos = new long[7];
                     montos[0] = IvaAmount;
@@ -3601,7 +3624,7 @@ public class FinanceTrans extends Trans {
         para.setAmount(Amount);
         para.setOtherAmount(0);
         transUI.handling(timeout, Tcode.Status.handling);
-        emv = new EmvTransaction(para, Type.VENTA);
+        emv = new EmvTransaction(para, Type.VENTA,pp_request);
         emv.setTraceNo(TraceNo);
         retVal = emv.start();
         Pan = emv.getCardNo();
@@ -3793,8 +3816,18 @@ public class FinanceTrans extends Trans {
             }
         }
 
+/*        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())
+                && ISOUtil.stringToBoolean(pp_request.getFiller1())
+                && (pp_request.getTypeTrans().equals("01")
+                || pp_request.getTypeTrans().equals("02"))){
+            if (!(lastPan.equals(Pan))){
+                retVal=Tcode.T_err_incorrect;
+                return false;
+            }
+        }*/
+
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
-            transUI.showError(timeout, Tcode.T_msg_err_gas,processPPFail);
+            transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
         }
 
@@ -3874,9 +3907,16 @@ public class FinanceTrans extends Trans {
         MasterControl.HOLDER_NAME = emvl2.getHolderName();
         Logger.error("PAN =" + Pan);
 
+/*        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()) && ISOUtil.stringToBoolean(pp_request.getFiller1())){
+            if (!(lastPan.equals(Pan))){
+                transUI.showError(timeout, Tcode.T_err_incorrect,processPPFail);
+                return false;
+            }
+        }*/
+
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
-            //retVal = Tcode.T_msg_err_gas;
-            transUI.showError(timeout, Tcode.T_msg_err_gas,processPPFail);
+           //retVal = Tcode.T_trans_done;
+            transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
         }
 
@@ -3950,7 +3990,7 @@ public class FinanceTrans extends Trans {
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
             //retVal = Tcode.T_msg_err_gas;
-            transUI.showError(timeout, Tcode.T_msg_err_gas,processPPFail);
+            transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
             return false;
         }
 

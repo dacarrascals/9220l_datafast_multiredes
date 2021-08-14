@@ -858,6 +858,7 @@ public abstract class Trans {
      * 清除关键信息
      */
     protected void clearPan() {
+        System.gc();
         Pan = null;
         Track2 = null;
         Track3 = null;

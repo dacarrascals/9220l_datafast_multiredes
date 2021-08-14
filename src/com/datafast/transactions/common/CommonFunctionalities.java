@@ -17,6 +17,7 @@ import com.android.desert.keyboard.InputInfo;
 import com.android.newpos.pay.R;
 import com.datafast.inicializacion.prompts.Prompt;
 import com.datafast.menus.menus;
+import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.device.pinpad.PinInfo;
 import com.newpos.libpay.global.TMConfig;
@@ -45,6 +46,8 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.NO_FALLBACK;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.newpos.libpay.device.printer.PrintManager.getIdPreAuto;
 import static com.newpos.libpay.trans.Trans.ENTRY_MODE_FALLBACK;
 import static com.newpos.libpay.trans.Trans.idLote;
@@ -1019,6 +1022,9 @@ public class CommonFunctionalities {
     }
 
     public static boolean permitirTransGasolinera(String pan){
+        if (Server.cmd.equals(LT) || Server.cmd.equals(CT) ){
+            return true;
+        }
         if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
 
             if (ISOUtil.stringToBoolean(tconf.getNO_PERMITIR_2_TRANS_MISMO_TARJ())){
