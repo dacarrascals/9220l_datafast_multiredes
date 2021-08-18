@@ -227,7 +227,8 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_socket_err,
             Tcode.T_receive_err,
             Tcode.T_ic_not_allow_swipe,
-            Tcode.T_trans_reversed
+            Tcode.T_trans_reversed,
+            Tcode.T_err_incorrect
     };
 
     public void cmdCancel(String cmd, int codRet){
@@ -311,10 +312,12 @@ public class ProcessPPFail extends FinanceTrans {
                 boolean finErr = false;
                 for (int cod : codErr) {
                     if (codRet == cod) {
-                        if(cod == Tcode.T_err_void_not_allow) {
+                        if(cod == Tcode.T_err_void_not_allow||cod == Tcode.T_not_reverse ) {
                             mensaje = "TRANS. NO ENCONTRADA";
                         }else if (cod == Tcode.T_socket_err || cod == Tcode.T_receive_err || cod == Tcode.T_no_answer) {
                             mensaje = "NO HUBO RESPUESTA";
+                        }else if(cod == Tcode.T_err_incorrect){
+                            mensaje = "ERROR EN TARJETA";
                         }
                         responsePPInvalid(pp_request, mensaje, code, false);
                         finErr = true;
@@ -324,9 +327,6 @@ public class ProcessPPFail extends FinanceTrans {
 
                 if (finErr) {
                     break;
-                }
-                if (codRet==Tcode.T_err_incorrect){
-                    mensaje = "ERROR EN TARJETA";
                 }
 
                 keySecurity = pp_request.getHash();

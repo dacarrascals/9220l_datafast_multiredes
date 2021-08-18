@@ -1,18 +1,13 @@
 package com.datafast.server.activity;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
-import android.media.Image;
 import android.media.ToneGenerator;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -46,20 +41,14 @@ import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.server.callback.waitResponse;
 import com.datafast.server.server_tcp.Server;
 import com.datafast.slide.slide;
-import com.datafast.tools.ConfigRed;
 import com.datafast.tools.CounterTimer;
 import com.datafast.tools.Wifi;
-import com.datafast.tools_bacth.ToolsBatch;
 import com.datafast.updateapp.UpdateApk;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.utils.ISOUtil;
-import com.pos.device.beeper.Beeper;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
-
-import java.io.IOException;
 import java.util.Objects;
-
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
 
@@ -70,8 +59,6 @@ import static com.android.newpos.pay.StartAppDATAFAST.resumePA;
 import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.android.newpos.pay.StartAppDATAFAST.toneG;
-import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
-import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CB;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
@@ -81,10 +68,6 @@ import static com.datafast.pinpad.cmd.defines.CmdDatafast.NN;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PA;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
-import static com.datafast.pinpad.cmd.defines.CmdDatafast.TO;
-import static com.datafast.server.server_tcp.Server.cmd;
-import static com.newpos.libpay.trans.Trans.idLote;
-import static com.pos.device.sys.SystemManager.reboot;
 import static java.lang.Thread.sleep;
 
 public class ServerTCP extends AppCompatActivity {
@@ -216,11 +199,17 @@ public class ServerTCP extends AppCompatActivity {
                             }
 
                             pp_request.UnPackData(aDat);
-                            if (pp_request.getCountValid() > 0) {
+
+                            if (pp_request.getCountValid() > 0 || pp_request.getCountValidOther() > 0) {
+                                String mensajeError = "";
+                                if (pp_request.getCountValid()> 0) {
+                                    mensajeError="ERROR EN TRAMA";
+                                }else
+                                    mensajeError="VALORES INCORRECTOS";
                                 Logger.information("ServerTCP.java -> Error, la trama no es correcta");
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
-                                processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
-                                UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
+                                processPPFail.responsePPInvalid(pp_request, mensajeError, ERROR_PROCESO, true);
+                                UIUtils.startResult(ServerTCP.this, false, mensajeError, false);
                                 break;
                             }
                             seleccion = Integer.parseInt(pp_request.getTypeTrans());

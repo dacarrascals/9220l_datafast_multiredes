@@ -5,14 +5,12 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.android.newpos.pay.R;
 import com.datafast.definesDATAFAST.DefinesDATAFAST;
 import com.datafast.server.activity.ServerTCP;
@@ -20,15 +18,10 @@ import com.datafast.server.server_tcp.Server;
 import com.newpos.libpay.Logger;
 import com.pos.device.icc.IccReader;
 import com.pos.device.icc.SlotType;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
 import cn.desert.newpos.payui.base.BaseActivity;
-
-import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.datafast.menus.MenuAction.callBackSeatle;
-import static com.datafast.menus.menus.contFallback;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CP;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.PC;
@@ -71,6 +64,9 @@ public class ResultControl extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             flag = bundle.getBoolean("flag");
+            int time = 1;
+            if (!flag)
+                time =2;
             displayDetails(flag, bundle.getString("info"));
             if (bundle.getBoolean("boton")) {
                 confirm.setVisibility(View.VISIBLE);
@@ -109,7 +105,7 @@ public class ResultControl extends BaseActivity {
                             //over();
                             removeCard();
                         }
-                    }, 1 * second);
+                    }, time * second);
                 }
             }
             over();
@@ -183,7 +179,7 @@ public class ResultControl extends BaseActivity {
                         public void run() {
                             iccReader0 = IccReader.getInstance(SlotType.USER_CARD);
 
-                            if (iccReader0.isCardPresent() && (!lastCmd.equals(LT))) {
+                            if (iccReader0.isCardPresent() && !(Server.cmd.equals(LT))) {
                                 setContentView(R.layout.activity_remove_card);
                                 removeCard = (ImageView) findViewById(R.id.iv_remove__card);
                                 removeCard.setImageResource(R.drawable.remove_card);
@@ -212,7 +208,7 @@ public class ResultControl extends BaseActivity {
 
     private boolean checkCard() {
         boolean ret = false;
-        if ((Server.cmd.equals(LT)) || (lastCmd == LT)) {
+        if ((Server.cmd.equals(LT))) {
             return true;
         }
 

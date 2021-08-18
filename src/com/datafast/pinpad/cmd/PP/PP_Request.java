@@ -3,10 +3,13 @@ package com.datafast.pinpad.cmd.PP;
 import com.newpos.libpay.Logger;
 import com.newpos.libpay.global.TMConfig;
 import com.newpos.libpay.utils.ISOUtil;
+import com.newpos.libpay.utils.PAYUtils;
+import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 
 public class PP_Request {
 
     private int countValid;
+    private int countValidOther;
 
     private String typeMsg;
     private String typeTrans;
@@ -42,6 +45,14 @@ public class PP_Request {
 
     public void setCountValid(int countValid) {
         this.countValid = countValid;
+    }
+
+    public int getCountValidOther() {
+        return countValidOther;
+    }
+
+    public void setCountValidOther(int countValidOther) {
+        this.countValidOther = countValidOther;
     }
 
     public String getTypeMsg() {
@@ -366,6 +377,14 @@ public class PP_Request {
             System.arraycopy(aData, offset, tmp, 0, 12);
             offset += 12;
             this.tips = ISOUtil.hex2AsciiStr(ISOUtil.byte2hex(tmp)).trim();
+
+            if (!(ISOUtil.stringToBoolean(tconf.getHABILITAR_PROPINA()))
+                    && !(ISOUtil.stringToBoolean(tconf.getHABILITAR_SERVICIO()))
+                    && !(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()))
+                    && (!(PAYUtils.isNullWithTrim(tips))
+                    || !(PAYUtils.isNullWithTrim(service)))){
+                countValidOther ++;
+            }
 
             //fixedAmount
             tmp = new byte[12];
