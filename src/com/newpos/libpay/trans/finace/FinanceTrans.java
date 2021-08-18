@@ -3604,7 +3604,7 @@ public class FinanceTrans extends Trans {
             cardInfo = transUI.getCardUse(GERCARD_MSG_ICC_SWIPE, timeout, mode, TransEname);
         }else {
             Logger.information("Venta.java -> Se solicita tarjeta");
-            cardInfo = transUI.getCardUseAmount(GERCARD_MSG_SWIPE_ICC_CTL, timeout, mode, transEname,"Monto\nTotal : ",PAYUtils.getStrAmount(Amount));
+            cardInfo = transUI.getCardUseAmount(GERCARD_MSG_SWIPE_ICC_CTL, timeout, mode, transEname,"Monto\nTotal : ",PAYUtils.getStrAmount(Long.parseLong(pp_request.getAmountTotal())));
         }
 
         if (cardInfo.isResultFalg()) {

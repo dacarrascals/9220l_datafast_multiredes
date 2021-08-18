@@ -356,11 +356,12 @@ public class EmvTransaction {
                 return ret;
             }
         }
-
-        if (!PAYUtils.stringToBoolean(rango.getPERMITIR_TARJ_EXP())) {//Validacion personalizada para Datafast
-            if (retExpApp == Tcode.T_err_exp_date_app) {
-                ret =  Tcode.T_err_exp_date_app;
-                return ret;
+        if (!Server.cmd.equals(CT)){
+            if (!PAYUtils.stringToBoolean(rango.getPERMITIR_TARJ_EXP())) {//Validacion personalizada para Datafast
+                if (retExpApp == Tcode.T_err_exp_date_app) {
+                    ret =  Tcode.T_err_exp_date_app;
+                    return ret;
+                }
             }
         }
 
