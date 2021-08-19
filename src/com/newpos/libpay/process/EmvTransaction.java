@@ -37,12 +37,14 @@ import com.pos.device.picc.EmvContactlessCard;
 import com.pos.device.picc.PiccReader;
 
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
+import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.server;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.CT;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.LT;
+import static com.datafast.pinpad.cmd.defines.CmdDatafast.PP;
 import static com.datafast.transactions.common.GetAmount.AUTOMATICO;
 import static com.newpos.libpay.trans.finace.FinanceTrans.LOCAL;
 
@@ -328,8 +330,8 @@ public class EmvTransaction {
             }
         }
 
-        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())
-                && ISOUtil.stringToBoolean(pp_request.getFiller1())
+        if (ISOUtil.stringToBoolean(pp_request.getFiller1())
+                &&lastCmd.equals(LT) && Server.cmd.equals(PP)
                 && (pp_request.getTypeTrans().equals("01")
                 || pp_request.getTypeTrans().equals("02"))){
             if (!(lastPan.equals(getCardNo()))){

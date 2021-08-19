@@ -3964,15 +3964,16 @@ public class FinanceTrans extends Trans {
             }
         }
 
-/*        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())
-                && ISOUtil.stringToBoolean(pp_request.getFiller1())
+        if (ISOUtil.stringToBoolean(pp_request.getFiller1())
+                &&lastCmd.equals(LT) && Server.cmd.equals(PP)
                 && (pp_request.getTypeTrans().equals("01")
                 || pp_request.getTypeTrans().equals("02"))){
             if (!(lastPan.equals(Pan))){
                 retVal=Tcode.T_err_incorrect;
+                transUI.showError(timeout,Tcode.T_err_incorrect,processPPFail);
                 return false;
             }
-        }*/
+        }
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
             transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
@@ -4055,12 +4056,15 @@ public class FinanceTrans extends Trans {
         MasterControl.HOLDER_NAME = emvl2.getHolderName();
         Logger.error("PAN =" + Pan);
 
-/*        if (ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()) && ISOUtil.stringToBoolean(pp_request.getFiller1())){
+        if (ISOUtil.stringToBoolean(pp_request.getFiller1())
+                &&lastCmd.equals(LT) && Server.cmd.equals(PP)
+                && (pp_request.getTypeTrans().equals("01")
+                || pp_request.getTypeTrans().equals("02"))){
             if (!(lastPan.equals(Pan))){
                 transUI.showError(timeout, Tcode.T_err_incorrect,processPPFail);
                 return false;
             }
-        }*/
+        }
 
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
            //retVal = Tcode.T_trans_done;
@@ -4136,6 +4140,16 @@ public class FinanceTrans extends Trans {
         Pan = CommonFunctionalities.getPan();
         processPPFail.setPAN(Pan);//en caso de fallo
 
+        if (ISOUtil.stringToBoolean(pp_request.getFiller1())
+                &&lastCmd.equals(LT) && Server.cmd.equals(PP)
+                && (pp_request.getTypeTrans().equals("01")
+                || pp_request.getTypeTrans().equals("02"))){
+            if (!(lastPan.equals(Pan))){
+                retVal=Tcode.T_err_incorrect;
+                transUI.showError(timeout, Tcode.T_err_incorrect,processPPFail);
+                return false;
+            }
+        }
         if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
             //retVal = Tcode.T_msg_err_gas;
             transUI.showError(timeout, Tcode.T_trans_done,processPPFail);

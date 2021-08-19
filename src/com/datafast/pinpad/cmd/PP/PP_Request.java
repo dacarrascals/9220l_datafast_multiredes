@@ -303,7 +303,6 @@ public class PP_Request {
                 case "03":
                 case "04":
                 case "06":
-                case "07":
                     break;
                 default:
                     countValid++;

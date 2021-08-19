@@ -12,6 +12,7 @@ import com.newpos.libpay.trans.translog.TransLog;
 import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
+import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
@@ -132,6 +133,7 @@ public class Control {
                 TransLog.getInstance(idAcquirer).clearAll(idAcquirer);
                 CommonFunctionalities.limpiarPanTarjGasolinera("");
                 TransLog.clearReveral(true);
+                lastPan ="";
             }
 
             if (TransLogReverse.getInstance().getSize() > 0){
