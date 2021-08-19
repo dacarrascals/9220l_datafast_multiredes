@@ -383,6 +383,10 @@ public class PP_Request {
                     && (!(PAYUtils.isNullWithTrim(tips))
                     || !(PAYUtils.isNullWithTrim(service)))){
                 countValidOther ++;
+            }else if(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())
+                    && (!(PAYUtils.isNullWithTrim(tips))
+                    || !(PAYUtils.isNullWithTrim(service)))){
+                countValidOther ++;
             }
 
             //fixedAmount

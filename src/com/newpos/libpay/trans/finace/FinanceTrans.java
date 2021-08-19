@@ -1498,8 +1498,8 @@ public class FinanceTrans extends Trans {
             return false;
         }
         if (!(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO()))) {
-            validarMonto();
-            if ( Amount != reversalData.getAmount()) {
+            long montoreverso = Long.parseLong(pp_request.getAmountTotal());
+            if ( montoreverso != reversalData.getAmount()) {
                 return false;
             }
         }
@@ -1514,32 +1514,6 @@ public class FinanceTrans extends Trans {
 
         // Si PP04 == PP01/PP02 es porque  existe la tranx en el archivo
         return true;
-    }
-
-    private void validarMonto( ) {
-        //El monto total que se recibe de la caja no siempre es el mismo
-        //con el que se debe procesar la tranx, ya que se valida con lo recibido desde polaris
-        //y si estos capos estan desactivados no se debe tomar en cuenta el monto que recibe de la caja
-
-        if (pp_request.getAmountNotIVA()!=null && !pp_request.getAmountNotIVA().equals(""))
-            AmountBase0 = Long.parseLong(pp_request.getAmountNotIVA());
-
-        if (pp_request.getAmountIVA()!=null && !pp_request.getAmountIVA().equals(""))
-            AmountXX = Long.parseLong(pp_request.getAmountIVA());
-
-        if (pp_request.getIVA()!=null && !pp_request.getIVA().equals(""))
-            IvaAmount = Long.parseLong(pp_request.getIVA());
-
-        if (pp_request.getService()!=null && !pp_request.getService().equals("") && GetAmount.checkService())
-            ServiceAmount = Long.parseLong(pp_request.getService());
-
-        if (pp_request.getTips()!=null && !pp_request.getTips().equals("")&& GetAmount.checkTip()) {
-            TipAmount = Long.parseLong(pp_request.getTips());
-            ExtAmount = ISOUtil.padleft(TipAmount + "", 12, '0');
-        }
-
-        if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals(""))
-            Amount = AmountBase0+AmountXX+IvaAmount+ServiceAmount+TipAmount;
     }
 
     private boolean deleteReverse_Save(TransLogData data, boolean update){
@@ -3527,14 +3501,14 @@ public class FinanceTrans extends Trans {
                     }
 
                     if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals(""))
-                        Amount = AmountBase0+AmountXX+IvaAmount+ServiceAmount+TipAmount;
+                        Amount = Long.parseLong(pp_request.getAmountTotal());
 
                     if(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
                         long montoMinimo;
                         //Cuando es Giro Gasolinera se le debe sumar al monto minimo el monto fijo
                         //independientemente de la tarjeta
                         montoMinimo=Long.parseLong(tconf.getVALOR_MONTO_FIJO()) +Long.parseLong(tconf.getMONTO_MINIMO_TRANSACCION());
-                        if(!(Amount>=montoMinimo)){
+                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=montoMinimo)){
                             retVal = Tcode.T_user_cancel_input;
                             transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
                             return false;
@@ -3542,7 +3516,7 @@ public class FinanceTrans extends Trans {
 
                     } else {
                         //para General y Restaurante el monto minimo es el recibido en la inicializacion
-                        if(!(Amount>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
+                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
                             retVal = Tcode.T_user_cancel_input;
                             transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
                             return false;

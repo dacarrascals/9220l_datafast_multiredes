@@ -329,13 +329,14 @@ public class EmvTransaction {
                 return Tcode.T_user_cancel_operation;
             }
         }
-
-        if (ISOUtil.stringToBoolean(pp_request.getFiller1())
-                &&lastCmd.equals(LT) && Server.cmd.equals(PP)
-                && (pp_request.getTypeTrans().equals("01")
-                || pp_request.getTypeTrans().equals("02"))){
-            if (!(lastPan.equals(getCardNo()))){
-                return Tcode.T_err_incorrect;
+        if (pp_request!=null){
+            if (ISOUtil.stringToBoolean(pp_request.getFiller1())
+                    &&lastCmd.equals(LT) && Server.cmd.equals(PP)
+                    && (pp_request.getTypeTrans().equals("01")
+                    || pp_request.getTypeTrans().equals("02"))){
+                if (!(lastPan.equals(getCardNo()))){
+                    return Tcode.T_err_incorrect;
+                }
             }
         }
 
