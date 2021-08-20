@@ -229,7 +229,8 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_ic_not_allow_swipe,
             Tcode.T_trans_reversed,
             Tcode.T_err_incorrect,
-            Tcode.T_user_cancel_pin_err
+            Tcode.T_user_cancel_pin_err,
+            Tcode.T_err_pin_null
     };
 
     public void cmdCancel(String cmd, int codRet){
@@ -319,7 +320,7 @@ public class ProcessPPFail extends FinanceTrans {
                             mensaje = "NO HUBO RESPUESTA";
                         }else if(cod == Tcode.T_err_incorrect){
                             mensaje = "ERROR EN TARJETA";
-                        }else if(cod==Tcode.T_user_cancel_pin_err){
+                        }else if(cod==Tcode.T_user_cancel_pin_err||cod==Tcode.T_err_pin_null){
                             mensaje = "TRANS CANCELADA ";
                         }
                         responsePPInvalid(pp_request, mensaje, code, false);
