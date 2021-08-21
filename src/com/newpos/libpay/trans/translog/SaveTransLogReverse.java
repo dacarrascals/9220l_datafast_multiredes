@@ -21,53 +21,53 @@ public class SaveTransLogReverse implements Serializable {
     private static String TranLogPath = "translog.dat";
 
     private List<TransLogData> transLogData = new ArrayList<TransLogData>();
-    private static SaveTransLogReverse transLogReverse;
+    private static SaveTransLogReverse saveTransLogReverse;
     private static String idAcqTmp;
 
     private SaveTransLogReverse() {
     }
 
     public static SaveTransLogReverse getInstance() {
-        if (transLogReverse == null) {
+        if (saveTransLogReverse == null) {
             String filepath = TMConfig.getRootFilePath() + TranLogPath;
             try {
-                transLogReverse = ((SaveTransLogReverse) PAYUtils.file2Object(filepath));
+                saveTransLogReverse = ((SaveTransLogReverse) PAYUtils.file2Object(filepath));
             } catch (FileNotFoundException e) {
-                transLogReverse = null;
+                saveTransLogReverse = null;
             } catch (IOException e) {
-                transLogReverse = null;
+                saveTransLogReverse = null;
             } catch (ClassNotFoundException e) {
-                transLogReverse = null;
-            }if (transLogReverse == null) {
-                transLogReverse = new SaveTransLogReverse();
+                saveTransLogReverse = null;
+            }if (saveTransLogReverse == null) {
+                saveTransLogReverse = new SaveTransLogReverse();
             }
         }
-        return transLogReverse;
+        return saveTransLogReverse;
     }
 
     public static SaveTransLogReverse getInstance(String acquirer_id) {
 
         if (idAcqTmp != null){
             if (!idAcqTmp.equals(acquirer_id))
-                transLogReverse = null;
+                saveTransLogReverse = null;
         }
 
-        if (transLogReverse == null) {
+        if (saveTransLogReverse == null) {
             idAcqTmp = acquirer_id;
             String filepath = TMConfig.getRootFilePath() + acquirer_id + TranLogPath;
             try {
-                transLogReverse = ((SaveTransLogReverse) PAYUtils.file2Object(filepath));
+                saveTransLogReverse = ((SaveTransLogReverse) PAYUtils.file2Object(filepath));
             } catch (FileNotFoundException e) {
-                transLogReverse = null;
+                saveTransLogReverse = null;
             } catch (IOException e) {
-                transLogReverse = null;
+                saveTransLogReverse = null;
             } catch (ClassNotFoundException e) {
-                transLogReverse = null;
-            }if (transLogReverse == null) {
-                transLogReverse = new SaveTransLogReverse();
+                saveTransLogReverse = null;
+            }if (saveTransLogReverse == null) {
+                saveTransLogReverse = new SaveTransLogReverse();
             }
         }
-        return transLogReverse;
+        return saveTransLogReverse;
     }
 
     public List<TransLogData> getData() {
@@ -113,7 +113,7 @@ public class SaveTransLogReverse implements Serializable {
         transLogData.add(data);
         Logger.debug("transLogData size " + transLogData.size());
         try {
-            PAYUtils.object2File(transLogReverse, TMConfig.getRootFilePath()+ acquirer_id + TranLogPath);
+            PAYUtils.object2File(saveTransLogReverse, TMConfig.getRootFilePath()+ acquirer_id + TranLogPath);
         } catch (FileNotFoundException e) {
             Logger.debug("save translog file not found");
             return false;
@@ -126,7 +126,7 @@ public class SaveTransLogReverse implements Serializable {
 
     public boolean saveLog(String acquirer_id) {
         try {
-            PAYUtils.object2File(transLogReverse, TMConfig.getRootFilePath()+ acquirer_id + TranLogPath);
+            PAYUtils.object2File(saveTransLogReverse, TMConfig.getRootFilePath()+ acquirer_id + TranLogPath);
         } catch (FileNotFoundException e) {
             Logger.debug("save translog file not found");
             return false;

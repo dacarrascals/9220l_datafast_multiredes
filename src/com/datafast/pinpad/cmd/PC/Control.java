@@ -14,6 +14,8 @@ import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE_SAVE;
 import static com.datafast.menus.menus.idAcquirer;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.ERROR_PROCESO;
 import static com.datafast.pinpad.cmd.defines.CmdDatafast.OK;
@@ -136,12 +138,12 @@ public class Control {
                 lastPan ="";
             }
 
-            if (TransLogReverse.getInstance().getSize() > 0){
-                TransLogReverse.getInstance().clearAll();
+            if (TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).getSize() > 0){
+                TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE).clearAll(idAcquirer + FILE_NAME_REVERSE);
             }
             // SE LIMPIA EL ARCHIVO QUE GUARDA TODAS LAS TRANSACCIONES
-            if (SaveTransLogReverse.getInstance().getSize() > 0){
-                SaveTransLogReverse.getInstance().clearAll();
+            if (SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).getSize() > 0){
+                SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).clearAll(idAcquirer + FILE_NAME_REVERSE_SAVE);
             }
 
     }
