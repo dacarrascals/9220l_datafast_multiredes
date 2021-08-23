@@ -32,6 +32,7 @@ import com.newpos.libpay.Logger;
 import com.newpos.libpay.device.card.CardInfo;
 import com.newpos.libpay.device.card.CardManager;
 import com.newpos.libpay.device.contactless.EmvL2Process;
+import com.newpos.libpay.device.contactless.SaveCtl;
 import com.newpos.libpay.device.pinpad.PinInfo;
 import com.newpos.libpay.device.pinpad.PinpadManager;
 import com.newpos.libpay.device.printer.PrintManager;
@@ -63,6 +64,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
 import static com.android.newpos.pay.StartAppDATAFAST.lastInputMode;
 import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
 import static com.android.newpos.pay.StartAppDATAFAST.lastTrack;
+import static com.android.newpos.pay.StartAppDATAFAST.oneTap;
 import static com.android.newpos.pay.StartAppDATAFAST.rango;
 import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
@@ -1819,6 +1821,24 @@ public class FinanceTrans extends Trans {
         return retVal;
     }
 
+    protected void saveCtlProcess() {
+        Logger.information("FinanceTrans.java -> Se ingresa al saveCtlProcess()");
+        oneTap=new SaveCtl();
+        oneTap.setExpDateCTL(emvl2.getExpdate());
+        oneTap.setPancCTL(Pan);
+        oneTap.setPanSeqNoCTL(emvl2.GetPanSeqNo());
+        oneTap.setTrack2CTL(Track2);
+        oneTap.setPINCTL(PIN);
+        oneTap.setICCDataCTL2(ICCData);
+        oneTap.setHolderNameCTL(emvl2.getHolderName());
+        oneTap.setARQCCTL(emvl2.GetARQC());
+        oneTap.setTVRCTL(emvl2.GetTVR());
+        oneTap.setTSICTL(emvl2.GetTSI());
+        oneTap.setLableCTL(emvl2.GetLable());
+        oneTap.setAIDCTL(emvl2.GetAid());
+        oneTap.setCIDCTL(emvl2.GetCID());
+    }
+
     protected int OfflineTrans() {
 
         SetFieldTrans();
@@ -2374,12 +2394,23 @@ public class FinanceTrans extends Trans {
             } else if (EntryMode.equals(MODE_CTL + CapPinPOS())) {
                 if (!MasterControl.HOLDER_NAME.equals("---"))
                     LogData.setNameCard(MasterControl.HOLDER_NAME);
-                if (emvl2.GetLable() != null) {
-                    LogData.setAIDName(emvl2.GetLable());
+
+                if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC && oneTap!=null){
+                    if (oneTap.getLableCTL() != null) {
+                        LogData.setAIDName(oneTap.getLableCTL());
+                    }
+                    if (oneTap.getAIDCTL() != null){
+                        LogData.setAID(oneTap.getAIDCTL());
+                    }
+                }else{
+                    if (emvl2.GetLable() != null) {
+                        LogData.setAIDName(emvl2.GetLable());
+                    }
+                    if (emvl2.GetAid() != null){
+                        LogData.setAID(emvl2.GetAid());
+                    }
                 }
-                if (emvl2.GetAid() != null){
-                    LogData.setAID(emvl2.GetAid());
-                }
+
             }
 
             if (EntryMode.equals(MODE_ICC + CapPinPOS())) {
@@ -3039,15 +3070,30 @@ public class FinanceTrans extends Trans {
         pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack, validateNFC));
 
         if (inputMode == ENTRY_MODE_NFC) {
-            pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvl2.getHolderName()), 40));
-            pp_response.setARQC(ISOUtil.spacepadRight(emvl2.GetARQC(),16));
-            pp_response.setTVR(ISOUtil.spacepadRight(emvl2.GetTVR(),10));
-            pp_response.setTSI(ISOUtil.spacepadRight(emvl2.GetTSI(),4));
-            pp_response.setAppEMV(ISOUtil.spacepadRight(emvl2.GetLable(), 20));
-            pp_response.setAIDEMV(ISOUtil.spacepadRight(emvl2.GetAid(), 20));
-            pp_response.setCriptEMV(ISOUtil.spacepadRight("", 22));
-            pp_response.setValidatePIN(ISOUtil.spacepadRight("", 15));
-            pp_response.setExpDateCard(ISOUtil.spacepadRight(emvl2.getExpdate(),4));
+            if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC  && oneTap!=null){
+                Logger.information("FinanceTrans.java -> Respuesta de PP por OneTap");
+                pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(oneTap.getHolderNameCTL()), 40));
+                pp_response.setARQC(ISOUtil.spacepadRight(oneTap.getARQCCTL(),16));
+                pp_response.setTVR(ISOUtil.spacepadRight(oneTap.getTVRCTL(),10));
+                pp_response.setTSI(ISOUtil.spacepadRight(oneTap.getTSICTL(),4));
+                pp_response.setAppEMV(ISOUtil.spacepadRight(oneTap.getLableCTL(), 20));
+                pp_response.setAIDEMV(ISOUtil.spacepadRight(oneTap.getAIDCTL(), 20));
+                pp_response.setCriptEMV(ISOUtil.spacepadRight("", 22));
+                pp_response.setValidatePIN(ISOUtil.spacepadRight("", 15));
+                pp_response.setExpDateCard(ISOUtil.spacepadRight(oneTap.getExpDateCTL(),4));
+                oneTap=null;
+            }else{
+                pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvl2.getHolderName()), 40));
+                pp_response.setARQC(ISOUtil.spacepadRight(emvl2.GetARQC(),16));
+                pp_response.setTVR(ISOUtil.spacepadRight(emvl2.GetTVR(),10));
+                pp_response.setTSI(ISOUtil.spacepadRight(emvl2.GetTSI(),4));
+                pp_response.setAppEMV(ISOUtil.spacepadRight(emvl2.GetLable(), 20));
+                pp_response.setAIDEMV(ISOUtil.spacepadRight(emvl2.GetAid(), 20));
+                pp_response.setCriptEMV(ISOUtil.spacepadRight("", 22));
+                pp_response.setValidatePIN(ISOUtil.spacepadRight("", 15));
+                pp_response.setExpDateCard(ISOUtil.spacepadRight(emvl2.getExpdate(),4));
+            }
+
         } else if (inputMode == ENTRY_MODE_ICC){
             pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCard(), 40));
             pp_response.setARQC(ISOUtil.spacepadRight(ARQC+"",16));
@@ -3277,7 +3323,7 @@ public class FinanceTrans extends Trans {
     }
 
     protected int validateReverseCash(){
-        Logger.information("Venta.java -> Se ingresa a validar reversos");
+        Logger.information("FinanceTrans.java -> Se ingresa a validar reversos");
         int ret = 1995;
         if (Server.cmd.equals(PP)){
             if (retVal == Tcode.T_mid_tid_invalid){
@@ -3459,7 +3505,7 @@ public class FinanceTrans extends Trans {
                 ServiceAmount = 0;
                 TipAmount = 0;
                 ExtAmount = ISOUtil.padleft(TipAmount + "", 12, '0');
-                Amount = 1;
+                Amount = 5000;
                 retVal = 0;
 
                 para.setAmountBase0(AmountBase0);
@@ -3558,13 +3604,20 @@ public class FinanceTrans extends Trans {
 
     protected boolean CardProcess(int mode) {
 
-        Logger.information("Venta.java -> Se ingresa al CardProcess");
+        Logger.information("FinanceTrans.java -> Se ingresa al CardProcess");
 
         if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_MAG){
             isDebit = false;
             inputMode = ENTRY_MODE_MAG;
             return isMag1(lastTrack);
         }
+        if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC && oneTap!=null){
+            Logger.information("FinanceTrans.java -> Se ingresa por OneTap");
+            inputMode = ENTRY_MODE_NFC;
+            return processCTL();
+        }else
+            oneTap=null;
+
         String TransEname = "";
         CardInfo cardInfo;
         if (Server.cmd.equals(LT)){
@@ -3573,11 +3626,13 @@ public class FinanceTrans extends Trans {
             TransEname = "CONSULTA\nDE TARJETA";
         }
 
-        if (Server.cmd.equals(LT) || Server.cmd.equals(CT)){
+        if (Server.cmd.equals(CT)){
             mode = INMODE_IC | INMODE_MAG | INMODE_HAND;
             cardInfo = transUI.getCardUse(GERCARD_MSG_ICC_SWIPE, timeout, mode, TransEname);
-        }else {
-            Logger.information("Venta.java -> Se solicita tarjeta");
+        }else if (Server.cmd.equals(LT) ){
+            cardInfo = transUI.getCardUse(GERCARD_MSG_SWIPE_ICC_CTL, timeout, mode, TransEname);
+        }else{
+            Logger.information("FinanceTrans.java -> Se solicita tarjeta");
             cardInfo = transUI.getCardUseAmount(GERCARD_MSG_SWIPE_ICC_CTL, timeout, mode, transEname,"Monto\nTotal : ",PAYUtils.getStrAmount(Amount));
         }
 
@@ -3601,7 +3656,7 @@ public class FinanceTrans extends Trans {
                     transUI.showError(timeout, Tcode.T_not_allow,processPPFail);
                     return false;
             }
-            Logger.information("Venta.java -> Se asigna inputMode -> " + inputMode);
+            Logger.information("FinanceTrans.java -> Se asigna inputMode -> " + inputMode);
             para.setInputMode(inputMode);
             processPPFail.setInputMode(inputMode);
             lastInputMode = inputMode;
@@ -3680,6 +3735,15 @@ public class FinanceTrans extends Trans {
         return false;
     }
 
+    private boolean processCTL() {
+        Logger.information("FinanceTrans.java -> Se ingresa al processCTL()");
+        Pan = oneTap.getPancCTL();
+        processPPFail.setPAN(Pan);//en caso de fallo
+        PanSeqNo = oneTap.getPanSeqNoCTL();
+        Track2 = oneTap.getTrack2CTL();
+        ICCData =  oneTap.getICCDataCTL2();
+        return  true;
+    }
     private boolean fallback(CardInfo cardInfo){
         isFallBack = true;
         processPPFail.setFallBack(true);
@@ -3700,7 +3764,7 @@ public class FinanceTrans extends Trans {
         if (Server.cmd.equals(LT) || Server.cmd.equals(CT)){
             cardInfo = transUI.getCardUse(GERCARD_MSG_FALLBACK, timeout,  INMODE_MAG, TransEname);
         }else {
-            Logger.information("Venta.java -> Se solicita tarjeta");
+            Logger.information("FinanceTrans.java -> Se solicita tarjeta");
             cardInfo = transUI.getCardUse(GERCARD_MSG_FALLBACK, timeout,  INMODE_MAG, transEname);
         }
 
@@ -3741,7 +3805,7 @@ public class FinanceTrans extends Trans {
     }
 
     public boolean isICC1() {
-        Logger.information("Venta.java -> Se crea ingresa a isICC1");
+        Logger.information("FinanceTrans.java -> Se crea ingresa a isICC1");
         String creditCard = "SI";
         para.setAmount(Amount);
         para.setOtherAmount(0);
@@ -3789,7 +3853,7 @@ public class FinanceTrans extends Trans {
     }
 
     protected boolean isMag1(String[] tracks) {
-        Logger.information("Venta.java -> Se igresa a isMag1");
+        Logger.information("FinanceTrans.java -> Se igresa a isMag1");
         String data1 = null;
         String data2 = null;
         String data3 = null;
@@ -3972,7 +4036,7 @@ public class FinanceTrans extends Trans {
 
     protected boolean PBOCTrans1() {
 
-        Logger.information("Venta.java -> Se ingresa a PBOCTrans1");
+        Logger.information("FinanceTrans.java -> Se ingresa a PBOCTrans1");
 
         int code = 0;
 
@@ -4105,7 +4169,7 @@ public class FinanceTrans extends Trans {
 
     protected boolean isHandle1() {
 
-        Logger.information("Venta.java -> Se ingresa a isHandle1");
+        Logger.information("FinanceTrans.java -> Se ingresa a isHandle1");
 
         if ((retVal = CommonFunctionalities.setPanManual(timeout, TransEName, transUI)) != 0) {
             return false;

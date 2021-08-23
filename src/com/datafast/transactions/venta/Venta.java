@@ -18,8 +18,6 @@ import com.newpos.libpay.trans.TransInputPara;
 import com.newpos.libpay.trans.finace.FinanceTrans;
 import com.newpos.libpay.utils.ISOUtil;
 
-import java.sql.SQLOutput;
-
 import cn.desert.newpos.payui.UIUtils;
 
 import static com.android.newpos.pay.StartAppDATAFAST.lastPan;
@@ -173,6 +171,9 @@ public class Venta extends FinanceTrans implements TransPresenter {
                             UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
                             return true;
                         }else {
+                            if ( Server.cmd.equals(LT) && inputMode == ENTRY_MODE_NFC){
+                                saveCtlProcess();
+                            }
                             lastPan=Pan;
                             transUI.trannSuccess(timeout, Tcode.Status.read_card_ok);
                            /* UIUtils.beep(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);*/
