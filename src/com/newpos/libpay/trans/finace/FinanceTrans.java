@@ -3505,7 +3505,7 @@ public class FinanceTrans extends Trans {
                 ServiceAmount = 0;
                 TipAmount = 0;
                 ExtAmount = ISOUtil.padleft(TipAmount + "", 12, '0');
-                Amount = 5000;
+                Amount =(PAYUtils.isNullWithTrim(tconf.getHEADER_TELEFONO()))?1:Long.parseLong(tconf.getHEADER_TELEFONO());
                 retVal = 0;
 
                 para.setAmountBase0(AmountBase0);
