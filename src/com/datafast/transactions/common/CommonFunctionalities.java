@@ -372,7 +372,7 @@ public class CommonFunctionalities {
                 ret = 0;
             }
             if (!isPinExist) {
-                ret = Tcode.T_user_cancel_pin_err;
+                ret = Tcode.T_err_pin_null;
                 transUI.showError(timeout, ret);
                 return ret;
             }

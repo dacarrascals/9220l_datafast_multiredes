@@ -1,7 +1,5 @@
 package com.newpos.libpay.device.contactless;
 
-import com.newpos.libpay.utils.ISOUtil;
-
 public class SaveCtl {
     protected String ExpDateCTL;
     protected String PancCTL;
@@ -15,7 +13,8 @@ public class SaveCtl {
     protected String TVRCTL;
     protected String TSICTL;
     protected String LableCTL="";
-
+    protected int CVM_type;
+    
     public String getCIDCTL() {
         return CIDCTL;
     }
@@ -130,6 +129,14 @@ public class SaveCtl {
 
     public void setICCDataCTL2(byte[] ICCDataCTL) {
         this.ICCDataCTL2 = ICCDataCTL;
+    }
+
+    public int getCVM_type() {
+        return CVM_type;
+    }
+
+    public void setCVM_type(int CVM_type) {
+        this.CVM_type = CVM_type;
     }
 
 /*    public byte[] changeIccdata(long amount){

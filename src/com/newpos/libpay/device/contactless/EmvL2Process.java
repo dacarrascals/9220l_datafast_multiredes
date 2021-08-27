@@ -525,7 +525,7 @@ public class EmvL2Process {
         }
         else
             return IEmvL2CallBack.L2_FAILED;
-        //CVM_type=emvL2.EmvL2GetCvm().getCvmValue();
+        CVM_type=emvL2.EmvL2GetCvm().getCvmValue();
         Logger.debug("CVM type="+CVM_type);
 //for print
         byte[] temp = new byte[256];

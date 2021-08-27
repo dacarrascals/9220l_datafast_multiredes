@@ -1,8 +1,6 @@
 package com.newpos.libpay.presenter;
 
 import android.app.Activity;
-import android.os.Handler;
-
 import com.android.desert.keyboard.InputInfo;
 import com.android.desert.keyboard.InputManager;
 import com.datafast.inicializacion.prompts.Prompt;
@@ -26,13 +24,10 @@ import com.newpos.libpay.global.TMConstants;
 import com.newpos.libpay.trans.Tcode;
 import com.newpos.libpay.trans.translog.TransLogData;
 import com.newpos.libpay.utils.PAYUtils;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
-
 import cn.desert.newpos.payui.master.MasterControl;
-
 import static com.datafast.tools_card.GetCard.cInfo;
 import static com.datafast.tools_card.GetCard.cardManager;
 import static com.newpos.libpay.trans.finace.FinanceTrans.INMODE_HAND;

@@ -7,7 +7,6 @@ import android.media.ToneGenerator;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Base64;
-
 import com.android.desert.keyboard.InputInfo;
 import com.android.newpos.libemv.EMVISRCode;
 import com.android.newpos.libemv.PBOCCardInfo;
@@ -20,7 +19,6 @@ import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
 import com.datafast.pinpad.cmd.LT.LT_Response;
-import com.datafast.pinpad.cmd.PP.PP_Request;
 import com.datafast.pinpad.cmd.PP.PP_Response;
 import com.datafast.pinpad.cmd.process.ProcessPPFail;
 import com.datafast.pinpad.cmd.rules.RulesPinPad;
@@ -49,7 +47,6 @@ import com.newpos.libpay.trans.translog.TransLogReverse;
 import com.newpos.libpay.utils.ISOUtil;
 import com.newpos.libpay.utils.PAYUtils;
 import com.pos.device.printer.Printer;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -57,7 +54,6 @@ import java.util.List;
 import java.util.Objects;
 import cn.desert.newpos.payui.UIUtils;
 import cn.desert.newpos.payui.master.MasterControl;
-
 import static cn.desert.newpos.payui.master.MasterControl.incardTable;
 import static com.android.newpos.pay.StartAppDATAFAST.host_confi;
 import static com.android.newpos.pay.StartAppDATAFAST.lastCmd;
@@ -1837,6 +1833,7 @@ public class FinanceTrans extends Trans {
         oneTap.setLableCTL(emvl2.GetLable());
         oneTap.setAIDCTL(emvl2.GetAid());
         oneTap.setCIDCTL(emvl2.GetCID());
+        oneTap.setCVM_type(emvl2.GetCVMType());
     }
 
     protected int OfflineTrans() {
@@ -3742,6 +3739,14 @@ public class FinanceTrans extends Trans {
         PanSeqNo = oneTap.getPanSeqNoCTL();
         Track2 = oneTap.getTrack2CTL();
         ICCData =  oneTap.getICCDataCTL2();
+        if (oneTap.getCVM_type() == EmvL2CVM.L2_CVONLINE_PIN) {
+            if (CommonFunctionalities.ctlPIN(Pan, timeout, Amount, transUI) != 0) {
+                //retVal = Tcode.T_user_cancel_input;
+                transUI.showError(timeout, Tcode.T_user_cancel_input,processPPFail);
+                return false;
+            }
+            PIN = CommonFunctionalities.getPIN();
+        }
         return  true;
     }
     private boolean fallback(CardInfo cardInfo){
@@ -4129,14 +4134,15 @@ public class FinanceTrans extends Trans {
         }
 
         //Aca deben validarse los cvm
-
-        if (emvl2.GetCVMType() == EmvL2CVM.L2_CVONLINE_PIN) {
-            if (CommonFunctionalities.ctlPIN(Pan, timeout, Amount, transUI) != 0) {
-                //retVal = Tcode.T_user_cancel_input;
-                transUI.showError(timeout, Tcode.T_user_cancel_input,processPPFail);
-                return false;
+        if (Server.cmd.equals(PP)) {
+            if (emvl2.GetCVMType() == EmvL2CVM.L2_CVONLINE_PIN) {
+                if (CommonFunctionalities.ctlPIN(Pan, timeout, Amount, transUI) != 0) {
+                    //retVal = Tcode.T_user_cancel_input;
+                    transUI.showError(timeout, Tcode.T_user_cancel_input,processPPFail);
+                    return false;
+                }
+                PIN = CommonFunctionalities.getPIN();
             }
-            PIN = CommonFunctionalities.getPIN();
         }
 
         if (emvl2.GetCVMType() == EmvL2CVM.L2_CVOBTAIN_SIGNATURE) {
