@@ -3477,7 +3477,7 @@ public class FinanceTrans extends Trans {
                 break;
 
             case LT:
-
+                lastPan=null;
                 LT_Request lt_request = new LT_Request();
 
                 if (!Server.correctLength){
@@ -4001,6 +4001,7 @@ public class FinanceTrans extends Trans {
 
         if (ISOUtil.stringToBoolean(pp_request.getFiller1())
                 &&lastCmd.equals(LT) && Server.cmd.equals(PP)
+                && !PAYUtils.isNullWithTrim(lastPan)
                 && (pp_request.getTypeTrans().equals("01")
                 || pp_request.getTypeTrans().equals("02"))){
             if (!(lastPan.equals(Pan))){
@@ -4093,6 +4094,7 @@ public class FinanceTrans extends Trans {
 
         if (ISOUtil.stringToBoolean(pp_request.getFiller1())
                 &&lastCmd.equals(LT) && Server.cmd.equals(PP)
+                && !PAYUtils.isNullWithTrim(lastPan)
                 && (pp_request.getTypeTrans().equals("01")
                 || pp_request.getTypeTrans().equals("02"))){
             if (!(lastPan.equals(Pan))){
@@ -4178,6 +4180,7 @@ public class FinanceTrans extends Trans {
 
         if (ISOUtil.stringToBoolean(pp_request.getFiller1())
                 &&lastCmd.equals(LT) && Server.cmd.equals(PP)
+                && !PAYUtils.isNullWithTrim(lastPan)
                 && (pp_request.getTypeTrans().equals("01")
                 || pp_request.getTypeTrans().equals("02"))){
             if (!(lastPan.equals(Pan))){
