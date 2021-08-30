@@ -85,10 +85,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
             if (setAmountPP()) {
                 if (CardProcess(INMODE_IC | INMODE_MAG | INMODE_NFC | INMODE_HAND)) {
                     if (!prepareOnline()) {
-                        if (retVal==Tcode.T_gen_2_ac_fail) {
-                            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
-                        }else {
-                            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                        UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
+                        if (!(retVal==Tcode.T_gen_2_ac_fail)) {
                             transUI.showError(timeout, retVal, processPPFail);
                             return;
                         }
@@ -125,6 +123,8 @@ public class Venta extends FinanceTrans implements TransPresenter {
                     return;
                     //transUI.showError(timeout, retVal,processPPFail);
                 }
+            } else{
+                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
             }
 
             if (aCmd.equals(PP) && retVal != Tcode.T_no_answer && retVal != Tcode.T_socket_err) {

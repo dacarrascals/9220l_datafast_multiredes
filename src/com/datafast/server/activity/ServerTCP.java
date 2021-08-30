@@ -195,6 +195,7 @@ public class ServerTCP extends AppCompatActivity {
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, "ERROR EN TRAMA", ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this, false, "ERROR EN TRAMA", false);
+                                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
                                 break;
                             }
 
@@ -210,6 +211,7 @@ public class ServerTCP extends AppCompatActivity {
                                 ProcessPPFail processPPFail = new ProcessPPFail(ServerTCP.this);
                                 processPPFail.responsePPInvalid(pp_request, mensajeError, ERROR_PROCESO, true);
                                 UIUtils.startResult(ServerTCP.this, false, mensajeError, false);
+                                UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
                                 break;
                             }
                             seleccion = Integer.parseInt(pp_request.getTypeTrans());

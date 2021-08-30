@@ -86,6 +86,7 @@ public class TransPagosElectronicos extends FinanceTrans implements TransPresent
         }
 
         if (!setAmountPP()) {
+            UIUtils.beep(ToneGenerator.TONE_PROP_BEEP2);
             return;
         }
 
