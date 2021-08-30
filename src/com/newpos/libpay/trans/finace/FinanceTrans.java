@@ -3546,24 +3546,11 @@ public class FinanceTrans extends Trans {
                     if (pp_request.getAmountTotal()!=null && !pp_request.getAmountTotal().equals(""))
                         Amount = Long.parseLong(pp_request.getAmountTotal());
 
-                    if(ISOUtil.stringToBoolean(tconf.getHABILITA_MONTO_FIJO())){
-                        long montoMinimo;
-                        //Cuando es Giro Gasolinera se le debe sumar al monto minimo el monto fijo
-                        //independientemente de la tarjeta
-                        montoMinimo=Long.parseLong(tconf.getVALOR_MONTO_FIJO()) +Long.parseLong(tconf.getMONTO_MINIMO_TRANSACCION());
-                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=montoMinimo)){
-                            retVal = Tcode.T_user_cancel_input;
-                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
-                            return false;
-                        }
-
-                    } else {
-                        //para General y Restaurante el monto minimo es el recibido en la inicializacion
-                        if(!(Integer.parseInt(pp_request.getAmountTotal())>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
-                            retVal = Tcode.T_user_cancel_input;
-                            transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
-                            return false;
-                        }
+                    //para General, gasolinera y Restaurante el monto minimo es el recibido en la inicializacion
+                    if(!(Integer.parseInt(pp_request.getAmountTotal())>=Integer.parseInt(tconf.getMONTO_MINIMO_TRANSACCION()))){
+                        retVal = Tcode.T_user_cancel_input;
+                        transUI.showError(timeout, Tcode.T_err_amounts,processPPFail);
+                        return false;
                     }
 
                     montos = new long[7];
