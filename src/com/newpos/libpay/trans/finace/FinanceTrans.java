@@ -3726,6 +3726,11 @@ public class FinanceTrans extends Trans {
         PanSeqNo = oneTap.getPanSeqNoCTL();
         Track2 = oneTap.getTrack2CTL();
         ICCData =  oneTap.getICCDataCTL2();
+        if (!CommonFunctionalities.permitirTransGasolinera(Pan)){
+            //retVal = Tcode.T_trans_done;
+            transUI.showError(timeout, Tcode.T_trans_done,processPPFail);
+            return false;
+        }
         if (oneTap.getCVM_type() == EmvL2CVM.L2_CVONLINE_PIN) {
             if (CommonFunctionalities.ctlPIN(Pan, timeout, Amount, transUI) != 0) {
                 //retVal = Tcode.T_user_cancel_input;
