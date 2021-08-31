@@ -174,7 +174,7 @@ public class SaveTransLogReverse implements Serializable {
         if (getSize() > 0) {
             transLogData.remove(logIndex);
             if (transLogData.size() == 0) {
-                TransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).clearAll(idAcquirer + FILE_NAME_REVERSE_SAVE);
+                SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).clearAll(idAcquirer + FILE_NAME_REVERSE_SAVE);
             }
             Logger.debug("Debug point deleteTransLog " + transLogData.toString());
             return true;

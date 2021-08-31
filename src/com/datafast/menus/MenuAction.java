@@ -44,6 +44,7 @@ import com.datafast.transactions.callbacks.waitSeatleReport;
 import com.datafast.transactions.common.CommonFunctionalities;
 import com.newpos.libpay.device.printer.PrintRes;
 import com.newpos.libpay.global.TMConfig;
+import com.newpos.libpay.trans.translog.SaveTransLogReverse;
 import com.newpos.libpay.trans.translog.TransLog;
 import com.newpos.libpay.trans.translog.TransLogData;
 import com.newpos.libpay.trans.translog.TransLogReverse;
@@ -67,6 +68,7 @@ import static com.android.newpos.pay.StartAppDATAFAST.tconf;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREAUTO;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_PREVOUCHER;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE;
+import static com.datafast.definesDATAFAST.DefinesDATAFAST.FILE_NAME_REVERSE_SAVE;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PAGO_PREVOUCHER;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PREAUTO_PANTALLA;
 import static com.datafast.definesDATAFAST.DefinesDATAFAST.ITEM_PRE_VOUCHER;
@@ -402,27 +404,39 @@ public class MenuAction {
                 int contTrans = 0;
                 long amountVoid_USD = 0;
                 int contTransVoid = 0;
+                int contTransReversal = 0;
                 if (ToolsBatch.statusTrans(idAcquirer)) {
                     List<TransLogData> list = TransLog.getInstance(menus.idAcquirer).getData();
                     for (TransLogData transLogData : list) {
-                        if (!transLogData.getIsVoided()) {
+                        if (!transLogData.getIsVoided() && !transLogData.isReversed()) {
                             if (!transLogData.isTarjetaCierre()) {
                                 amount_USD += transLogData.getAmount();
                                 contTrans++;
                             }
                         } else {
-                            if (!transLogData.isTarjetaCierre()) {
+                            if (!transLogData.isTarjetaCierre() && !transLogData.isReversed()) {
                                 amountVoid_USD += transLogData.getAmount();
                                 contTransVoid++;
                             }
                         }
                     }
                 }
+                if (SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).getSize() > 0){
+                    List<TransLogData> listSave = SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).getData();
+                    for (TransLogData transLogData : listSave) {
+                        if (transLogData.isCont()) {
+                            contTransReversal++;
+                        }
+                    }
+                }
+
                 ServerTCP.mDialog = UIUtils.dialogInformativo(context, "RESUMEN DE TRANSACCIONES",
                             "No. Transacciones:   " + contTrans + "\n" +
                                       "Mnt. Transacciones:  $" + formatAmount(amount_USD)+ "\n" +
                                       "No. Anulación:   " + contTransVoid + "\n" +
-                                      "Mnt. Anulación: $ " + formatAmount(amountVoid_USD));
+                                      "Mnt. Anulación: $ " + formatAmount(amountVoid_USD)+  "\n" +
+                                      "No. Reversos:   " + contTransReversal
+                );
                 break;
             case DefinesDATAFAST.ITEM_CONFIG_WIFI:
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

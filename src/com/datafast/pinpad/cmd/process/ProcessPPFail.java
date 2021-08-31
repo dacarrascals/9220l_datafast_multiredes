@@ -233,7 +233,8 @@ public class ProcessPPFail extends FinanceTrans {
             Tcode.T_trans_reversed,
             Tcode.T_err_incorrect,
             Tcode.T_user_cancel_pin_err,
-            Tcode.T_err_pin_null
+            Tcode.T_err_pin_null,
+            Tcode.T_trans_voided
     };
 
     public void cmdCancel(String cmd, int codRet){

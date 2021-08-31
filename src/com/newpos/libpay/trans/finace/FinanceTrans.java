@@ -15,6 +15,7 @@ import com.android.newpos.libemv.PBOCTag9c;
 import com.android.newpos.libemv.PBOCTransProperty;
 import com.android.newpos.libemv.PBOCUtil;
 import com.android.newpos.libemv.PBOCode;
+import com.datafast.menus.menus;
 import com.datafast.pinpad.cmd.CT.CT_Request;
 import com.datafast.pinpad.cmd.CT.CT_Response;
 import com.datafast.pinpad.cmd.LT.LT_Request;
@@ -1337,6 +1338,16 @@ public class FinanceTrans extends Trans {
     protected int SendReverse( TransLogData revesalData ) {
         retVal = Tcode.T_not_reverse;
 
+        TransLog log = TransLog.getInstance(menus.idAcquirer);
+        TransLogData dataR = log.searchTransLogByTraceNo(revesalData.getTraceNo());
+        if (dataR != null) {
+            if (dataR.getIsVoided()){
+                retVal = Tcode.T_trans_voided;
+                return retVal;
+            }
+
+        }
+
 
         if (revesalData != null) {
             //SE INSTANCIA CLASE QUE SE ENCARGA
@@ -1347,6 +1358,10 @@ public class FinanceTrans extends Trans {
                 if (revesalData != null){
                     retVal = revesal.sendRevesal(revesalData);
                     if (retVal == 0) {
+                        revesalData.setCont(true);
+                        int indexRev = SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).getCurrentIndex(revesalData);
+                        SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).deleteTransLog(indexRev);
+                        SaveTransLogReverse.getInstance(idAcquirer + FILE_NAME_REVERSE_SAVE).saveLog(revesalData, idAcquirer + FILE_NAME_REVERSE_SAVE);
                         TransLog.clearReveral(true);
                         transUI.toasTransReverse(Tcode.Status.rev_receive_ok, true, false);
                         break;

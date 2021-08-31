@@ -19,6 +19,16 @@ public class TransLogData implements Serializable {
     private String numCell;
     private String MsgID;
     private boolean isTip;
+    private boolean cont;
+
+    public boolean isCont() {
+        return cont;
+    }
+
+    public void setCont(boolean cont) {
+        this.cont = cont;
+    }
+
 
     public boolean isTip() {
         return isTip;
