@@ -3080,39 +3080,42 @@ public class FinanceTrans extends Trans {
 
         pp_response.setNameGroupCard(ISOUtil.spacepadRight(rango.getNOMBRE_RANGO(),25));
         pp_response.setModeReadCard(PAYUtils.entryModePP(inputMode, isFallBack, validateNFC));
-
+        String AID ="";
         if (inputMode == ENTRY_MODE_NFC) {
             if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC  && oneTap!=null){
+                AID=cutAID(oneTap.getAIDCTL());
                 Logger.information("FinanceTrans.java -> Respuesta de PP por OneTap");
                 pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(oneTap.getHolderNameCTL()), 40));
                 pp_response.setARQC(ISOUtil.spacepadRight(oneTap.getARQCCTL(),16));
                 pp_response.setTVR(ISOUtil.spacepadRight(oneTap.getTVRCTL(),10));
                 pp_response.setTSI(ISOUtil.spacepadRight(oneTap.getTSICTL(),4));
                 pp_response.setAppEMV(ISOUtil.spacepadRight(oneTap.getLableCTL(), 20));
-                pp_response.setAIDEMV(ISOUtil.spacepadRight(oneTap.getAIDCTL(), 20));
+                pp_response.setAIDEMV(ISOUtil.spacepadRight(AID, 20));
                 pp_response.setCriptEMV(ISOUtil.spacepadRight("", 22));
                 pp_response.setValidatePIN(ISOUtil.spacepadRight("", 15));
                 pp_response.setExpDateCard(ISOUtil.spacepadRight(oneTap.getExpDateCTL(),4));
                 oneTap=null;
             }else{
+                AID=cutAID(emvl2.GetAid());
                 pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvl2.getHolderName()), 40));
                 pp_response.setARQC(ISOUtil.spacepadRight(emvl2.GetARQC(),16));
                 pp_response.setTVR(ISOUtil.spacepadRight(emvl2.GetTVR(),10));
                 pp_response.setTSI(ISOUtil.spacepadRight(emvl2.GetTSI(),4));
                 pp_response.setAppEMV(ISOUtil.spacepadRight(emvl2.GetLable(), 20));
-                pp_response.setAIDEMV(ISOUtil.spacepadRight(emvl2.GetAid(), 20));
+                pp_response.setAIDEMV(ISOUtil.spacepadRight(AID, 20));
                 pp_response.setCriptEMV(ISOUtil.spacepadRight("", 22));
                 pp_response.setValidatePIN(ISOUtil.spacepadRight("", 15));
                 pp_response.setExpDateCard(ISOUtil.spacepadRight(emvl2.getExpdate(),4));
             }
 
         } else if (inputMode == ENTRY_MODE_ICC){
+            AID=cutAID(getAID());
             pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCard(), 40));
             pp_response.setARQC(ISOUtil.spacepadRight(ARQC+"",16));
             pp_response.setTVR(ISOUtil.spacepadRight(getTVR(),10));
             pp_response.setTSI(ISOUtil.spacepadRight(getTSI(),4));
             pp_response.setAppEMV(ISOUtil.spacepadRight(getLabelCard(), 20));
-            pp_response.setAIDEMV(ISOUtil.spacepadRight(getAID(), 20));
+            pp_response.setAIDEMV(ISOUtil.spacepadRight(AID, 20));
             pp_response.setCriptEMV(ISOUtil.spacepadRight(getTC(), 22));
             pp_response.setValidatePIN(ISOUtil.spacepad("", 15));
             pp_response.setExpDateCard(ISOUtil.spacepadRight(expDate,4));
@@ -3186,7 +3189,12 @@ public class FinanceTrans extends Trans {
         ppResponse = pp_response.packData();
 
     }
-
+    protected String cutAID(String aid){
+        if (aid.length()>20){
+            aid=aid.substring(0,20);
+        }
+        return aid;
+    }
     protected boolean isAnulacionElectronic() {
         return transEname.equals(ANULACION) && (CodOTT != null || TokenElectronic != null);
     }

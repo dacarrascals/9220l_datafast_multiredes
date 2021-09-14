@@ -437,33 +437,37 @@ public class ProcessPPFail extends FinanceTrans {
                     pp_response.setAIDEMV(ISOUtil.spacepadRight("", 20));
                     pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
                 } else {
+                    String AID ="";
                     if (inputModeFail == ENTRY_MODE_NFC) {
                         if (lastCmd.equals(LT) && Server.cmd.equals(PP) && lastInputMode == ENTRY_MODE_NFC && oneTap!=null){
+                            AID=cutAID(oneTap.getAIDCTL());
                             pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(oneTap.getHolderNameCTL()), 40));
                             pp_response.setARQC(ISOUtil.spacepadRight(oneTap.getARQCCTL(),16));
                             pp_response.setTVR(ISOUtil.spacepadRight(oneTap.getTVRCTL(),10));
                             pp_response.setTSI(ISOUtil.spacepadRight(oneTap.getTSICTL(),4));
                             pp_response.setAppEMV(ISOUtil.spacepadRight(oneTap.getLableCTL(), 20));
-                            pp_response.setAIDEMV(ISOUtil.spacepadRight(oneTap.getAIDCTL(), 20));
+                            pp_response.setAIDEMV(ISOUtil.spacepadRight(AID, 20));
                             pp_response.setCriptEMV(ISOUtil.spacepadRight(oneTap.getCIDCTL(), 22));
                             oneTap=null;
                         }else{
+                            AID=cutAID(emvL2Process.GetAid());
                             pp_response.setNameCardHolder(ISOUtil.spacepadRight(verifyHolderName(emvL2Process.getHolderName()), 40));
                             pp_response.setARQC(ISOUtil.spacepadRight(emvL2Process.GetARQC(), 16));
                             pp_response.setTVR(ISOUtil.spacepadRight(emvL2Process.GetTVR(), 10));
                             pp_response.setTSI(ISOUtil.spacepadRight(emvL2Process.GetTSI(), 4));
                             pp_response.setAppEMV(ISOUtil.spacepadRight(emvL2Process.GetLable(), 20));
-                            pp_response.setAIDEMV(ISOUtil.spacepadRight(emvL2Process.GetAid(), 20));
+                            pp_response.setAIDEMV(ISOUtil.spacepadRight(AID, 20));
                             pp_response.setCriptEMV(ISOUtil.spacepad(emvL2Process.GetCID(), 22));
                         }
 
                     } else if (inputModeFail == ENTRY_MODE_ICC) {
+                        AID=cutAID(getAID());
                         pp_response.setNameCardHolder(ISOUtil.spacepadRight(getNameCard(), 40));
                         pp_response.setARQC(ISOUtil.spacepadRight(ARQCFail, 16));
                         pp_response.setTVR(ISOUtil.spacepadRight(getTVR(), 10));
                         pp_response.setTSI(ISOUtil.spacepadRight(getTSI(), 4));
                         pp_response.setAppEMV(ISOUtil.spacepadRight(getLabelCard(), 20));
-                        pp_response.setAIDEMV(ISOUtil.spacepadRight(getAID(), 20));
+                        pp_response.setAIDEMV(ISOUtil.spacepadRight(AID, 20));
                         pp_response.setCriptEMV(ISOUtil.spacepad("", 22));
                     } else {
                         if ((pp_request.getTypeTrans().equals("01") || pp_request.getTypeTrans().equals("02"))) {
